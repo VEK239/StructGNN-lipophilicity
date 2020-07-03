@@ -1,4 +1,4 @@
-,SMILES,logP,pH,Temperature
+,smiles,logP,pH,Temperature
 21317,CC(C)[C@@H](NC(=O)CN)C(O)=O,-1.33,,25.0
 21318,C[C@H](N)C(=O)N[C@@H](C)C(O)=O,-2.0,,25.0
 21319,CC(C)[C@@H](NC(=O)CN)C(O)=O,-1.33,7.0,25.0

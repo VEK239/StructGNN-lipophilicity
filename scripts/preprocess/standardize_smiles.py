@@ -16,7 +16,7 @@ class DatasetsHolder:
     @staticmethod
     def read_datasets(inp_folder_path):
         with os.scandir(inp_folder_path) as entries:
-            return dict([(entry.name, pd.read_csv(entry, index_col=0)) for entry in entries])
+            return dict([(entry.name, pd.read_csv(entry, index_col=0)) for entry in entries if entry.is_file()])
 
 
 class StandardizeDatasets:
