@@ -1,4 +1,4 @@
-value,smiles,Temperature (C),pH
+logP,smiles,Temperature,pH
 -0.89,O=c1[nH]cc(F)c(=O)[nH]1,22.0,4.0
 -0.89,O=c1[nH]cc(F)c(=O)[nH]1,25.0,4.0
 -0.89,O=c1[nH]cc(F)c(=O)[nH]1,37.0,4.0

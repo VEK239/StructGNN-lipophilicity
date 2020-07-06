@@ -1,4 +1,4 @@
-,value,smiles,Temperature (C),pH
+,logP,smiles,Temperature,pH
 437,-0.89,[H][c]1[c]([F])[c](=[O])[n]([H])[c](=[O])[n]1[H],22.0,4.0
 439,-0.89,[H][c]1[c]([F])[c](=[O])[n]([H])[c](=[O])[n]1[H],25.0,4.0
 441,-0.89,[H][c]1[c]([F])[c](=[O])[n]([H])[c](=[O])[n]1[H],37.0,4.0
