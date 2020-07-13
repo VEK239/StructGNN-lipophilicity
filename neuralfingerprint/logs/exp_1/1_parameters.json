@@ -1,0 +1,1 @@
+{"num_epochs": 10, "learn_rate": 0.049787068367863944, "fp_depth": 4, "conv_width": 20, "fp_length": 50, "init_scale": 0.01831563888873418, "h1_size": 100, "data_file": "logp_mean", "NUM_EXP": "1", "l2_penalty": 0.1353352832366127, "l1_penalty": 0.0}

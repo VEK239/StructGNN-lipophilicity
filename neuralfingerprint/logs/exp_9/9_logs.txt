@@ -1,0 +1,218 @@
+
+Starting Morgan fingerprint experiment...
+
+Total number of weights in the network: 4201
+
+max of weights 0.06962983567500523
+
+max of weights 0.46352529375896107
+
+max of weights 0.7541399558598034
+
+max of weights 0.9200943704513901
+
+max of weights 1.0227351222573495
+
+max of weights 1.070867159497127
+
+max of weights 1.1546230017693837
+
+max of weights 1.246470399579788
+
+max of weights 1.294746731672775
+
+max of weights 1.459023448233209
+
+max of weights 1.747755428346211
+
+max of weights 1.7864545800801293
+
+max of weights 1.770546505526745
+
+max of weights 1.7356094525676546
+
+max of weights 1.7394816142950946
+
+max of weights 1.9504421383139159
+
+max of weights 2.063340862773214
+
+max of weights 2.1184862641159823
+
+max of weights 2.173362080626479
+
+max of weights 2.2436785924312903
+
+max of weights 2.3664055353195197
+
+max of weights 2.4092597310588824
+
+max of weights 2.526673452446688
+
+max of weights 2.6232126551649144
+
+max of weights 2.7630462833936735
+
+max of weights 2.754687858736887
+
+max of weights 2.781368814375163
+
+max of weights 2.730829830714702
+
+max of weights 2.8589110815234045
+
+max of weights 2.8548911531705357
+
+max of weights 2.840151930525448
+
+max of weights 3.0891585748778168
+
+max of weights 3.279295211732045
+
+max of weights 3.4090557306023266
+
+max of weights 3.466957343041819
+
+max of weights 3.4861043862803993
+
+max of weights 3.436093731066812
+
+max of weights 3.4488241528502064
+
+max of weights 3.5341795685681543
+
+max of weights 3.5022104739638515
+
+max of weights 3.587607388823636
+
+max of weights 3.646070890220962
+
+max of weights 3.70092486942297
+
+max of weights 3.7136566117214307
+
+max of weights 3.724663006343439
+
+Performance on logP:
+Train RMSE: 1.5057469316274041
+Train R2: 0.31144263066479916
+Test RMSE: 1.5511150942531733
+Test R2: 0.2687687194970809
+
+Starting Average experiment...
+
+Performance on logP:
+Train RMSE: 1.8146042407352028
+Train R2: 0.0
+Test RMSE: 1.8141849992522239
+Test R2: -0.0002990500750039704
+
+Starting neural fingerprint experiment...
+
+Total number of weights in the network: 16011
+
+max of weights 0.06962983567500523
+
+max of weights 0.4869449238727962
+
+max of weights 0.9341960338820792
+
+max of weights 1.3784176623511046
+
+max of weights 1.693973022159594
+
+max of weights 1.7772086740449624
+
+max of weights 1.9628400411995321
+
+max of weights 2.254804545864004
+
+max of weights 2.4384171421240515
+
+max of weights 2.579145832006097
+
+max of weights 2.857402871507981
+
+max of weights 3.1738731822088746
+
+max of weights 3.3413171436731286
+
+max of weights 3.432853369702544
+
+max of weights 3.613776110563983
+
+max of weights 3.757090393829554
+
+max of weights 4.047706768123646
+
+max of weights 4.2205809427124645
+
+max of weights 4.326387665038188
+
+max of weights 4.546829925684741
+
+max of weights 4.716675951711946
+
+max of weights 4.798763925475833
+
+max of weights 4.9084885681822055
+
+max of weights 5.127186810834212
+
+max of weights 5.360636338047035
+
+max of weights 5.532858171609325
+
+max of weights 5.660825343778701
+
+max of weights 5.870012914535164
+
+max of weights 6.124485606588755
+
+max of weights 6.29387792129927
+
+max of weights 6.360528234287095
+
+max of weights 6.446870208638583
+
+max of weights 6.624126704184706
+
+max of weights 6.841232436892166
+
+max of weights 6.9875557948116045
+
+max of weights 7.014174943300219
+
+max of weights 6.944445474481546
+
+max of weights 6.928521406886111
+
+max of weights 6.950604590916596
+
+max of weights 6.944257319281417
+
+max of weights 7.015396543810226
+
+max of weights 7.03572153453842
+
+max of weights 7.131785386225976
+
+max of weights 7.216182457947315
+
+max of weights 7.297448914714021
+
+max of weights 7.317380222073864
+
+max of weights 7.372219426951612
+
+max of weights 7.4257244950983905
+
+max of weights 7.423671411584241
+
+max of weights 7.524577454423999
+
+max of weights 7.532413820373325
+
+Morgan test R2: 0.2687687194970809
+Avg test R2: -0.0002990500750039704
+Neural test R2: 0.7493484414263352
