@@ -24,24 +24,26 @@ def rms_prop(grad, x, callback=None, num_iters=100, step_size=0.1, gamma=0.9,
     return x
 
 def adam(grad, x, callback=None, num_iters=100,
-         step_size=0.001, b1=0.9, b2=0.999, eps=10**-8):
+         step_size=0.001, b1=0.9, b2=0.999, eps=10**-8, delta = 0):
     """Adam as described in http://arxiv.org/pdf/1412.6980.pdf.
     It's basically RMSprop with momentum and some correction terms."""
     m = np.zeros(len(x))
     v = np.zeros(len(x))
     early_stop_r2 = []
     best_iter = 0
-    delta = 300
     best_weights = x
     for i in range(num_iters):
-        if i-best_iter>delta or i=num_iters-1:
-            return best_weights
+        if delta>0:
+            if i-best_iter>delta or i==num_iters-1:
+                return best_weights
         g = grad(x, i)
         if callback: 
-            early_stop_r2.append(callback(x, i))
-            if early_stop_r2[-1]>early_stop_r2[best_iter]:
-                best_weights = x
-                best_iter = i
+            loss = callback(x, i)
+            if delta>0:
+                early_stop_r2.append(loss)
+                if early_stop_r2[-1]>early_stop_r2[best_iter]:
+                    best_weights = x
+                    best_iter = i
         m = (1 - b1) * g      + b1 * m  # First  moment estimate.
         v = (1 - b2) * (g**2) + b2 * v  # Second moment estimate.
         mhat = m / (1 - b1**(i + 1))    # Bias correction.

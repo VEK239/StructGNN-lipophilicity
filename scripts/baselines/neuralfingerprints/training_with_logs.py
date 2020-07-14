@@ -2,6 +2,11 @@ import autograd.numpy as np
 import autograd.numpy.random as npr
 from autograd import grad
 
+# Path to Neural Fingerprint scripts
+import sys
+sys.path
+sys.path.append('./utils')
+
 from build_vanilla_net import build_morgan_deep_net
 from build_convnet import build_conv_deep_net
 from util import normalize_array, build_batched_grad
@@ -15,11 +20,7 @@ import os
 import json
 from argparse import ArgumentParser
 
-# Path to Neural Fingerprint scripts
 
-import sys
-sys.path
-sys.path.append('./scripts')
 
 parser = ArgumentParser()
 parser.add_argument("-f", "--fp_length", dest="fp_length",
@@ -54,14 +55,19 @@ parser.add_argument("-t", "--data_file",
 parser.add_argument("-e", "--num_epochs",
                     dest="num_epochs", default=10,
                     help="Number of epochs",type=int)
+parser.add_argument("-b", "--early_stopping",
+                    dest="early_stopping", default=300,
+                    help="Number of iterations before early stopping",type=int)
 
 args = parser.parse_args()
 
-DATASET_PATH = "../../mol_properties/data/3_final_data/split_data"
+# path to datasets
+DATASET_PATH = "../../../data/3_final_data/split_data"
 
-EXPERIMENTS_DATA = "./"
+# path to logs directory
+EXPERIMENTS_DATA = "../../../data/raw"
 
-#logs path
+# logs path
 global LOG_PATH
 LOG_PATH=os.path.join(EXPERIMENTS_DATA, "logs")
 
@@ -112,7 +118,7 @@ def train_nn(pred_fun, loss_fun, num_weights, train_smiles, train_raw_targets, p
 
     # Optimize weights.
     trained_weights = adam(grad_fun_with_data, init_weights, callback=callback,
-                           num_iters=params['num_iters'], step_size=params['learn_rate'])
+                           num_iters=params['num_iters'], step_size=params['learn_rate'], delta=args.early_stopping)
 
     def predict_func(new_smiles):
         """Returns to the original units that the raw targets were in."""
