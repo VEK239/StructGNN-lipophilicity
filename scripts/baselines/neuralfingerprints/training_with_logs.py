@@ -261,7 +261,7 @@ def main():
                    str(test_loss_morgan) +
                    "\nAvg test R2: "+ str(test_loss_avg) + 
                    "\nNeural test R2: " + str(test_r2_neural) +
-                   "\nNeural test RMSE:"+str(test_rmse_neural)+'\n')
+                   "\nNeural test RMSE: "+str(test_rmse_neural)+'\n')
 
 
 if __name__ == '__main__':
