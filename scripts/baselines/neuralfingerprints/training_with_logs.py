@@ -110,7 +110,7 @@ def train_nn(pred_fun, loss_fun, num_weights, train_smiles, train_raw_targets, p
                            str(r2_score(train_raw_targets, train_preds))+'\t'+\
                            str(r2_score(validation_raw_targets, validation_preds))+'\t'+\
                            '\n')
-            return r2_score(validation_raw_targets, validation_preds)
+            return rmse(validation_raw_targets, validation_preds)
     # Build gradient using autograd.
     grad_fun = grad(loss_fun)
     grad_fun_with_data = build_batched_grad(grad_fun, params['batch_size'],
