@@ -1,0 +1,290 @@
+
+Starting Morgan fingerprint experiment...
+
+Total number of weights in the network: 6201
+
+max of weights 0.06962983567500523
+
+max of weights 0.4914679123941948
+
+max of weights 0.762558577360078
+
+max of weights 1.016581358290735
+
+max of weights 1.1664671684542347
+
+max of weights 1.128840425880453
+
+max of weights 1.1971196985311157
+
+max of weights 1.306185978049677
+
+max of weights 1.3833557581980904
+
+max of weights 1.5438242563332618
+
+max of weights 1.5823892639197459
+
+max of weights 1.6152681414105297
+
+max of weights 1.7560316282604478
+
+max of weights 1.7294237650874027
+
+max of weights 1.8079334005783825
+
+max of weights 1.936878962198711
+
+max of weights 2.241560096342623
+
+max of weights 2.3322654133138294
+
+max of weights 2.3428441165761122
+
+max of weights 2.363750905370938
+
+max of weights 2.4157808825599867
+
+max of weights 2.4112469220389814
+
+max of weights 2.4598523135990713
+
+max of weights 2.4872726378237715
+
+max of weights 2.488633572546387
+
+max of weights 2.6026653960076644
+
+max of weights 2.6991226869364695
+
+max of weights 2.7758313764055416
+
+max of weights 2.745639391453237
+
+max of weights 2.8073780569597893
+
+max of weights 2.903752566517099
+
+max of weights 2.9257568162193546
+
+max of weights 2.9325150874967973
+
+max of weights 3.0166382149389976
+
+max of weights 3.0528308371840556
+
+max of weights 3.115855195330339
+
+max of weights 3.1385966154567204
+
+max of weights 3.1720195944854237
+
+max of weights 3.1775664451186456
+
+max of weights 3.288718537155054
+
+max of weights 3.26385496839431
+
+max of weights 3.2892211697404137
+
+max of weights 3.305111346123698
+
+Performance on logP:
+Train RMSE: 1.3046932280253063
+Train R2: 0.4830447223829103
+Test RMSE: 1.4146082395018218
+Test R2: 0.39181027347280895
+
+Starting Average experiment...
+
+Performance on logP:
+Train RMSE: 1.8146042407352028
+Train R2: 0.0
+Test RMSE: 1.8141849992522239
+Test R2: -0.0002990500750039704
+
+Starting neural fingerprint experiment...
+
+Total number of weights in the network: 19951
+
+max of weights 0.08144291040373952
+
+max of weights 0.4915967745809167
+
+max of weights 0.9553673354825236
+
+max of weights 1.346946003203053
+
+max of weights 1.7099910042774824
+
+max of weights 1.9154696304249645
+
+max of weights 2.1105998303833036
+
+max of weights 2.3209816333575493
+
+max of weights 2.4908128102153277
+
+max of weights 2.8545750828482204
+
+max of weights 3.308018475158577
+
+max of weights 3.76988617382666
+
+max of weights 4.057558413313236
+
+max of weights 4.28740599560856
+
+max of weights 4.611223988210926
+
+max of weights 4.875327714141475
+
+max of weights 5.076785293790625
+
+max of weights 5.2297561663989205
+
+max of weights 5.361453912835583
+
+max of weights 5.50123868667625
+
+max of weights 5.656846420121854
+
+max of weights 5.766077492312932
+
+max of weights 5.961831634946164
+
+max of weights 6.273229815739659
+
+max of weights 6.653682299407079
+
+max of weights 7.016339781459716
+
+max of weights 7.311549603995988
+
+max of weights 7.432173111695079
+
+max of weights 7.608809231092787
+
+max of weights 7.789193946844309
+
+max of weights 7.881749660028819
+
+max of weights 7.997804683888586
+
+max of weights 8.171783946338815
+
+max of weights 8.364244020231189
+
+max of weights 8.522622994929673
+
+max of weights 8.593895378920047
+
+max of weights 8.616425217309061
+
+max of weights 8.842900784553589
+
+max of weights 9.017655607398083
+
+max of weights 9.087838926032168
+
+max of weights 9.209892943287345
+
+max of weights 9.298568404468137
+
+max of weights 9.404305340143988
+
+max of weights 9.441605785141759
+
+max of weights 9.467822223854961
+
+max of weights 9.439720295027715
+
+max of weights 9.47176577868324
+
+max of weights 9.491460261724548
+
+max of weights 9.433988528610719
+
+max of weights 9.468576190777945
+
+max of weights 9.463666631156691
+
+max of weights 9.466255747292701
+
+max of weights 9.420529971885129
+
+max of weights 9.327034070003364
+
+max of weights 9.212795501474352
+
+max of weights 9.166479508758066
+
+max of weights 9.072819614051044
+
+max of weights 8.984082503648223
+
+max of weights 8.95919386110996
+
+max of weights 8.859681296708583
+
+max of weights 8.932879341360614
+
+max of weights 8.944023000021136
+
+max of weights 8.856417628627948
+
+max of weights 8.80367778896785
+
+max of weights 8.73462616547229
+
+max of weights 8.617826550365992
+
+max of weights 8.523318443056604
+
+max of weights 8.511242541785224
+
+max of weights 8.437919621818406
+
+max of weights 8.459389171741423
+
+max of weights 8.438874869179005
+
+max of weights 8.377452288986134
+
+max of weights 8.315004317777298
+
+max of weights 8.279318920309453
+
+max of weights 8.213625917885874
+
+max of weights 8.122601432113436
+
+max of weights 8.060268576320242
+
+max of weights 7.873462822877085
+
+max of weights 7.91469518692826
+
+max of weights 7.892399151676566
+
+max of weights 7.806788150088444
+
+max of weights 7.677272344764633
+
+max of weights 7.609793986711348
+
+max of weights 7.5263931034573925
+
+max of weights 7.4343099272884725
+
+max of weights 7.463646731441958
+
+max of weights 7.4131667810166055
+
+max of weights 7.417082482680376
+
+max of weights 7.546464035904975
+
+Morgan test R2: 0.39181027347280895
+Avg test R2: -0.0002990500750039704
+Neural test R2: 0.7487948693479225

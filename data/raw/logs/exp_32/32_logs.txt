@@ -1,0 +1,1231 @@
+
+Starting Morgan fingerprint experiment...
+
+Total number of weights in the network: 10201
+
+max of weights 0.06962983567500523
+
+max of weights 0.5089014402003887
+
+max of weights 0.8229719222957562
+
+max of weights 1.044726836671941
+
+max of weights 1.2196689374869683
+
+max of weights 1.347168482206856
+
+max of weights 1.4250835114700173
+
+max of weights 1.4598605976171346
+
+max of weights 1.492649286381318
+
+max of weights 1.5900690040896963
+
+max of weights 1.658197388440883
+
+max of weights 1.7072678861087085
+
+max of weights 1.7056142064775448
+
+max of weights 1.7488430201432363
+
+max of weights 1.799892833075936
+
+max of weights 1.8705705012449032
+
+max of weights 1.9651537703530002
+
+max of weights 1.942129791312189
+
+max of weights 2.286941276769846
+
+max of weights 2.4043460140362996
+
+max of weights 2.4711920735384485
+
+max of weights 2.4773567573266386
+
+max of weights 2.5210963371242903
+
+max of weights 2.5293069028422237
+
+max of weights 2.508998204809808
+
+max of weights 2.575610258005893
+
+max of weights 2.6044896412648595
+
+max of weights 2.571437804079374
+
+max of weights 2.6545496078817705
+
+max of weights 2.719302686395593
+
+max of weights 2.8378848833159687
+
+max of weights 2.868738804856375
+
+max of weights 2.900466904644892
+
+max of weights 2.909900714755187
+
+max of weights 2.9754366715115976
+
+max of weights 3.107536659381339
+
+max of weights 3.1532133704940533
+
+max of weights 3.2121042321053483
+
+max of weights 3.2131558178368045
+
+max of weights 3.2004746012233194
+
+max of weights 3.2746304598656906
+
+max of weights 3.356943841221093
+
+max of weights 3.375104246666362
+
+max of weights 3.408538479591017
+
+max of weights 3.3188358856823705
+
+max of weights 3.417940629492239
+
+max of weights 3.4422274977285574
+
+max of weights 3.4932139937548183
+
+max of weights 3.62282654011032
+
+max of weights 3.7199032746305636
+
+max of weights 3.8661224021386253
+
+max of weights 3.914523064910411
+
+max of weights 3.9023814863574464
+
+max of weights 3.9120785878137987
+
+max of weights 3.9012470935636467
+
+max of weights 3.9351771791848154
+
+max of weights 3.927295257895978
+
+max of weights 4.072215594062606
+
+max of weights 4.188987047837553
+
+max of weights 4.317620435988026
+
+max of weights 4.426462461244933
+
+max of weights 4.410355590939447
+
+max of weights 4.432562953217174
+
+max of weights 4.442866388069902
+
+max of weights 4.456654090371811
+
+max of weights 4.480813361310169
+
+max of weights 4.4907978374641155
+
+max of weights 4.582030213756492
+
+max of weights 4.526143261454387
+
+max of weights 4.60377775970256
+
+max of weights 4.756011205004669
+
+max of weights 4.678566492690108
+
+max of weights 4.642546894507948
+
+max of weights 4.628404597256
+
+max of weights 4.620499221906582
+
+max of weights 4.70760748865732
+
+max of weights 4.74337880235962
+
+max of weights 4.585874623987569
+
+max of weights 4.696646946319444
+
+max of weights 4.852596443946314
+
+max of weights 4.908921375867661
+
+max of weights 4.963683280014553
+
+max of weights 5.051433060635063
+
+max of weights 5.099313486250412
+
+max of weights 5.195456124710438
+
+max of weights 5.1680992551965925
+
+max of weights 4.9285988395661215
+
+max of weights 4.904899657148497
+
+max of weights 4.957545076794664
+
+max of weights 4.988903517253877
+
+max of weights 4.894387969023487
+
+max of weights 4.972723530624006
+
+max of weights 5.045643939940841
+
+max of weights 5.242797503195259
+
+max of weights 5.244248589226003
+
+max of weights 5.036274239754808
+
+max of weights 5.0324504696361805
+
+max of weights 5.0489418963811215
+
+max of weights 5.042530014861363
+
+max of weights 4.873393441038781
+
+max of weights 4.930425747255719
+
+max of weights 4.977150537565348
+
+max of weights 5.218232177574
+
+max of weights 5.214921874483136
+
+max of weights 5.0948796158210925
+
+max of weights 5.100281713327577
+
+max of weights 5.09794145461768
+
+max of weights 5.0696659902934575
+
+max of weights 5.136331091894406
+
+max of weights 5.062095917690684
+
+max of weights 5.2176758870849245
+
+max of weights 5.252555199821771
+
+max of weights 5.271223776552785
+
+max of weights 5.205451540862686
+
+max of weights 5.27806601001021
+
+max of weights 5.2723249302227
+
+max of weights 5.375695736007292
+
+max of weights 5.400649718521815
+
+max of weights 5.253002238181363
+
+max of weights 5.422635895770215
+
+max of weights 5.430708580036068
+
+max of weights 5.404916862511457
+
+max of weights 5.383942569074721
+
+max of weights 5.459159093604099
+
+max of weights 5.475080721199314
+
+max of weights 5.552877875911195
+
+max of weights 5.570211202951676
+
+max of weights 5.529212314441406
+
+max of weights 5.575292245038605
+
+max of weights 5.615616396771925
+
+max of weights 5.635113046331077
+
+max of weights 5.493116997760856
+
+max of weights 5.5859486409094075
+
+max of weights 5.716023775709811
+
+max of weights 5.7013808040314675
+
+max of weights 5.8315815974587375
+
+max of weights 5.850484903642196
+
+max of weights 5.821513419107383
+
+max of weights 5.854412790351822
+
+max of weights 5.734766231983577
+
+max of weights 5.683456997990685
+
+max of weights 5.769293977680543
+
+max of weights 5.861223151550751
+
+max of weights 5.812718420199708
+
+max of weights 5.925967829672098
+
+max of weights 5.913371033556559
+
+max of weights 5.872121013448049
+
+max of weights 5.914146870699777
+
+max of weights 5.866612124379595
+
+max of weights 5.8538568841073815
+
+Performance on logP:
+Train RMSE: 1.022713735530438
+Train R2: 0.6823533097241705
+Test RMSE: 1.3811878193255236
+Test R2: 0.4202080349587819
+
+Starting Average experiment...
+
+Performance on logP:
+Train RMSE: 1.8146042407352028
+Train R2: 0.0
+Test RMSE: 1.8141849992522239
+Test R2: -0.0002990500750039704
+
+Starting neural fingerprint experiment...
+
+Total number of weights in the network: 48121
+
+max of weights 0.08535001578936458
+
+max of weights 0.4873496039424941
+
+max of weights 0.9258482373837269
+
+max of weights 1.2874043795957626
+
+max of weights 1.5034496648346283
+
+max of weights 1.816338729436557
+
+max of weights 2.2741645566817454
+
+max of weights 2.3742445652064683
+
+max of weights 2.828999663905742
+
+max of weights 3.3723627205484052
+
+max of weights 3.948608884673527
+
+max of weights 4.479794180835264
+
+max of weights 4.7774281620549965
+
+max of weights 5.0216328199139255
+
+max of weights 5.375283780466717
+
+max of weights 5.685657623628534
+
+max of weights 5.8763538001005085
+
+max of weights 5.997171709170679
+
+max of weights 6.112863606243464
+
+max of weights 6.251851863557771
+
+max of weights 6.3490400757149725
+
+max of weights 6.405382615491811
+
+max of weights 6.479639754475106
+
+max of weights 6.615627815448574
+
+max of weights 6.727603731165954
+
+max of weights 6.802734879588871
+
+max of weights 6.873581602068871
+
+max of weights 6.946989792262057
+
+max of weights 7.009449966925898
+
+max of weights 7.049827828729546
+
+max of weights 7.076863226105153
+
+max of weights 7.132439475483548
+
+max of weights 7.191917699353871
+
+max of weights 7.2296341782450835
+
+max of weights 7.252623679270607
+
+max of weights 7.314221326402503
+
+max of weights 7.377132156321068
+
+max of weights 7.406160493745973
+
+max of weights 7.41717917221151
+
+max of weights 7.432326650399685
+
+max of weights 7.480915131800725
+
+max of weights 7.457774756148598
+
+max of weights 7.492673859902279
+
+max of weights 7.509672072298042
+
+max of weights 7.531905525319121
+
+max of weights 7.556393914527904
+
+max of weights 7.615600183864373
+
+max of weights 7.6385682877539915
+
+max of weights 7.6351430810975245
+
+max of weights 7.691081078336526
+
+max of weights 7.694094560491631
+
+max of weights 7.754300784640149
+
+max of weights 7.763356990984254
+
+max of weights 7.817927119396003
+
+max of weights 7.903353415811749
+
+max of weights 7.937614693460669
+
+max of weights 7.956510586608874
+
+max of weights 7.95127770614976
+
+max of weights 7.975802490079746
+
+max of weights 7.972250365054095
+
+max of weights 7.998787409964199
+
+max of weights 7.993556522311535
+
+max of weights 7.960218932133597
+
+max of weights 7.963415178932374
+
+max of weights 7.949778541671354
+
+max of weights 7.948719365112503
+
+max of weights 7.942569041616401
+
+max of weights 8.008278427461397
+
+max of weights 7.994964967175986
+
+max of weights 8.020238808258831
+
+max of weights 8.009648097791679
+
+max of weights 7.9168025563884115
+
+max of weights 7.920926304718393
+
+max of weights 7.8823074648503955
+
+max of weights 7.8806347125775495
+
+max of weights 7.869267445049167
+
+max of weights 7.894316764208131
+
+max of weights 7.85229163208839
+
+max of weights 7.868864590902652
+
+max of weights 7.871050080866177
+
+max of weights 7.834101547450567
+
+max of weights 7.884175525035543
+
+max of weights 7.89316367573422
+
+max of weights 7.888603538047313
+
+max of weights 7.87514523706758
+
+max of weights 7.911510517303252
+
+max of weights 7.9196500122432845
+
+max of weights 7.973911982527358
+
+max of weights 8.002625149525551
+
+max of weights 7.914699382955508
+
+max of weights 7.92646043586912
+
+max of weights 7.944588985046803
+
+max of weights 7.9485716436698315
+
+max of weights 7.933539878985253
+
+max of weights 7.93021601159131
+
+max of weights 7.897389130479492
+
+max of weights 7.91028672303954
+
+max of weights 7.898590634526841
+
+max of weights 7.812909290809138
+
+max of weights 7.878288841225631
+
+max of weights 7.891025601489996
+
+max of weights 7.884336746157368
+
+max of weights 7.8838447573899115
+
+max of weights 7.874607445897737
+
+max of weights 7.899177003164746
+
+max of weights 7.948858897925871
+
+max of weights 7.9384942566828105
+
+max of weights 7.8637561911827705
+
+max of weights 7.871677866306531
+
+max of weights 7.860327997418338
+
+max of weights 7.829581066262778
+
+max of weights 7.824497799779309
+
+max of weights 7.7695989594233
+
+max of weights 7.793098524275874
+
+max of weights 7.851167456992535
+
+max of weights 7.820646227239627
+
+max of weights 7.730405214299924
+
+max of weights 7.7220468638245405
+
+max of weights 7.72623277828356
+
+max of weights 7.704438975956036
+
+max of weights 7.720818108021406
+
+max of weights 7.678619580592098
+
+max of weights 7.744997788921005
+
+max of weights 7.799232089881999
+
+max of weights 7.760773103543737
+
+max of weights 7.77208918467411
+
+max of weights 7.800761519596479
+
+max of weights 7.795272179760135
+
+max of weights 7.762896605471836
+
+max of weights 7.765586683424007
+
+max of weights 7.735527116354278
+
+max of weights 7.833789188263144
+
+max of weights 7.897739278692951
+
+max of weights 7.889132425745095
+
+max of weights 7.830251901692812
+
+max of weights 7.881339180442654
+
+max of weights 7.968462911386467
+
+max of weights 7.9944505960652315
+
+max of weights 8.068828817085693
+
+max of weights 8.030495337420211
+
+max of weights 8.209864339635335
+
+max of weights 8.32734753728076
+
+max of weights 8.330397120397024
+
+max of weights 8.316742484026129
+
+max of weights 8.315527934500235
+
+max of weights 8.347108612919083
+
+max of weights 8.35373059849831
+
+max of weights 8.49551211709892
+
+max of weights 8.518520196769705
+
+max of weights 8.690428775021621
+
+max of weights 8.757718514413565
+
+max of weights 8.582873248922324
+
+max of weights 8.578201587354133
+
+max of weights 8.550158623426926
+
+max of weights 8.572696659701558
+
+max of weights 8.592620862844058
+
+max of weights 8.610113177856213
+
+max of weights 8.555290682977775
+
+max of weights 8.701959156605609
+
+max of weights 8.800610505124945
+
+max of weights 8.748874386961178
+
+max of weights 8.796803651628352
+
+max of weights 8.688612391766608
+
+max of weights 8.710635358648478
+
+max of weights 8.774589284847542
+
+max of weights 8.89203224156319
+
+max of weights 8.860822923124502
+
+max of weights 9.010761139953047
+
+max of weights 9.099249133395839
+
+max of weights 8.950015857678816
+
+max of weights 8.955144364501523
+
+max of weights 8.952556564754886
+
+max of weights 8.890720297239522
+
+max of weights 9.000057698486879
+
+max of weights 9.035384763373294
+
+max of weights 9.011725412829986
+
+max of weights 9.113972543955386
+
+max of weights 9.166554464359285
+
+max of weights 9.030500372639118
+
+max of weights 8.982910424926109
+
+max of weights 9.033122894766779
+
+max of weights 8.981150757717312
+
+max of weights 9.022365070271045
+
+max of weights 8.985244665604267
+
+max of weights 9.017680987857096
+
+max of weights 9.156239042458672
+
+max of weights 9.234429157466735
+
+max of weights 9.09153529256727
+
+max of weights 9.047149061007008
+
+max of weights 9.071986827012923
+
+max of weights 9.257973971402503
+
+max of weights 9.506335610807573
+
+max of weights 9.493368467124737
+
+max of weights 9.360650474707572
+
+max of weights 9.302393009069695
+
+max of weights 9.266050260756549
+
+max of weights 9.201061261597523
+
+max of weights 9.153253734594491
+
+max of weights 9.131860359935235
+
+max of weights 9.160801647331498
+
+max of weights 9.257975256576346
+
+max of weights 9.35003620804805
+
+max of weights 9.402434208261461
+
+max of weights 9.441985494644634
+
+max of weights 9.525879722313364
+
+max of weights 9.412063513865828
+
+max of weights 9.461295010351261
+
+max of weights 9.586681239648458
+
+max of weights 9.5167853161014
+
+max of weights 9.442820784588147
+
+max of weights 9.444853769048388
+
+max of weights 9.451956507775902
+
+max of weights 9.555216868108975
+
+max of weights 9.696616715310546
+
+max of weights 9.752840675715902
+
+max of weights 9.667159366393273
+
+max of weights 9.776927749542917
+
+max of weights 9.844763333325748
+
+max of weights 9.86557479812005
+
+max of weights 9.964610532836403
+
+max of weights 10.034272033536606
+
+max of weights 10.11133656127062
+
+max of weights 10.143555915500931
+
+max of weights 10.094998600986749
+
+max of weights 10.02168467446551
+
+max of weights 10.088049091790147
+
+max of weights 10.311977448370037
+
+max of weights 10.292760131634733
+
+max of weights 10.329069754014695
+
+max of weights 10.247185405088839
+
+max of weights 10.183549529853856
+
+max of weights 10.140969748374003
+
+max of weights 10.113382909613824
+
+max of weights 10.113144281787454
+
+max of weights 10.110569626827749
+
+max of weights 10.12092553851388
+
+max of weights 10.28001639141929
+
+max of weights 10.420635721632998
+
+max of weights 10.455088355571656
+
+max of weights 10.476639786840387
+
+max of weights 10.503451061406963
+
+max of weights 10.531930901804692
+
+max of weights 10.577032620235705
+
+max of weights 10.615006051435023
+
+max of weights 10.608419844576895
+
+max of weights 10.62369429253163
+
+max of weights 10.69133232792894
+
+max of weights 10.739231390588849
+
+max of weights 10.737457813161843
+
+max of weights 10.736268008002252
+
+max of weights 10.727705929160338
+
+max of weights 10.667463894201466
+
+max of weights 10.731076520056785
+
+max of weights 10.738022805929793
+
+max of weights 10.618637991153234
+
+max of weights 10.633750087668233
+
+max of weights 10.648944718443655
+
+max of weights 10.65493108552961
+
+max of weights 10.677986676151662
+
+max of weights 10.691110594063764
+
+max of weights 10.770187818106503
+
+max of weights 10.931360562949312
+
+max of weights 11.001094328574869
+
+max of weights 10.999248355544484
+
+max of weights 11.001673237262528
+
+max of weights 11.031384148527128
+
+max of weights 10.977557431987252
+
+max of weights 10.921773635585481
+
+max of weights 10.884430565164411
+
+max of weights 10.912221060976858
+
+max of weights 11.00480802485682
+
+max of weights 11.11461742536465
+
+max of weights 10.860135818963629
+
+max of weights 10.813539480645561
+
+max of weights 10.832123371011019
+
+max of weights 10.867867587078779
+
+max of weights 10.874390012556852
+
+max of weights 10.885047219604845
+
+max of weights 10.881338138638792
+
+max of weights 10.926893185878871
+
+max of weights 10.868111883034219
+
+max of weights 10.932956017227529
+
+max of weights 11.096852157504433
+
+max of weights 11.16778654727642
+
+max of weights 11.251614545055507
+
+max of weights 11.285716378317694
+
+max of weights 11.301945878176582
+
+max of weights 11.272338270790263
+
+max of weights 11.283716091305397
+
+max of weights 11.238932254418684
+
+max of weights 11.182568873410709
+
+max of weights 11.089979640891311
+
+max of weights 11.002132760129271
+
+max of weights 10.991793752728155
+
+max of weights 11.101082720730135
+
+max of weights 11.151073925292902
+
+max of weights 11.228033356470272
+
+max of weights 11.313604666912576
+
+max of weights 11.30829249586938
+
+max of weights 11.215410078653106
+
+max of weights 11.201223423707859
+
+max of weights 11.196152744804738
+
+max of weights 11.177480144150316
+
+max of weights 11.237037161863006
+
+max of weights 11.191988082881126
+
+max of weights 11.257343329884584
+
+max of weights 11.240013898993215
+
+max of weights 11.257519515975108
+
+max of weights 11.237165275048739
+
+max of weights 11.202914792860883
+
+max of weights 11.287988558825223
+
+max of weights 11.361537965020464
+
+max of weights 11.336482822286314
+
+max of weights 11.226198063337197
+
+max of weights 11.306981324331387
+
+max of weights 11.34433104167174
+
+max of weights 11.302232179955533
+
+max of weights 11.260293057964217
+
+max of weights 11.185286502403374
+
+max of weights 11.234675421155204
+
+max of weights 11.364128885275692
+
+max of weights 11.427836711865702
+
+max of weights 11.378225555643095
+
+max of weights 11.375777624501694
+
+max of weights 11.396454479550608
+
+max of weights 11.373729128279903
+
+max of weights 11.36774439989072
+
+max of weights 11.367292171023038
+
+max of weights 11.439475162007094
+
+max of weights 11.57061212510772
+
+max of weights 11.503034260692125
+
+max of weights 11.47745203257584
+
+max of weights 11.485012431206387
+
+max of weights 11.476240461743444
+
+max of weights 11.468822274843129
+
+max of weights 11.465185572909997
+
+max of weights 11.386050685994347
+
+max of weights 11.424782988691152
+
+max of weights 11.52115274357242
+
+max of weights 11.517606637243542
+
+max of weights 11.440228695048624
+
+max of weights 11.60646147462111
+
+max of weights 11.652502772809171
+
+max of weights 11.723640332523654
+
+max of weights 11.806520615099934
+
+max of weights 11.73070092864295
+
+max of weights 11.654322368769
+
+max of weights 11.677066199836199
+
+max of weights 11.737229251984816
+
+max of weights 11.715341282636725
+
+max of weights 11.939341969037086
+
+max of weights 12.082169961810267
+
+max of weights 12.073623685080776
+
+max of weights 11.996041635474617
+
+max of weights 11.92909606572813
+
+max of weights 11.914250078971692
+
+max of weights 11.898819935717842
+
+max of weights 11.915011471584934
+
+max of weights 11.873090812399392
+
+max of weights 11.865022311129774
+
+max of weights 11.85919198624463
+
+max of weights 11.77633699271673
+
+max of weights 11.664001537439683
+
+max of weights 11.61044651784506
+
+max of weights 11.670084566129121
+
+max of weights 11.585415936268369
+
+max of weights 11.61350307794421
+
+max of weights 11.484562230426882
+
+max of weights 11.412519114265347
+
+max of weights 11.394671536600354
+
+max of weights 11.248355738897278
+
+max of weights 11.229729594421565
+
+max of weights 11.246854402137254
+
+max of weights 11.336181022437096
+
+max of weights 11.458470127768608
+
+max of weights 11.494546843573705
+
+max of weights 11.450968531105985
+
+max of weights 11.473115147414562
+
+max of weights 11.471447407236345
+
+max of weights 11.387722549695324
+
+max of weights 11.273066082323872
+
+max of weights 11.252360930994783
+
+max of weights 11.250807300960824
+
+max of weights 11.45795688351334
+
+max of weights 11.689324622100763
+
+max of weights 11.826058553378486
+
+max of weights 11.889992511116956
+
+max of weights 11.862998040875897
+
+max of weights 11.809838713334447
+
+max of weights 11.806295926169183
+
+max of weights 11.787044103915205
+
+max of weights 11.720307876959328
+
+max of weights 11.633206044565048
+
+max of weights 11.768154742522167
+
+max of weights 11.90163594879582
+
+max of weights 12.050340621800483
+
+max of weights 12.044438756826253
+
+max of weights 11.974678556192023
+
+max of weights 11.986282947729027
+
+max of weights 11.92037820186107
+
+max of weights 11.890424279663454
+
+max of weights 11.846172730789702
+
+max of weights 11.752877819173715
+
+max of weights 11.740617100657495
+
+max of weights 11.65600917339605
+
+max of weights 11.604721196071267
+
+max of weights 11.532443442030694
+
+max of weights 11.476805807189155
+
+max of weights 11.484277229328281
+
+max of weights 11.500570519098904
+
+max of weights 11.518517699911895
+
+max of weights 11.501420221949862
+
+max of weights 11.56468830355369
+
+max of weights 11.602092648794633
+
+max of weights 11.58901579126528
+
+max of weights 11.502143421074669
+
+max of weights 11.481563170634969
+
+max of weights 11.473208735664311
+
+max of weights 11.535841725285133
+
+max of weights 11.812000766536283
+
+max of weights 11.862471011378354
+
+max of weights 11.827505413416311
+
+max of weights 11.883382398808218
+
+max of weights 11.83026176666255
+
+max of weights 11.757049277247813
+
+max of weights 11.760475541901107
+
+max of weights 11.732156900009015
+
+max of weights 11.778929496978124
+
+max of weights 12.102185740744902
+
+max of weights 12.1368299422431
+
+max of weights 12.249340299392777
+
+max of weights 12.262067440076304
+
+max of weights 12.22348281911749
+
+max of weights 12.229267338633418
+
+max of weights 12.307998348988537
+
+max of weights 12.316931889412098
+
+max of weights 12.267412621146043
+
+max of weights 12.371511018231901
+
+max of weights 12.354637528332988
+
+max of weights 12.553119174411796
+
+max of weights 12.502087926504101
+
+max of weights 12.402490317274335
+
+max of weights 12.333335972516775
+
+max of weights 12.428341099156079
+
+max of weights 12.433527057261525
+
+max of weights 12.335440125571917
+
+max of weights 12.321990662722289
+
+max of weights 12.23675624711981
+
+max of weights 12.234897884609223
+
+max of weights 12.269174268997133
+
+max of weights 12.146582080511147
+
+max of weights 12.103546840055865
+
+Morgan test R2: 0.4202080349587819
+Avg test R2: -0.0002990500750039704
+Neural test R2: 0.8331787548687783
+Neural test RMSE: 0.7408705345354213
