@@ -18,6 +18,7 @@ from pathlib2 import Path
 import time
 import os
 import json
+import pickle
 from argparse import ArgumentParser
 
 
@@ -56,7 +57,7 @@ parser.add_argument("-e", "--num_epochs",
                     dest="num_epochs", default=10,
                     help="Number of epochs",type=int)
 parser.add_argument("-b", "--early_stopping",
-                    dest="early_stopping", default=300,
+                    dest="early_stopping", default=500,
                     help="Number of iterations before early stopping",type=int)
 
 args = parser.parse_args()
@@ -65,13 +66,18 @@ args = parser.parse_args()
 DATASET_PATH = "../../../data/3_final_data/split_data"
 
 # path to logs directory
-EXPERIMENTS_DATA = "../../../data/raw"
+EXPERIMENTS_DATA = "../../../data/raw/baselines/neuralfingerprint"
 
 # logs path
 global LOG_PATH
 LOG_PATH=os.path.join(EXPERIMENTS_DATA, "logs")
 
 Path(LOG_PATH).mkdir(exist_ok=True)
+
+global MODEL_PATH
+MODEL_PATH=os.path.join(EXPERIMENTS_DATA, "models")
+
+Path(MODEL_PATH).mkdir(exist_ok=True)
 
 def write_log_file(path, filename, log_message):
     """Write info to txt files"""
@@ -110,6 +116,9 @@ def train_nn(pred_fun, loss_fun, num_weights, train_smiles, train_raw_targets, p
                            str(r2_score(train_raw_targets, train_preds))+'\t'+\
                            str(r2_score(validation_raw_targets, validation_preds))+'\t'+\
                            '\n')
+            if filename_fix=='conv':
+                with open(os.path.join(MODEL_PATH,'model_'+str(iter)+'.pkl'),'w') as f:
+                    pickle.dump(weights, f)
             return rmse(validation_raw_targets, validation_preds)
     # Build gradient using autograd.
     grad_fun = grad(loss_fun)
@@ -117,8 +126,12 @@ def train_nn(pred_fun, loss_fun, num_weights, train_smiles, train_raw_targets, p
                                             train_smiles, train_targets)
 
     # Optimize weights.
-    trained_weights = adam(grad_fun_with_data, init_weights, callback=callback,
+    trained_weights, best_iter = adam(grad_fun_with_data, init_weights, callback=callback,
                            num_iters=params['num_iters'], step_size=params['learn_rate'], delta=args.early_stopping)
+    print "Best model is ", best_iter
+    if filename_fix=='conv':
+        with open(os.path.join(MODEL_PATH,'model_best'+str(best_iter)+'.pkl'),'w') as f:
+            pickle.dump(trained_weights, f)
 
     def predict_func(new_smiles):
         """Returns to the original units that the raw targets were in."""
@@ -197,10 +210,15 @@ def main():
     global val_inputs,   val_targets
     global test_inputs,  test_targets
     global LOG_PATH
+    global MODEL_PATH
     
     path = os.path.join(LOG_PATH,'exp_'+args.NUM_EXP)
     Path(path).mkdir(exist_ok=True)
     LOG_PATH = path
+    
+    path = os.path.join(MODEL_PATH,'exp_'+args.NUM_EXP)
+    Path(path).mkdir(exist_ok=True)
+    MODEL_PATH = path
 
     # create log files
     with open(os.path.join(LOG_PATH,args.NUM_EXP+'_parameters.json'),'w') as f:

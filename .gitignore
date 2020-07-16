@@ -1,4 +1,5 @@
 NCIdb.sdf
 __pycache__/
 *.pyc
-logs/exp_*
+logs/
+models/

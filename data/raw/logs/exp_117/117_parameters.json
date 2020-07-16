@@ -1,1 +1,0 @@
-{"num_epochs": 50, "learn_rate": -3.0, "fp_depth": 3, "conv_width": 10, "fp_length": 64, "init_scale": -4, "h1_size": 100, "data_file": "logP_wo_parameters", "NUM_EXP": "117", "l2_penalty": -3.0, "l1_penalty": 0.0, "early_stopping": 500}

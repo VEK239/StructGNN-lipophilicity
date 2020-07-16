@@ -1,6 +1,6 @@
 #!/bin/bash
 # starting number of experiment
-i=60
+i=200
 # learning rate
 for l in -3 -2
 do
@@ -17,9 +17,9 @@ do
 				for f in 32 64 128
 				do
                     # dataset name
-					for n in logp_mean logP_wo_parameters
+					for n in logp_wo_averaging
 					do
-						python training_with_logs.py -n $i -f $f -d $d -c $c -s $p -l $l -t $n -b 500 -e 50
+						python training_with_logs.py -n $i -f $f -d $d -c $c -s $p -l $l -t $n -b 500 -e 150
 						i=$(($i+1))
 						echo $i
 					done

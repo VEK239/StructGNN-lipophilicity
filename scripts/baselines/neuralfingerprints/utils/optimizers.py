@@ -35,15 +35,16 @@ def adam(grad, x, callback=None, num_iters=100,
     for i in range(num_iters):
         if delta>0:
             if i-best_iter>delta or i==num_iters-1:
-                return best_weights
+                return best_weights, best_iter
         g = grad(x, i)
         if callback: 
-            loss = callback(x, i)
-            if delta>0:
-                early_stop_r2.append(loss)
-                if early_stop_r2[-1]>early_stop_r2[best_iter]:
-                    best_weights = x
-                    best_iter = i
+            if i%10==0:
+                loss = callback(x, i)
+                if delta>0:
+                    early_stop_r2.append(loss)
+                    if early_stop_r2[-1]<early_stop_r2[best_iter//10]:
+                        best_weights = x
+                        best_iter = i
         m = (1 - b1) * g      + b1 * m  # First  moment estimate.
         v = (1 - b2) * (g**2) + b2 * v  # Second moment estimate.
         mhat = m / (1 - b1**(i + 1))    # Bias correction.
