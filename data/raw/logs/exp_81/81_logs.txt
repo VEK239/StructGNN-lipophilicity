@@ -1,0 +1,235 @@
+
+Starting Morgan fingerprint experiment...
+
+Total number of weights in the network: 6601
+
+max of weights 0.06962983567500523
+
+max of weights 0.4713260448273201
+
+max of weights 0.7290592792279665
+
+max of weights 0.9894180810160996
+
+max of weights 1.1540639341109975
+
+max of weights 1.1766238544326912
+
+max of weights 1.2131719688868559
+
+max of weights 1.3418521517867124
+
+max of weights 1.449176902339353
+
+max of weights 1.6122719153164498
+
+max of weights 1.5829880573463038
+
+max of weights 1.6222930467820573
+
+max of weights 1.632561071431385
+
+max of weights 1.7454326357380636
+
+max of weights 1.8703811568101725
+
+max of weights 2.0097803588986802
+
+max of weights 2.1142191415725295
+
+max of weights 2.1790586960065745
+
+max of weights 2.1195750664733244
+
+max of weights 2.1893314123602043
+
+max of weights 2.305631454409135
+
+max of weights 2.3278650206937033
+
+max of weights 2.33218906364982
+
+max of weights 2.3707611141625877
+
+max of weights 2.4576964104937726
+
+max of weights 2.517743166212152
+
+max of weights 2.686245309796271
+
+max of weights 2.788101082059247
+
+max of weights 2.7962016712124145
+
+max of weights 2.8293975886705813
+
+max of weights 2.810929206336527
+
+max of weights 2.8518129026452543
+
+max of weights 2.894438151402864
+
+max of weights 2.890993510099406
+
+max of weights 2.90003926980308
+
+max of weights 2.874704071133309
+
+max of weights 2.882669196750711
+
+max of weights 3.106763822467079
+
+max of weights 3.1895094640055266
+
+max of weights 3.2630010996818184
+
+max of weights 3.335875002728685
+
+max of weights 3.2705940590593334
+
+max of weights 3.36890506107981
+
+max of weights 3.364705961156066
+
+max of weights 3.41913163379766
+
+max of weights 3.4848350034919537
+
+max of weights 3.8505055165675763
+
+max of weights 4.006905770176881
+
+max of weights 4.077407293511811
+
+max of weights 4.099009010705372
+
+max of weights 4.017307704093469
+
+max of weights 4.107697214442897
+
+max of weights 4.0704039422817715
+
+Performance on logP:
+Train RMSE: 1.2759533641930907
+Train R2: 0.5055689235340279
+Test RMSE: 1.4557108977823803
+Test R2: 0.35595386306129495
+
+Starting Average experiment...
+
+Performance on logP:
+Train RMSE: 1.8146042407352028
+Train R2: 0.0
+Test RMSE: 1.8141849992522239
+Test R2: -0.0002990500750039704
+
+Starting neural fingerprint experiment...
+
+Total number of weights in the network: 33789
+
+max of weights 0.08535001578936458
+
+max of weights 0.4873020422327253
+
+max of weights 0.898901944356699
+
+max of weights 1.248757632102769
+
+max of weights 1.5005612456347932
+
+max of weights 1.7514562645151037
+
+max of weights 1.9882330640841865
+
+max of weights 2.3293489980185242
+
+max of weights 2.655445537715463
+
+max of weights 3.021598999166767
+
+max of weights 3.4746427195305096
+
+max of weights 4.015290571532961
+
+max of weights 4.405061271863244
+
+max of weights 4.743244527795582
+
+max of weights 5.161223547785817
+
+max of weights 5.43373195395079
+
+max of weights 5.551581211860661
+
+max of weights 5.653545099581663
+
+max of weights 5.78109550015765
+
+max of weights 5.9585201203042555
+
+max of weights 6.133243026863185
+
+max of weights 6.215451128259389
+
+max of weights 6.281954141093761
+
+max of weights 6.4013519833223524
+
+max of weights 6.522804525691641
+
+max of weights 6.6297169871249135
+
+max of weights 6.75951415136286
+
+max of weights 6.92498177856627
+
+max of weights 7.123357908317816
+
+max of weights 7.25751248163725
+
+max of weights 7.312858234997901
+
+max of weights 7.358808759007556
+
+max of weights 7.416127384147415
+
+max of weights 7.4851460234928
+
+max of weights 7.537729877998671
+
+max of weights 7.570393503160012
+
+max of weights 7.712485278787983
+
+max of weights 8.192860850007902
+
+max of weights 8.348223220001376
+
+max of weights 8.3635686724494
+
+max of weights 8.374809454968373
+
+max of weights 8.363611373163023
+
+max of weights 8.392077871117914
+
+max of weights 8.378078967633538
+
+max of weights 8.325062707717418
+
+max of weights 8.278549041828786
+
+max of weights 8.277097892466333
+
+max of weights 8.253966019190466
+
+max of weights 8.197559587352956
+
+max of weights 8.240966684265988
+
+max of weights 8.282651617304845
+
+Morgan test R2: 0.35595386306129495
+Avg test R2: -0.0002990500750039704
+Neural test R2: 0.769730671176258
+Neural test RMSE: 0.8704316837589869
