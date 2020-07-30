@@ -4,23 +4,30 @@ from ring_dictionary_creating import RingsDictionaryHolder, get_cycles_for_molec
 
 
 class Atom:
-    def __init__(self, idx, symbol, atomic_mass, is_ring=False):
+    def __init__(self, idx, symbol, atom_representation, is_ring=False):
         self.symbol = symbol
         self.idx = idx
-        self.atomic_mass = atomic_mass
+        self.atom_representation = atom_representation
         self.is_ring = is_ring
         self.bonds = []
 
     def add_bond(self, bond):
         self.bonds.append(bond)
 
+    def get_representation(self):
+        return list(self.atom_representation)
+
 
 class Bond:
-    def __init__(self, idx, out_atom_idx, in_atom_idx, bond_type):
+    def __init__(self, rdkit_atom, idx, out_atom_idx, in_atom_idx, bond_type):
+        self.rdkit_atom = rdkit_atom
         self.idx = idx
         self.out_atom_idx = out_atom_idx
         self.in_atom_idx = in_atom_idx
         self.bond_type = bond_type
+
+    def get_rdkit_atom(self):
+        return self.rdkit_atom
 
 
 class Molecule:
@@ -35,6 +42,9 @@ class Molecule:
                 return bond
         return None
 
+    def get_atoms(self):
+        return self.atoms
+
     def get_atom(self, atom_idx):
         return self.atoms[atom_idx]
 
@@ -43,12 +53,12 @@ class Molecule:
 
     def prnt(self):
         for atom in self.atoms:
-            print(atom.symbol, atom.idx, atom.bonds)
+            print(atom.symbol, atom.idx, atom.bonds, atom.atom_representation)
         for bond in self.bonds:
             print(bond.out_atom_idx, bond.in_atom_idx)
 
 
-def create_molecule_for_smiles(rings_dictionary_holder, smiles):
+def create_molecule_for_smiles(rings_dictionary_holder, smiles, representation_type):
     mol = Chem.MolFromSmiles(smiles)
     rings = get_cycles_for_molecule(mol)
     ring_atoms = set()
@@ -64,12 +74,24 @@ def create_molecule_for_smiles(rings_dictionary_holder, smiles):
         atom_idx = atom.GetIdx()
         if atom_idx not in used_atoms:
             if atom_idx not in ring_atoms:
-                custom_atom = Atom(idx=atom_idx, atomic_mass=atom.GetMass(), symbol=atom.GetSymbol())
+                if representation_type == 'mass':
+                    atom_repr = atom.GetMass()
+                elif representation_type == 'one-hot' or representation_type == 'one-hot-aromatic':
+                    atom_repr = [0 for _ in range(rings_dictionary_holder.get_max_class_dict())]
+                    atom_repr[atom.GetAtomicNum()] = 1
+                elif representation_type == 'sum-vector':
+                    atom_repr = tuple(
+                        [atom.GetAtomicNum(), atom.GetExplicitValence(), atom.GetFormalCharge(), atom.GetTotalNumHs(),
+                         int(atom.GetIsAromatic())])
+
+                custom_atom = Atom(idx=atom_idx, atom_representation=atom_repr, symbol=atom.GetSymbol())
                 mol_atoms.append(custom_atom)
                 idx_to_atom[atom_idx] = custom_atom
+
     for ring in rings:
-        ring_symbol, ring_mass = rings_dictionary_holder.generate_ring_symbol(ring, mol)
-        ring_atom = Atom(idx=min(*ring), symbol=ring_symbol, atomic_mass=ring_mass, is_ring=True)
+        ring_mapping = rings_dictionary_holder.get_mapping_for_ring(ring, mol)
+        ring_symbol, _ = rings_dictionary_holder.generate_ring_symbol(ring, mol)
+        ring_atom = Atom(idx=min(*ring), symbol=ring_symbol, atom_representation=ring_mapping, is_ring=True)
         mol_atoms.append(ring_atom)
         for idx in ring:
             idx_to_atom[idx] = ring_atom
@@ -78,26 +100,30 @@ def create_molecule_for_smiles(rings_dictionary_holder, smiles):
         start_atom = idx_to_atom[bond.GetBeginAtomIdx()]
         end_atom = idx_to_atom[bond.GetEndAtomIdx()]
         if start_atom != end_atom:
-            bond = Bond(idx, start_atom, end_atom, bond.GetBondType())
-            mol_bonds.append(bond)
-            start_atom.add_bond(bond)
-            end_atom.add_bond(bond)
+            custom_bond = Bond(bond, idx, start_atom, end_atom, bond.GetBondType())
+            mol_bonds.append(custom_bond)
+            start_atom.add_bond(custom_bond)
+            end_atom.add_bond(custom_bond)
 
     custom_mol = Molecule(mol_atoms, mol_bonds)
     return custom_mol
 
 
-def create_custom_mols_for_data(data):
+def create_custom_mols_for_data(data, representation_type, rings_data_file):
     custom_mols = []
     for smi in data.smiles:
-        rings_dictionary_holder = RingsDictionaryHolder()
+        assert representation_type in ['mass', 'one-hot', 'one-hot-aromatic', 'sum-vector']
+        rings_dictionary_holder = RingsDictionaryHolder(rings_data_file, representation_type)
         rings_dictionary_holder.read_json_rings_dict()
-        custom_mols.append(create_molecule_for_smiles(rings_dictionary_holder, smi))
+        custom_mols.append(create_molecule_for_smiles(rings_dictionary_holder, smi, representation_type))
 
 
 if __name__ == "__main__":
-    rings_dictionary_holder = RingsDictionaryHolder()
+    representation_type = 'sum-vector'
+    rings_data_file = 'rings_zinc_features.json'
+    assert representation_type in ['mass', 'one-hot', 'one-hot-aromatic', 'sum-vector']
+    rings_dictionary_holder = RingsDictionaryHolder(rings_data_file, representation_type)
     rings_dictionary_holder.read_json_rings_dict()
-    custom_mol = create_molecule_for_smiles(rings_dictionary_holder, 'CSc1scc(-c2cccs2)c1C#N')
+    custom_mol = create_molecule_for_smiles(rings_dictionary_holder, 'CSc1scc(-c2cccs2)c1C#N', representation_type)
     print(custom_mol.get_num_atoms())
     custom_mol.prnt()
