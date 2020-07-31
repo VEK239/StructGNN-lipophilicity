@@ -82,7 +82,7 @@ def create_molecule_for_smiles(rings_dictionary_holder, smiles, representation_t
                 elif representation_type == 'sum-vector':
                     atom_repr = tuple(
                         [atom.GetAtomicNum(), atom.GetExplicitValence(), atom.GetFormalCharge(), atom.GetTotalNumHs(),
-                         int(atom.GetIsAromatic())])
+                         int(atom.GetIsAromatic()), atom.GetMass()])
 
                 custom_atom = Atom(idx=atom_idx, atom_representation=atom_repr, symbol=atom.GetSymbol())
                 mol_atoms.append(custom_atom)
@@ -124,6 +124,6 @@ if __name__ == "__main__":
     assert representation_type in ['mass', 'one-hot', 'one-hot-aromatic', 'sum-vector']
     rings_dictionary_holder = RingsDictionaryHolder(rings_data_file, representation_type)
     rings_dictionary_holder.read_json_rings_dict()
-    custom_mol = create_molecule_for_smiles(rings_dictionary_holder, 'CSc1scc(-c2cccs2)c1C#N', representation_type)
+    custom_mol = create_molecule_for_smiles(rings_dictionary_holder, 'C1COC2C(O1)OCCO2', representation_type)
     print(custom_mol.get_num_atoms())
     custom_mol.prnt()

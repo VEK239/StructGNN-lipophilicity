@@ -18,6 +18,20 @@ class RingsDictionaryHolder:
         self.type = representation_type
         self.rings_dict = {}
         self.atoms_set_dict = {}
+        self.ring_to_num = {'B': 0,
+                            'C': 1,
+                            'N': 2,
+                            'O': 3,
+                            'F': 4,
+                            'Na': 6,
+                            'P': 7,
+                            'S': 8,
+                            'Cl': 9,
+                            'K': 10,
+                            'Ca': 11,
+                            'Fe': 12,
+                            'Br': 13,
+                            'I': 14}
         self.BT_MAPPING_CHAR = {
             Chem.rdchem.BondType.SINGLE: 'S',
             Chem.rdchem.BondType.DOUBLE: 'D',
@@ -103,22 +117,55 @@ class RingsDictionaryHolder:
             atoms.append(
                 reduce(lambda x, y: x or y, arom))
         atoms = tuple(atoms)
-        if atoms not in self.atoms_set_dict.keys():
-            self.atoms_set_dict[atoms] = self.get_max_class_dict()
-        return self.atoms_set_dict[atoms]
+        if atoms not in self.ring_to_num.keys():
+            self.ring_to_num[atoms] = len(self.ring_to_num.keys())
+        return self.ring_to_num[atoms]
+
+    def structure_encoding(self, atoms):
+        enc = [0 for _ in range(55)]
+        for atom in atoms:
+            enc[atom.GetAtomicNum()] += 1
+        return enc
+
+    def get_valence(self, value):
+        enc = [0 for _ in range(40)]
+        enc[int(value)] = 1
+        return enc
+
+    def hydrogens_count_encoding(self, value):
+        enc = [0 for _ in range(60)]
+        enc[int(value)] = 1
+        return enc
+
+    def create_one_hot_for_ring(self, value):
+        enc = [0 for _ in range(130)]
+        enc[int(value)] = 1
+        return enc
 
     def generate_ring_sum_vector_mapping(self, ring, mol):
         atoms = [mol.GetAtomWithIdx(i) for i in ring]
-        ring_atomic_charge = sum(atom.GetAtomicNum() for atom in atoms)
+        # ring_atomic_charge = sum(atom.GetAtomicNum() for atom in atoms)
+        ring_atomic_encoding = self.structure_encoding(atoms)
+        # ring_atomic_encoding = self.generate_ring_one_hot_class_mapping(ring, mol, True)
+        # print(ring_atomic_encoding)
+        # ring_atomic_encoding = self.create_one_hot_for_ring(ring_atomic_encoding)
         ring_valence = sum(atom.GetExplicitValence() for atom in atoms) - 2 * sum(
             [self.BT_MAPPING_INT[mol.GetBondBetweenAtoms(ring[i], ring[(i + 1) % len(ring)]).GetBondType()] for i in
              range(len(ring))])
+        # print(ring_valence)
+        ring_valence_array = self.get_valence(ring_valence)
         ring_formal_charge = sum(atom.GetFormalCharge() for atom in atoms)
         ring_num_Hs = sum(atom.GetTotalNumHs() for atom in atoms)
+        ring_Hs_array = self.hydrogens_count_encoding(ring_num_Hs)
         arom = [mol.GetBondBetweenAtoms(ring[i - 1], ring[i]).GetIsAromatic() for i
                 in range(len(ring))]
         ring_is_aromatic = int(reduce(lambda x, y: x or y, arom))
-        return ring_atomic_charge, ring_valence, ring_formal_charge, ring_num_Hs, ring_is_aromatic
+        ring_mass = sum(atom.GetMass() for atom in atoms)
+        ring_edges_sum = sum([self.BT_MAPPING_INT[mol.GetBondBetweenAtoms(ring[i], ring[(i + 1) % len(ring)]).GetBondType()] for i in
+             range(len(ring))])
+        features = ring_atomic_encoding + ring_valence_array + ring_Hs_array + [ring_formal_charge, ring_is_aromatic,
+                                                                                ring_mass * 0.01, 1, ring_edges_sum * 0.1]
+        return tuple(features)
 
 
 if __name__ == "__main__":
@@ -134,7 +181,7 @@ if __name__ == "__main__":
         type=sum-vector:
         Encodes a ring into a vector with features
     """
-    data = pd.read_csv('../../data/3_final_data/zinc_dataset.csv')
-    rings_dictionary_holder = RingsDictionaryHolder('rings_zinc_features.json', 'sum-vector')
+    data = pd.read_csv('../../data/3_final_data/logP.csv')
+    rings_dictionary_holder = RingsDictionaryHolder('rings_logp_features.json', 'sum-vector')
     rings_dictionary_holder.generate_ring_mapping(data)
     rings_dictionary_holder.save_rings_to_json()
