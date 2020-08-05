@@ -16,10 +16,10 @@ import torch.nn as nn
 from torch.optim import Adam, Optimizer
 from torch.optim.lr_scheduler import _LRScheduler
 
-from chemprop.args import TrainArgs
-from chemprop.data import StandardScaler, MoleculeDataset
-from chemprop.models import MoleculeModel
-from chemprop.nn_utils import NoamLR
+from scripts.baseline_improvements.chemprop.args import TrainArgs
+from scripts.baseline_improvements.chemprop.data import StandardScaler, MoleculeDataset
+from scripts.baseline_improvements.chemprop.models import MoleculeModel
+from scripts.baseline_improvements.chemprop.nn_utils import NoamLR
 
 
 def makedirs(path: str, isfile: bool = False) -> None:

@@ -1,28 +1,49 @@
-import itertools
-import json
 from collections import defaultdict
-from functools import reduce
 
 import pandas as pd
 from rdkit import Chem
-from rdkit.Chem import Descriptors
 
 
-def get_cycles_for_molecule(mol):
+def get_cycles_for_molecule(mol, merging_cycles=False):
     all_cycles = Chem.GetSymmSSSR(mol)
-    all_cycles = [list(substruct) for substruct in all_cycles if len(substruct) > 2]
+    all_cycles = [set(ring) for ring in all_cycles]
+    if merging_cycles:
+        atom_to_ring = defaultdict(set)
+        for cycle_idx, cycle in enumerate(all_cycles):
+            for atom in cycle:
+                atom_to_ring[atom].add(cycle_idx)
+        rings_to_merge = [1]
+        while rings_to_merge:
+            rings_to_merge = None
+            for atom, atom_cycles in atom_to_ring.items():
+                if len(atom_cycles) > 1:
+                    rings_to_merge = atom_cycles.copy()
+            if rings_to_merge:
+                ring_new_idx = min(rings_to_merge)
+                for ring_idx in rings_to_merge:
+                    for atom in all_cycles[ring_idx]:
+                        all_cycles[ring_new_idx].add(atom)
+                        atom_to_ring[atom].remove(ring_idx)
+                        atom_to_ring[atom].add(ring_new_idx)
+                for ring_idx in rings_to_merge:
+                    if ring_idx != ring_new_idx:
+                        all_cycles[ring_idx] = []
+    all_cycles = [list(cycle) for cycle in all_cycles if len(cycle) > 2]
     return all_cycles
+
 
 def get_acids_for_molecule(mol):
     acid_pattern = Chem.MolFromSmarts('[CX3](=O)[OX2H1]')
     acids = mol.GetSubstructMatches(acid_pattern)
     return [list(acid) for acid in acids]
 
+
 def get_amins_for_molecule(mol):
     amin_pattern = Chem.MolFromSmarts('[NX3;H2,H1;!$(NC=O)]')
     amins = mol.GetSubstructMatches(amin_pattern)
     amins = [list(amin) for amin in amins]
     return [[amin[0] if mol.GetAtomWithIdx(amin[0]).GetSymbol() == 'N' else amin[1]] for amin in amins]
+
 
 def get_esters_for_molecule(mol):
     ester_pattern = Chem.MolFromSmarts('[#6][CX3](=O)[OX2H0][#6]')
@@ -40,6 +61,7 @@ def get_esters_for_molecule(mol):
         ester_atoms.append(atoms)
     return ester_atoms
 
+
 def get_sulfoneamids_for_molecule(mol):
     sulphoneamid_pattern = Chem.MolFromSmarts(
         '[$([#16X4]([NX3])(=[OX1])(=[OX1])[#6]),$([#16X4+2]([NX3])([OX1-])([OX1-])[#6])]')
@@ -53,6 +75,7 @@ def get_sulfoneamids_for_molecule(mol):
                 atoms.append(neighbor.GetIdx())
         sulfoneamid_atoms.append(atoms)
     return sulfoneamid_atoms
+
 
 class SubstructureDictionaryHolder:
     def __init__(self):

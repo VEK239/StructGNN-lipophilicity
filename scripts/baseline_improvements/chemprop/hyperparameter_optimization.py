@@ -8,12 +8,12 @@ import os
 from hyperopt import fmin, hp, tpe
 import numpy as np
 
-from chemprop.args import HyperoptArgs
-from chemprop.constants import HYPEROPT_LOGGER_NAME
-from chemprop.models import MoleculeModel
-from chemprop.nn_utils import param_count
-from chemprop.train import cross_validate
-from chemprop.utils import create_logger, makedirs, timeit
+from scripts.baseline_improvements.chemprop.args import HyperoptArgs
+from scripts.baseline_improvements.chemprop.constants import HYPEROPT_LOGGER_NAME
+from scripts.baseline_improvements.chemprop.models import MoleculeModel
+from scripts.baseline_improvements.chemprop.nn_utils import param_count
+from scripts.baseline_improvements.chemprop.train import cross_validate
+from scripts.baseline_improvements.chemprop.utils import create_logger, makedirs, timeit
 
 
 SPACE = {

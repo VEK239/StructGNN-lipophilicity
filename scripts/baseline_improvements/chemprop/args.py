@@ -8,7 +8,7 @@ from typing_extensions import Literal
 import torch
 from tap import Tap  # pip install typed-argument-parser (https://github.com/swansonk14/typed-argument-parser)
 
-from chemprop.features import get_available_features_generators
+from scripts.baseline_improvements.chemprop.features import get_available_features_generators
 
 
 def get_checkpoint_paths(checkpoint_path: Optional[str] = None,
@@ -315,6 +315,7 @@ class TrainArgs(CommonArgs):
 
         # Load config file
         if self.config_path is not None:
+            print(os.getcwd())
             with open(self.config_path) as f:
                 config = json.load(f)
                 for key, value in config.items():

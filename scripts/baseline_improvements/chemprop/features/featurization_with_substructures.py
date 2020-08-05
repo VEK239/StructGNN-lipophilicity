@@ -1,5 +1,6 @@
-from chemprop.features.molecule import Molecule, create_molecule_for_smiles
-from chemprop.features.substructure_dictionary_creating import SubstructureDictionaryHolder, get_cycles_for_molecule
+from scripts.baseline_improvements.chemprop.features.molecule import Molecule, create_molecule_for_smiles
+from scripts.baseline_improvements.chemprop.features.substructure_dictionary_creating import \
+    SubstructureDictionaryHolder, get_cycles_for_molecule
 from typing import List, Tuple, Union
 
 from rdkit import Chem
@@ -194,7 +195,8 @@ class BatchMolGraphWithSubstructures:
             self.n_atoms += mol_graph.n_atoms
             self.n_bonds += mol_graph.n_bonds
 
-        self.max_num_bonds = max(1, max(len(in_bonds) for in_bonds in a2b))  # max with 1 to fix a crash in rare case of all single-heavy-atom mols
+        self.max_num_bonds = max(1, max(
+            len(in_bonds) for in_bonds in a2b))  # max with 1 to fix a crash in rare case of all single-heavy-atom mols
 
         self.f_atoms = torch.FloatTensor(f_atoms)
         self.f_bonds = torch.FloatTensor(f_bonds)
@@ -270,4 +272,5 @@ def mol2graph_with_substructures(mols: Union[List[str]]) -> BatchMolGraphWithSub
     :return: A :class:`BatchMolGraph` containing the combined molecular graph for the molecules.
     """
     substructure_dictionary_holder = SubstructureDictionaryHolder()
-    return BatchMolGraphWithSubstructures([MolGraphWithSubstructures(mol, substructure_dictionary_holder) for mol in mols])
+    return BatchMolGraphWithSubstructures(
+        [MolGraphWithSubstructures(mol, substructure_dictionary_holder) for mol in mols])

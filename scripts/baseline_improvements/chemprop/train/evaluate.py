@@ -4,8 +4,8 @@ from typing import Callable, List
 from sklearn.metrics import r2_score
 
 from .predict import predict
-from chemprop.data import MoleculeDataLoader, StandardScaler
-from chemprop.models import MoleculeModel
+from scripts.baseline_improvements.chemprop.data import MoleculeDataLoader, StandardScaler
+from scripts.baseline_improvements.chemprop.models import MoleculeModel
 
 
 def evaluate_predictions(preds: List[List[float]],

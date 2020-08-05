@@ -5,9 +5,9 @@ import numpy as np
 from tqdm import tqdm
 
 from .predict import predict
-from chemprop.args import PredictArgs, TrainArgs
-from chemprop.data import get_data, get_data_from_smiles, MoleculeDataLoader, MoleculeDataset
-from chemprop.utils import load_args, load_checkpoint, load_scalers, makedirs, timeit
+from scripts.baseline_improvements.chemprop.args import PredictArgs, TrainArgs
+from scripts.baseline_improvements.chemprop.data import get_data, get_data_from_smiles, MoleculeDataLoader, MoleculeDataset
+from scripts.baseline_improvements.chemprop.utils import load_args, load_checkpoint, load_scalers, makedirs, timeit
 
 
 @timeit()

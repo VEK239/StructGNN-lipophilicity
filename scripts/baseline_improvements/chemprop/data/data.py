@@ -7,11 +7,12 @@ import numpy as np
 from torch.utils.data import DataLoader, Dataset, Sampler
 from rdkit import Chem
 
-from chemprop.features.substructure_dictionary_creating import SubstructureDictionaryHolder
+from scripts.baseline_improvements.chemprop.features.substructure_dictionary_creating import \
+    SubstructureDictionaryHolder
 from .scaler import StandardScaler
-from chemprop.features import get_features_generator
-from chemprop.features import BatchMolGraph, MolGraph, BatchMolGraphWithSubstructures, MolGraphWithSubstructures
-
+from scripts.baseline_improvements.chemprop.features import get_features_generator
+from scripts.baseline_improvements.chemprop.features import BatchMolGraph, MolGraph, BatchMolGraphWithSubstructures, \
+    MolGraphWithSubstructures
 
 # Cache of graph featurizations
 SMILES_TO_GRAPH_RINGS: Dict[str, MolGraph] = {}
@@ -204,7 +205,7 @@ class MoleculeDataset(Dataset):
         if seed is not None:
             self._random.seed(seed)
         self._random.shuffle(self._data)
-    
+
     def normalize_features(self, scaler: StandardScaler = None, replace_nan_token: int = 0) -> StandardScaler:
         """
         Normalizes the features of the dataset using a :class:`~chemprop.data.StandardScaler`.
@@ -239,7 +240,7 @@ class MoleculeDataset(Dataset):
             d.set_features(self._scaler.transform(d.features.reshape(1, -1))[0])
 
         return self._scaler
-    
+
     def set_targets(self, targets: List[List[Optional[float]]]) -> None:
         """
         Sets the targets for each molecule in the dataset. Assumes the targets are aligned with the datapoints.
@@ -349,7 +350,8 @@ def construct_molecule_batch(data: List[MoleculeDatapoint], cache: bool = False)
     :return: A :class:`MoleculeDataset` containing all the :class:`MoleculeDatapoint`\ s.
     """
     data = MoleculeDataset(data)
-    data.batch_graph(cache=cache, model_type='rings')  # Forces computation and caching of the BatchMolGraph for the molecules
+    data.batch_graph(cache=cache,
+                     model_type='rings')  # Forces computation and caching of the BatchMolGraph for the molecules
 
     return data
 

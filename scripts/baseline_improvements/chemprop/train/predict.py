@@ -3,8 +3,8 @@ from typing import List
 import torch
 from tqdm import tqdm
 
-from chemprop.data import MoleculeDataLoader, MoleculeDataset, StandardScaler
-from chemprop.models import MoleculeModel
+from scripts.baseline_improvements.chemprop.data import MoleculeDataLoader, MoleculeDataset, StandardScaler
+from scripts.baseline_improvements.chemprop.models import MoleculeModel
 
 
 def predict(model: MoleculeModel,

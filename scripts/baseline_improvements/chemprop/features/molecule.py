@@ -2,7 +2,8 @@ from collections import defaultdict
 
 from rdkit import Chem
 import pandas as pd
-from chemprop.features.substructure_dictionary_creating import SubstructureDictionaryHolder, get_cycles_for_molecule, \
+from scripts.baseline_improvements.chemprop.features.substructure_dictionary_creating import \
+    SubstructureDictionaryHolder, get_cycles_for_molecule, \
     get_acids_for_molecule, get_esters_for_molecule, get_amins_for_molecule, get_sulfoneamids_for_molecule
 from tqdm import tqdm
 
@@ -64,11 +65,13 @@ class Molecule:
 
 def create_molecule_for_smiles(substruct_dictionary_holder, smiles):
     mol = Chem.MolFromSmiles(smiles)
+
     rings = get_cycles_for_molecule(mol)
     acids = get_acids_for_molecule(mol)
     esters = get_esters_for_molecule(mol)
     amins = get_amins_for_molecule(mol)
     sulfoneamids = get_sulfoneamids_for_molecule(mol)
+
     used_atoms = set()
     mol_bonds = []
     mol_atoms = []
@@ -80,7 +83,8 @@ def create_molecule_for_smiles(substruct_dictionary_holder, smiles):
         substructures = structure_type[0]
         for substruct in substructures:
             mapping = substruct_dictionary_holder.get_mapping_for_substructure(substruct, mol, substructure_type_string)
-            substruct_atom = Atom(idx=(min(*substruct) if len(substruct) > 1 else substruct[0]), atom_representation=mapping)
+            substruct_atom = Atom(idx=(min(*substruct) if len(substruct) > 1 else substruct[0]),
+                                  atom_representation=mapping)
             mol_atoms.append(substruct_atom)
             for idx in substruct:
                 idx_to_atom[idx].add(substruct_atom)

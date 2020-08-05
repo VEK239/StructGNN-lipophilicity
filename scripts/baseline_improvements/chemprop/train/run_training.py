@@ -12,12 +12,14 @@ from torch.optim.lr_scheduler import ExponentialLR
 from .evaluate import evaluate, evaluate_predictions
 from .predict import predict
 from .train import train
-from chemprop.args import TrainArgs
-from chemprop.constants import MODEL_FILE_NAME
-from chemprop.data import get_class_sizes, get_data, MoleculeDataLoader, split_data, StandardScaler, validate_dataset_type
-from chemprop.models import MoleculeModel
-from chemprop.nn_utils import param_count
-from chemprop.utils import build_optimizer, build_lr_scheduler, get_loss_func, get_metric_func, load_checkpoint,\
+from scripts.baseline_improvements.chemprop.args import TrainArgs
+from scripts.baseline_improvements.chemprop.constants import MODEL_FILE_NAME
+from scripts.baseline_improvements.chemprop.data import get_class_sizes, get_data, MoleculeDataLoader, split_data, \
+    StandardScaler, validate_dataset_type
+from scripts.baseline_improvements.chemprop.models import MoleculeModel
+from scripts.baseline_improvements.chemprop.nn_utils import param_count
+from scripts.baseline_improvements.chemprop.utils import build_optimizer, build_lr_scheduler, get_loss_func, \
+    get_metric_func, load_checkpoint, \
     makedirs, save_checkpoint, save_smiles_splits
 
 
@@ -59,18 +61,23 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
     # Split data
     debug(f'Splitting data with seed {args.seed}')
     if args.separate_test_path:
-        test_data = get_data(path=args.separate_test_path, args=args, features_path=args.separate_test_features_path, logger=logger)
+        test_data = get_data(path=args.separate_test_path, args=args, features_path=args.separate_test_features_path,
+                             logger=logger)
     if args.separate_val_path:
-        val_data = get_data(path=args.separate_val_path, args=args, features_path=args.separate_val_features_path, logger=logger)
+        val_data = get_data(path=args.separate_val_path, args=args, features_path=args.separate_val_features_path,
+                            logger=logger)
 
     if args.separate_val_path and args.separate_test_path:
         train_data = data
     elif args.separate_val_path:
-        train_data, _, test_data = split_data(data=data, split_type=args.split_type, sizes=(0.8, 0.0, 0.2), seed=args.seed, args=args, logger=logger)
+        train_data, _, test_data = split_data(data=data, split_type=args.split_type, sizes=(0.8, 0.0, 0.2),
+                                              seed=args.seed, args=args, logger=logger)
     elif args.separate_test_path:
-        train_data, val_data, _ = split_data(data=data, split_type=args.split_type, sizes=(0.8, 0.2, 0.0), seed=args.seed, args=args, logger=logger)
+        train_data, val_data, _ = split_data(data=data, split_type=args.split_type, sizes=(0.8, 0.2, 0.0),
+                                             seed=args.seed, args=args, logger=logger)
     else:
-        train_data, val_data, test_data = split_data(data=data, split_type=args.split_type, sizes=args.split_sizes, seed=args.seed, args=args, logger=logger)
+        train_data, val_data, test_data = split_data(data=data, split_type=args.split_type, sizes=args.split_sizes,
+                                                     seed=args.seed, args=args, logger=logger)
 
     if args.dataset_type == 'classification':
         class_sizes = get_class_sizes(data)
@@ -97,7 +104,7 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
         features_scaler = None
 
     args.train_data_size = len(train_data)
-    
+
     debug(f'Total size = {len(data):,} | '
           f'train size = {len(train_data):,} | val size = {len(val_data):,} | test size = {len(test_data):,}')
 

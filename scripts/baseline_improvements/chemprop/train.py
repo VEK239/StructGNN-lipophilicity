@@ -1,5 +1,4 @@
 """Trains a chemprop model on a dataset."""
-from scripts.baselines.
 from chemprop.train import chemprop_train
 
 
