@@ -70,7 +70,7 @@ class MoleculeDataset(Dataset):
             if option in data_file:
                 broken_smiles  = [x.strip("\r\n ") for x in open(os.path.join(args.raw_path,option+'_errs.txt'))] 
                 
-        self.data = self.data[~self.data[SMILES_COLUMN].isin(broken_smiles)]   
+        self.data = self.data[~self.data[SMILES_COLUMN].isin(broken_smiles)]
         self.SMILES_COLUMN = SMILES_COLUMN
         self.TARGET_COLUMN = TARGET_COLUMN
         
@@ -212,8 +212,9 @@ class EarlyStopping:
         self.val_loss_min = np.Inf
         self.delta = delta
         self.path = path
+        self.epoch = 0
 
-    def __call__(self, val_loss, model):
+    def __call__(self, val_loss, model, epoch = 0):
 
         score = -val_loss
 
@@ -222,6 +223,7 @@ class EarlyStopping:
             self.save_checkpoint(val_loss, model)
         elif score < self.best_score + self.delta:
             self.counter += 1
+            self.epoch = epoch
             print 'EarlyStopping counter: ',self.counter,  ' out of ', self.patience
             if self.counter >= self.patience:
                 self.early_stop = True
@@ -462,7 +464,7 @@ def main():
             writer.add_scalar('data/test r2', test_r2, epoch)
             writer.add_scalar('data/test rmse', test_rmse, epoch)
 
-        early_stopping(val_rmse, model)
+        early_stopping(val_rmse, model, epoch)
 
         if early_stopping.early_stop:
             print("Early stopping", epoch)
@@ -471,7 +473,20 @@ def main():
         print("")
     if not args.filename == "":
         writer.close()
+        with open(os.path.join(fname, 'logs.txt'), 'w') as f:
+            f.write('Best epoch is '+str(epoch)+'\n')
         # torch.save(model.gnn.state_dict(), os.path.join(fname, args.filename+'.pth'))
+        model.load_state_dict(torch.load(os.path.join(fname, args.filename + '.pth')))
+        train_r2, train_rmse = eval(args, model, device, train_loader, scaler, train = True)
+        val_r2, val_rmse = eval(args, model, device, val_loader, scaler)
+        test_r2, test_rmse = eval(args, model, device, test_loader, scaler)
+        with open(os.path.join(fname, 'logs.txt'), 'a') as f:
+            f.write('Test RMSE is '+str(test_rmse)+'\n')
+            f.write('Test R2 is '+str(test_r2)+'\n')
+            f.write('Val RMSE is '+str(val_rmse)+'\n')
+            f.write('Val R2 is '+str(val_r2)+'\n')
+            f.write('Train RMSE is '+str(train_rmse)+'\n')
+            f.write('Train R2 is '+str(train_r2)+'\n')
 
 if __name__ == "__main__":
     main()
