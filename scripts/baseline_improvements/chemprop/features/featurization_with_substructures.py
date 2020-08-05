@@ -1,6 +1,4 @@
-from scripts.baseline_improvements.chemprop.features.molecule import Molecule, create_molecule_for_smiles
-from scripts.baseline_improvements.chemprop.features.substructure_dictionary_creating import \
-    SubstructureDictionaryHolder, get_cycles_for_molecule
+from scripts.baseline_improvements.chemprop.features.molecule import Molecule, create_molecule_for_smiles, onek_encoding_unk
 from typing import List, Tuple, Union
 
 from rdkit import Chem
@@ -16,12 +14,12 @@ ATOM_FDIM = 165
 BOND_FDIM = 14
 
 
-def get_atom_fdim_wo_rings() -> int:
+def get_atom_fdim_with_substructures() -> int:
     """Gets the dimensionality of the atom feature vector."""
     return ATOM_FDIM
 
 
-def get_bond_fdim_wo_rings(atom_messages: bool = False) -> int:
+def get_bond_fdim_with_substructures(atom_messages: bool = False) -> int:
     """
     Gets the dimensionality of the bond feature vector.
 
@@ -30,31 +28,14 @@ def get_bond_fdim_wo_rings(atom_messages: bool = False) -> int:
                           Otherwise it contains both atom and bond features.
     :return: The dimensionality of the bond feature vector.
     """
-    return BOND_FDIM + (not atom_messages) * get_atom_fdim_wo_rings()
+    return BOND_FDIM + (not atom_messages) * get_atom_fdim_with_substructures()
 
 
-def onek_encoding_unk_wo_rings(value: int, choices: List[int]) -> List[int]:
-    """
-    Creates a one-hot encoding with an extra category for uncommon values.
-
-    :param value: The value for which the encoding should be one.
-    :param choices: A list of possible values.
-    :return: A one-hot encoding of the :code:`value` in a list of length :code:`len(choices) + 1`.
-             If :code:`value` is not in :code:`choices`, then the final element in the encoding is 1.
-    """
-    encoding = [0] * (len(choices) + 1)
-    index = choices.index(value) if value in choices else -1
-    encoding[index] = 1
-
-    return encoding
-
-
-def atom_features_for_substructures(atom, functional_groups: List[int] = None) -> List[Union[bool, int, float]]:
+def atom_features_for_substructures(atom) -> List[Union[bool, int, float]]:
     """
     Builds a feature vector for an atom.
 
     :param atom: An RDKit atom.
-    :param functional_groups: A k-hot vector indicating the functional groups the atom belongs to.
     :return: A list containing the atom features.
     """
     return atom.get_representation()
@@ -80,7 +61,7 @@ def bond_features_for_substructures(bond: Chem.rdchem.Bond) -> List[Union[bool, 
             (bond.GetIsConjugated() if bt is not None else 0),
             (bond.IsInRing() if bt is not None else 0)
         ]
-        fbond += onek_encoding_unk_wo_rings(int(bond.GetStereo()), list(range(6)))
+        fbond += onek_encoding_unk(int(bond.GetStereo()), list(range(6)))
     return fbond
 
 
@@ -99,11 +80,11 @@ class MolGraphWithSubstructures:
     * :code:`b2revb`: A mapping from a bond index to the index of the reverse bond.
     """
 
-    def __init__(self, mol: str, substructure_dictionary_holder):
+    def __init__(self, mol: str, rings_merge, use_substructures):
         """
         :param mol: A SMILES or an RDKit molecule.
         """
-        mol = create_molecule_for_smiles(substructure_dictionary_holder, mol)
+        mol = create_molecule_for_smiles(mol, rings_merge, use_substructures)
 
         self.n_atoms = 0  # number of atoms
         self.n_bonds = 0  # number of bonds
@@ -164,8 +145,8 @@ class BatchMolGraphWithSubstructures:
         r"""
         :param mol_graphs: A list of :class:`MolGraph`\ s from which to construct the :class:`BatchMolGraph`.
         """
-        self.atom_fdim = get_atom_fdim_wo_rings()
-        self.bond_fdim = get_bond_fdim_wo_rings()
+        self.atom_fdim = get_atom_fdim_with_substructures()
+        self.bond_fdim = get_bond_fdim_with_substructures()
 
         # Start n_atoms and n_bonds at 1 b/c zero padding
         self.n_atoms = 1  # number of atoms (start at 1 b/c need index 0 as padding)
@@ -228,7 +209,7 @@ class BatchMolGraphWithSubstructures:
                  and scope of the atoms and bonds (i.e., the indices of the molecules they belong to).
         """
         if atom_messages:
-            f_bonds = self.f_bonds[:, :get_bond_fdim_wo_rings(atom_messages=atom_messages)]
+            f_bonds = self.f_bonds[:, :get_bond_fdim_with_substructures(atom_messages=atom_messages)]
         else:
             f_bonds = self.f_bonds
 
@@ -264,13 +245,12 @@ class BatchMolGraphWithSubstructures:
         return self.a2a
 
 
-def mol2graph_with_substructures(mols: Union[List[str]]) -> BatchMolGraphWithSubstructures:
+def mol2graph_with_substructures(mols: Union[List[str]], rings_merge, use_substructures) -> BatchMolGraphWithSubstructures:
     """
     Converts a list of SMILES or RDKit molecules to a :class:`BatchMolGraph` containing the batch of molecular graphs.
 
     :param mols: A list of SMILES or a list of RDKit molecules.
     :return: A :class:`BatchMolGraph` containing the combined molecular graph for the molecules.
     """
-    substructure_dictionary_holder = SubstructureDictionaryHolder()
     return BatchMolGraphWithSubstructures(
-        [MolGraphWithSubstructures(mol, substructure_dictionary_holder) for mol in mols])
+        [MolGraphWithSubstructures(mol, rings_merge, use_substructures) for mol in mols])

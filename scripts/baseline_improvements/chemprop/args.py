@@ -207,6 +207,10 @@ class TrainArgs(CommonArgs):
     rings_atom_messages: bool = False
     no_rings_atom_messages: bool = False
     """Centers messages on atoms instead of on bonds."""
+    no_rings_merge: bool = False
+    """Merges neighboring rings."""
+    no_rings_use_substructures: bool = False
+    """Generates chemical substructures."""
     rings_undirected: bool = False
     no_rings_undirected: bool = False
     """Undirected edges (always sum the two relevant bond vectors)."""

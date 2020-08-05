@@ -7,8 +7,6 @@ import numpy as np
 from torch.utils.data import DataLoader, Dataset, Sampler
 from rdkit import Chem
 
-from scripts.baseline_improvements.chemprop.features.substructure_dictionary_creating import \
-    SubstructureDictionaryHolder
 from .scaler import StandardScaler
 from scripts.baseline_improvements.chemprop.features import get_features_generator
 from scripts.baseline_improvements.chemprop.features import BatchMolGraph, MolGraph, BatchMolGraphWithSubstructures, \
