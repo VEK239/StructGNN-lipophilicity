@@ -1,5 +1,6 @@
 """Trains a chemprop model on a dataset."""
-from chemprop.train import chemprop_train
+
+from scripts.baseline_improvements.chemprop.train import chemprop_train
 
 
 if __name__ == '__main__':

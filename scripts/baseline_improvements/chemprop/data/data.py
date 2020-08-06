@@ -7,6 +7,7 @@ import numpy as np
 from torch.utils.data import DataLoader, Dataset, Sampler
 from rdkit import Chem
 
+from scripts.baseline_improvements.chemprop.args import TrainArgs
 from .scaler import StandardScaler
 from scripts.baseline_improvements.chemprop.features import get_features_generator
 from scripts.baseline_improvements.chemprop.features import BatchMolGraph, MolGraph, BatchMolGraphWithSubstructures, \
@@ -121,7 +122,8 @@ class MoleculeDataset(Dataset):
         """
         return [d.mol for d in self._data]
 
-    def batch_graph(self, model_type, cache: bool = False) -> Union[BatchMolGraph, BatchMolGraphWithSubstructures]:
+    def batch_graph(self, model_type, args: TrainArgs, cache: bool = True) -> Union[
+        BatchMolGraph, BatchMolGraphWithSubstructures]:
         r"""
         Constructs a :class:`~chemprop.features.BatchMolGraph` with the graph featurization of all the molecules.
 
@@ -144,8 +146,7 @@ class MoleculeDataset(Dataset):
                     no_ring_mol_graph = SMILES_TO_GRAPH_NO_RINGS[d.smiles]
                 else:
                     ring_mol_graph = MolGraph(d.mol)
-                    rings_dictionary_holder = SubstructureDictionaryHolder()
-                    no_ring_mol_graph = MolGraphWithSubstructures(d.smiles, rings_dictionary_holder)
+                    no_ring_mol_graph = MolGraphWithSubstructures(d.smiles, args)
                     if cache:
                         SMILES_TO_GRAPH_RINGS[d.smiles] = ring_mol_graph
                         SMILES_TO_GRAPH_NO_RINGS[d.smiles] = no_ring_mol_graph
@@ -153,7 +154,7 @@ class MoleculeDataset(Dataset):
                 no_rings_mol_graphs.append(no_ring_mol_graph)
 
             self._batch_graph_rings = BatchMolGraph(rings_mol_graphs)
-            self._batch_graph_wo_rings = BatchMolGraphWithSubstructures(no_rings_mol_graphs)
+            self._batch_graph_wo_rings = BatchMolGraphWithSubstructures(no_rings_mol_graphs, args=args)
         if model_type == 'rings':
             return self._batch_graph_rings
         else:
@@ -348,8 +349,8 @@ def construct_molecule_batch(data: List[MoleculeDatapoint], cache: bool = False)
     :return: A :class:`MoleculeDataset` containing all the :class:`MoleculeDatapoint`\ s.
     """
     data = MoleculeDataset(data)
-    data.batch_graph(cache=cache,
-                     model_type='rings')  # Forces computation and caching of the BatchMolGraph for the molecules
+    # data.batch_graph(cache=cache,
+    #                  model_type='rings', )  # Forces computation and caching of the BatchMolGraph for the molecules
 
     return data
 
@@ -364,7 +365,8 @@ class MoleculeDataLoader(DataLoader):
                  cache: bool = False,
                  class_balance: bool = False,
                  shuffle: bool = False,
-                 seed: int = 0):
+                 seed: int = 0,
+                 ):
         """
         :param dataset: The :class:`MoleculeDataset` containing the molecules to load.
         :param batch_size: Batch size.

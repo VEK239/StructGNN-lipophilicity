@@ -15,13 +15,12 @@ from scripts.baseline_improvements.chemprop.nn_utils import param_count
 from scripts.baseline_improvements.chemprop.train import cross_validate
 from scripts.baseline_improvements.chemprop.utils import create_logger, makedirs, timeit
 
-
 SPACE = {
-    'rings_hidden_size': hp.quniform('rings_hidden_size', low=300, high=600, q=100),
-    'no_rings_hidden_size': hp.quniform('no_rings_hidden_size', low=300, high=600, q=100),
-    'rings_depth': hp.quniform('rings_depth', low=2, high=10, q=1),
-    'no_rings_depth': hp.quniform('no_rings_depth', low=2, high=10, q=1),
-    'no_rings_atom_messages': hp.choice('no_rings_atom_messages', [True, False]),
+    'rings_hidden_size': hp.choice('rings_hidden_size', [300, 600]),
+    'no_rings_hidden_size': hp.choice('no_rings_hidden_size', [300, 600]),
+    'rings_depth': hp.quniform('rings_depth', low=2, high=10, q=2),
+    'no_rings_depth': hp.quniform('no_rings_depth', low=2, high=10, q=2),
+    'no_rings_use_substructures': hp.choice('no_rings_use_substructures', [True, False]),
 }
 INT_KEYS = ['rings_hidden_size', 'no_rings_hidden_size', 'rings_depth', 'no_rings_depth']
 
@@ -66,7 +65,7 @@ def hyperopt(args: HyperoptArgs) -> None:
         for key, value in hyperparams.items():
             setattr(hyper_args, key, value)
 
-        # hyper_args.ffn_hidden_size = hyper_args.hidden_size
+        hyper_args.ffn_hidden_size = hyper_args.rings_hidden_size + hyper_args.no_rings_hidden_size
 
         # Record hyperparameters
         logger.info(hyperparams)
@@ -119,3 +118,7 @@ def chemprop_hyperopt() -> None:
     This is the entry point for the command line command :code:`chemprop_hyperopt`.
     """
     hyperopt(args=HyperoptArgs().parse_args())
+
+
+if __name__ == "__main__":
+    chemprop_hyperopt()

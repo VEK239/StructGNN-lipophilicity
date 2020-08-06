@@ -145,19 +145,19 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
         cache=cache,
         class_balance=args.class_balance,
         shuffle=True,
-        seed=args.seed
+        seed=args.seed,
     )
     val_data_loader = MoleculeDataLoader(
         dataset=val_data,
         batch_size=args.batch_size,
         num_workers=num_workers,
-        cache=cache
+        cache=cache,
     )
     test_data_loader = MoleculeDataLoader(
         dataset=test_data,
         batch_size=args.batch_size,
         num_workers=num_workers,
-        cache=cache
+        cache=cache,
     )
 
     if args.class_balance:
@@ -222,7 +222,8 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
                 metric_func=metric_func,
                 dataset_type=args.dataset_type,
                 scaler=scaler,
-                logger=logger
+                logger=logger,
+                args=args
             )
 
             # Average validation score
@@ -249,7 +250,8 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
         test_preds = predict(
             model=model,
             data_loader=test_data_loader,
-            scaler=scaler
+            scaler=scaler,
+            args=args
         )
         test_scores = evaluate_predictions(
             preds=test_preds,

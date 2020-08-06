@@ -1,9 +1,5 @@
 from collections import defaultdict
 
-from tqdm import tqdm
-from collections import defaultdict
-
-import pandas as pd
 from rdkit import Chem
 
 BT_MAPPING_CHAR = {
@@ -127,16 +123,6 @@ def get_sulfoneamids_for_molecule(mol):
     return sulfoneamid_atoms
 
 
-def get_mapping_for_substructure(substructure, mol, structure_type):
-    """
-    Generates vector mapping for a given substructure
-    :param mol: The RDKit molecule the substructure is in
-    :param structure_type: The type of a structure (one of STRUCT_TO_NUM)
-    :return: A vector mapping for a substructure
-    """
-    return generate_substructure_sum_vector_mapping(substructure, mol, structure_type)
-
-
 def structure_encoding(atoms):
     """
     Generates one-hot mapping for molecule structure
@@ -161,7 +147,7 @@ def onek_encoding_unk(value, choices_len):
     return encoding
 
 
-def generate_substructure_sum_vector_mapping(substruct, mol, structure_type):
+def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, args):
     """
     Generates a vector with mapping for a substructure
     :param substruct: The given substructure
@@ -186,7 +172,7 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type):
     substruct_formal_charge = sum(atom.GetFormalCharge() for atom in atoms)
 
     substruct_num_Hs = sum(atom.GetTotalNumHs() for atom in atoms)
-    substruct_Hs_array = onek_encoding_unk(substruct_num_Hs, 60)
+    substruct_Hs_array = onek_encoding_unk(substruct_num_Hs, 65 if args.no_rings_merge else 60)
 
     substruct_is_aromatic = 1 if sum(atom.GetIsAromatic() for atom in atoms) > 0 else 0
 
@@ -194,12 +180,14 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type):
 
     substruct_edges_sum = implicit_substruct_valence
 
-    substruct_type = onek_encoding_unk(STRUCT_TO_NUM[structure_type], len(STRUCT_TO_NUM))
+    if args.no_rings_use_substructures:
+        substruct_type = onek_encoding_unk(STRUCT_TO_NUM[structure_type], len(STRUCT_TO_NUM))
+    else:
+        substruct_type = [1 if structure_type == 'RING' else 0]
 
     features = substruct_atomic_encoding + substruct_valence_array + substruct_Hs_array + substruct_type + \
                [substruct_formal_charge, substruct_is_aromatic, substruct_mass * 0.01, substruct_edges_sum * 0.1]
     return tuple(features)
-
 
 
 class Atom:
@@ -257,11 +245,11 @@ class Molecule:
             print(bond.out_atom_idx, bond.in_atom_idx)
 
 
-def create_molecule_for_smiles(smiles, rings_merge, use_substructures):
+def create_molecule_for_smiles(smiles, args):
     mol = Chem.MolFromSmiles(smiles)
 
-    rings = get_cycles_for_molecule(mol, rings_merge)
-    if use_substructures:
+    rings = get_cycles_for_molecule(mol, args.no_rings_merge)
+    if args.no_rings_use_substructures:
         acids = get_acids_for_molecule(mol)
         esters = get_esters_for_molecule(mol)
         amins = get_amins_for_molecule(mol)
@@ -282,7 +270,7 @@ def create_molecule_for_smiles(smiles, rings_merge, use_substructures):
         substructure_type_string = structure_type[1]
         substructures = structure_type[0]
         for substruct in substructures:
-            mapping = get_mapping_for_substructure(substruct, mol, substructure_type_string)
+            mapping = generate_substructure_sum_vector_mapping(substruct, mol, substructure_type_string, args)
             substruct_atom = Atom(idx=(min(*substruct) if len(substruct) > 1 else substruct[0]),
                                   atom_representation=mapping)
             mol_atoms.append(substruct_atom)
@@ -293,7 +281,7 @@ def create_molecule_for_smiles(smiles, rings_merge, use_substructures):
     for atom in mol.GetAtoms():
         atom_idx = atom.GetIdx()
         if atom_idx not in used_atoms:
-            atom_repr = get_mapping_for_substructure([atom_idx], mol, 'ATOM')
+            atom_repr = generate_substructure_sum_vector_mapping([atom_idx], mol, 'ATOM', args)
             custom_atom = Atom(idx=atom_idx, atom_representation=atom_repr, symbol=atom.GetSymbol())
             mol_atoms.append(custom_atom)
             idx_to_atom[atom_idx].add(custom_atom)
@@ -301,7 +289,7 @@ def create_molecule_for_smiles(smiles, rings_merge, use_substructures):
     for idx, bond in enumerate(mol.GetBonds()):
         start_atoms = idx_to_atom[bond.GetBeginAtomIdx()]
         end_atoms = idx_to_atom[bond.GetEndAtomIdx()]
-        if len(start_atoms & end_atoms) > 0:
+        if len(start_atoms & end_atoms) == 0:
             custom_bond = Bond(bond, idx, start_atoms, end_atoms, bond.GetBondType())
             mol_bonds.append(custom_bond)
             for start_atom in start_atoms:

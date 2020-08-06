@@ -1,4 +1,6 @@
-from scripts.baseline_improvements.chemprop.features.molecule import Molecule, create_molecule_for_smiles, onek_encoding_unk
+# from scripts.baseline_improvements.chemprop.args import TrainArgs
+from scripts.baseline_improvements.chemprop.features.molecule import Molecule, create_molecule_for_smiles, \
+    onek_encoding_unk
 from typing import List, Tuple, Union
 
 from rdkit import Chem
@@ -10,16 +12,18 @@ THREE_D_DISTANCE_MAX = 20
 THREE_D_DISTANCE_STEP = 1
 THREE_D_DISTANCE_BINS = list(range(0, THREE_D_DISTANCE_MAX + 1, THREE_D_DISTANCE_STEP))
 
-ATOM_FDIM = 165
 BOND_FDIM = 14
 
 
-def get_atom_fdim_with_substructures() -> int:
+def get_atom_fdim_with_substructures(use_substructures=False) -> int:
     """Gets the dimensionality of the atom feature vector."""
-    return ATOM_FDIM
+    # atom_fdim = 160
+    # if use_substructures:
+    #     atom_fdim += 5
+    return 165 if use_substructures else 160
 
 
-def get_bond_fdim_with_substructures(atom_messages: bool = False) -> int:
+def get_bond_fdim_with_substructures(atom_messages: bool = False, use_substructures=False) -> int:
     """
     Gets the dimensionality of the bond feature vector.
 
@@ -28,7 +32,7 @@ def get_bond_fdim_with_substructures(atom_messages: bool = False) -> int:
                           Otherwise it contains both atom and bond features.
     :return: The dimensionality of the bond feature vector.
     """
-    return BOND_FDIM + (not atom_messages) * get_atom_fdim_with_substructures()
+    return BOND_FDIM + (not atom_messages) * get_atom_fdim_with_substructures(use_substructures)
 
 
 def atom_features_for_substructures(atom) -> List[Union[bool, int, float]]:
@@ -80,11 +84,11 @@ class MolGraphWithSubstructures:
     * :code:`b2revb`: A mapping from a bond index to the index of the reverse bond.
     """
 
-    def __init__(self, mol: str, rings_merge, use_substructures):
+    def __init__(self, mol: str, args):
         """
         :param mol: A SMILES or an RDKit molecule.
         """
-        mol = create_molecule_for_smiles(mol, rings_merge, use_substructures)
+        mol = create_molecule_for_smiles(mol, args)
 
         self.n_atoms = 0  # number of atoms
         self.n_bonds = 0  # number of bonds
@@ -141,12 +145,12 @@ class BatchMolGraphWithSubstructures:
     * :code:`a2a`: (Optional): A mapping from an atom index to neighboring atom indices.
     """
 
-    def __init__(self, mol_graphs: List[MolGraphWithSubstructures]):
+    def __init__(self, mol_graphs: List[MolGraphWithSubstructures], args):
         r"""
         :param mol_graphs: A list of :class:`MolGraph`\ s from which to construct the :class:`BatchMolGraph`.
         """
-        self.atom_fdim = get_atom_fdim_with_substructures()
-        self.bond_fdim = get_bond_fdim_with_substructures()
+        self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.no_rings_use_substructures)
+        self.bond_fdim = get_bond_fdim_with_substructures(use_substructures=args.no_rings_use_substructures)
 
         # Start n_atoms and n_bonds at 1 b/c zero padding
         self.n_atoms = 1  # number of atoms (start at 1 b/c need index 0 as padding)
@@ -187,9 +191,9 @@ class BatchMolGraphWithSubstructures:
         self.b2b = None  # try to avoid computing b2b b/c O(n_atoms^3)
         self.a2a = None  # only needed if using atom messages
 
-    def get_components(self, atom_messages: bool = False) -> Tuple[torch.FloatTensor, torch.FloatTensor,
-                                                                   torch.LongTensor, torch.LongTensor, torch.LongTensor,
-                                                                   List[Tuple[int, int]], List[Tuple[int, int]]]:
+    def get_components(self, args) -> Tuple[torch.FloatTensor, torch.FloatTensor,
+                                                       torch.LongTensor, torch.LongTensor, torch.LongTensor,
+                                                       List[Tuple[int, int]], List[Tuple[int, int]]]:
         """
         Returns the components of the :class:`BatchMolGraph`.
 
@@ -208,8 +212,9 @@ class BatchMolGraphWithSubstructures:
         :return: A tuple containing PyTorch tensors with the atom features, bond features, graph structure,
                  and scope of the atoms and bonds (i.e., the indices of the molecules they belong to).
         """
-        if atom_messages:
-            f_bonds = self.f_bonds[:, :get_bond_fdim_with_substructures(atom_messages=atom_messages)]
+        if args.no_rings_atom_messages:
+            f_bonds = self.f_bonds[:, :get_bond_fdim_with_substructures(atom_messages=args.no_rings_atom_messages,
+                                                                        use_substructures=args.no_rings_use_substructures)]
         else:
             f_bonds = self.f_bonds
 
@@ -245,7 +250,7 @@ class BatchMolGraphWithSubstructures:
         return self.a2a
 
 
-def mol2graph_with_substructures(mols: Union[List[str]], rings_merge, use_substructures) -> BatchMolGraphWithSubstructures:
+def mol2graph_with_substructures(mols: Union[List[str]], args) -> BatchMolGraphWithSubstructures:
     """
     Converts a list of SMILES or RDKit molecules to a :class:`BatchMolGraph` containing the batch of molecular graphs.
 
@@ -253,4 +258,4 @@ def mol2graph_with_substructures(mols: Union[List[str]], rings_merge, use_substr
     :return: A :class:`BatchMolGraph` containing the combined molecular graph for the molecules.
     """
     return BatchMolGraphWithSubstructures(
-        [MolGraphWithSubstructures(mol, rings_merge, use_substructures) for mol in mols])
+        [MolGraphWithSubstructures(mol, args) for mol in mols], args=args)

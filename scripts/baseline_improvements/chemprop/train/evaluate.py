@@ -3,6 +3,7 @@ from typing import Callable, List
 
 from sklearn.metrics import r2_score
 
+from scripts.baseline_improvements.chemprop.args import TrainArgs
 from .predict import predict
 from scripts.baseline_improvements.chemprop.data import MoleculeDataLoader, StandardScaler
 from scripts.baseline_improvements.chemprop.models import MoleculeModel
@@ -74,6 +75,7 @@ def evaluate(model: MoleculeModel,
              num_tasks: int,
              metric_func: Callable,
              dataset_type: str,
+             args: TrainArgs,
              scaler: StandardScaler = None,
              logger: logging.Logger = None) -> List[float]:
     """
@@ -91,7 +93,8 @@ def evaluate(model: MoleculeModel,
     preds = predict(
         model=model,
         data_loader=data_loader,
-        scaler=scaler
+        scaler=scaler,
+        args=args
     )
 
     results = evaluate_predictions(

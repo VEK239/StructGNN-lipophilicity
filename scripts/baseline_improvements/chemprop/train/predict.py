@@ -3,12 +3,14 @@ from typing import List
 import torch
 from tqdm import tqdm
 
+from scripts.baseline_improvements.chemprop.args import TrainArgs
 from scripts.baseline_improvements.chemprop.data import MoleculeDataLoader, MoleculeDataset, StandardScaler
 from scripts.baseline_improvements.chemprop.models import MoleculeModel
 
 
 def predict(model: MoleculeModel,
             data_loader: MoleculeDataLoader,
+            args: TrainArgs,
             disable_progress_bar: bool = False,
             scaler: StandardScaler = None) -> List[List[float]]:
     """
@@ -28,8 +30,8 @@ def predict(model: MoleculeModel,
         # Prepare batch
         batch: MoleculeDataset
         # mol_batch, features_batch = batch.batch_graph(), batch.features()
-        no_ring_mol_batch = batch.batch_graph(model_type='no-rings')
-        ring_mol_batch, features_batch = batch.batch_graph(model_type='rings'), batch.features()
+        no_ring_mol_batch = batch.batch_graph(model_type='no-rings', args=args)
+        ring_mol_batch, features_batch = batch.batch_graph(model_type='rings', args=args), batch.features()
 
         # Make predictions
         with torch.no_grad():

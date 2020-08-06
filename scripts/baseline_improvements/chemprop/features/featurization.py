@@ -4,6 +4,8 @@ from rdkit import Chem
 import torch
 
 # Atom feature sizes
+# from scripts.baseline_improvements.chemprop.args import TrainArgs
+
 MAX_ATOMIC_NUM = 100
 ATOM_FEATURES = {
     'atomic_num': list(range(MAX_ATOMIC_NUM)),
@@ -232,7 +234,7 @@ class BatchMolGraph:
         self.b2b = None  # try to avoid computing b2b b/c O(n_atoms^3)
         self.a2a = None  # only needed if using atom messages
 
-    def get_components(self, atom_messages: bool = False) -> Tuple[torch.FloatTensor, torch.FloatTensor,
+    def get_components(self, args) -> Tuple[torch.FloatTensor, torch.FloatTensor,
                                                                    torch.LongTensor, torch.LongTensor, torch.LongTensor,
                                                                    List[Tuple[int, int]], List[Tuple[int, int]]]:
         """
@@ -253,8 +255,8 @@ class BatchMolGraph:
         :return: A tuple containing PyTorch tensors with the atom features, bond features, graph structure,
                  and scope of the atoms and bonds (i.e., the indices of the molecules they belong to).
         """
-        if atom_messages:
-            f_bonds = self.f_bonds[:, :get_bond_fdim(atom_messages=atom_messages)]
+        if args.rings_atom_messages:
+            f_bonds = self.f_bonds[:, :get_bond_fdim(atom_messages=args.rings_atom_messages)]
         else:
             f_bonds = self.f_bonds
 

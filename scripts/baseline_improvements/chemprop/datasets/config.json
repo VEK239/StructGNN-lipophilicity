@@ -1,16 +1,21 @@
 {
-  "data_path": "./chemprop/datasets/logp_wo_averaging_train.csv",
-  "separate_val_path": "./chemprop/datasets/logp_wo_averaging_validation.csv",
-  "separate_test_path": "./chemprop/datasets/logp_wo_averaging_test.csv",
+  "data_path": "./datasets/logp_wo_averaging_cross.csv",
+  "separate_test_path": "./datasets/logp_wo_averaging_test.csv",
   "dataset_type": "regression",
-  "save_dir": "./chemprop/datasets/substructures/experiment_3",
+  "save_dir": "./datasets/cross_validation",
+  "num_iters": 12,
+  "num_folds": 4,
+  
   "rings_depth": 2,
   "no_rings_depth": 6,
   "epochs": 100,
   "init_lr": 1e-4,
   "max_lr": 1e-3,
   "ffn_num_layers": 3,
-  "rings_hidden_size": 300,
-  "no_rings_hidden_size": 300,
-  "dropout": 0.2
+  "ffn_hidden_size": null,
+  "rings_hidden_size": 500,
+  "no_rings_hidden_size": 500,
+  "dropout": 0.2,
+  "no_rings_use_substructures": true,
+  "no_rings_merge": false
 }

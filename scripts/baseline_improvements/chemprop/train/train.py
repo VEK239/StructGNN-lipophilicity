@@ -38,15 +38,16 @@ def train(model: MoleculeModel,
     :return: The total number of iterations (training examples) trained on so far.
     """
     debug = logger.debug if logger is not None else print
-    
+
     model.train()
     loss_sum, iter_count = 0, 0
 
     for batch in tqdm(data_loader, total=len(data_loader)):
         # Prepare batch
         batch: MoleculeDataset
-        no_ring_mol_batch = batch.batch_graph(model_type='no-rings')
-        ring_mol_batch, features_batch, target_batch = batch.batch_graph(model_type='rings'), batch.features(), batch.targets()
+        no_ring_mol_batch = batch.batch_graph(model_type='no-rings', args=args)
+        ring_mol_batch, features_batch, target_batch = batch.batch_graph(model_type='rings', args=args), \
+                                                       batch.features(), batch.targets()
         mask = torch.Tensor([[x is not None for x in tb] for tb in target_batch])
         targets = torch.Tensor([[0 if x is None else x for x in tb] for tb in target_batch])
 
@@ -61,7 +62,9 @@ def train(model: MoleculeModel,
 
         if args.dataset_type == 'multiclass':
             targets = targets.long()
-            loss = torch.cat([loss_func(preds[:, target_index, :], targets[:, target_index]).unsqueeze(1) for target_index in range(preds.size(1))], dim=1) * class_weights * mask
+            loss = torch.cat(
+                [loss_func(preds[:, target_index, :], targets[:, target_index]).unsqueeze(1) for target_index in
+                 range(preds.size(1))], dim=1) * class_weights * mask
         else:
             loss = loss_func(preds, targets) * class_weights * mask
         loss = loss.sum() / mask.sum()
