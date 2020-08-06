@@ -15,8 +15,10 @@ import math, random, sys
 from optparse import OptionParser
 from collections import deque
 
+# from jtnn import *
 import rdkit
 
+# from jtnn_enc import JTNNEncoder
 
 import torch
 import torch.nn as nn
@@ -28,6 +30,7 @@ import numpy as np
 
 from sklearn.metrics import roc_auc_score, r2_score, mean_squared_error
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import KFold
 
 import pandas as pd
 
@@ -35,8 +38,9 @@ import os
 import shutil
 
 import json
-
 import pickle
+
+
 
 from tensorboardX import SummaryWriter
 
@@ -96,10 +100,10 @@ class MoleculeDataset(Dataset):
             SMILES_TO_MOLTREE[smiles] = mol_tree
         return mol_tree, target            
             
-class JOnlyTreePredict(nn.Module):
+class JTPredict(nn.Module):
 
     def __init__(self, vocab, hidden_size, latent_size, depth, stereo=True):
-        super(JOnlyTreePredict, self).__init__()
+        super(JTPredict, self).__init__()
         self.vocab = vocab
         self.hidden_size = hidden_size
         self.latent_size = latent_size
@@ -107,11 +111,14 @@ class JOnlyTreePredict(nn.Module):
 
         self.embedding = nn.Embedding(vocab.size(), hidden_size)
         self.jtnn = JTNNEncoder(vocab, hidden_size, self.embedding)
+        self.mpn = MPN(hidden_size, depth)
         
         self.output_size = 1
 
-        self.T_mean = nn.Linear(hidden_size, latent_size)
-        self.T_var = nn.Linear(hidden_size, latent_size)
+        self.T_mean = nn.Linear(hidden_size, latent_size / 2)
+        self.T_var = nn.Linear(hidden_size, latent_size / 2)
+        self.G_mean = nn.Linear(hidden_size, latent_size / 2)
+        self.G_var = nn.Linear(hidden_size, latent_size / 2)
         
         self.use_stereo = stereo
         if stereo:
@@ -123,17 +130,20 @@ class JOnlyTreePredict(nn.Module):
         tree_mess,tree_vec = self.jtnn(root_batch)
 
         smiles_batch = [mol_tree.smiles for mol_tree in mol_batch]
-        return tree_mess, tree_vec
+        mol_vec = self.mpn(mol2graph(smiles_batch))
+        return tree_mess, tree_vec, mol_vec
 
     def encode_latent_mean(self, smiles_list):
         print(smiles_list)
         mol_batch = [MolTree(s) for s in smiles_list]
+#         print(mol_batch)
         for mol_tree in mol_batch:
             mol_tree.recover()
 
         _, tree_vec, mol_vec = self.encode(mol_batch)
         tree_mean = self.T_mean(tree_vec)
-        return tree_mean
+        mol_mean = self.G_mean(mol_vec)
+        return torch.cat([tree_mean,mol_mean], dim=1)
     
     def create_ffn(self, ffn_num_layers = 3, ffn_hidden_size = 50):
         """
@@ -174,11 +184,12 @@ class JOnlyTreePredict(nn.Module):
     def forward(self, mol_batch, beta=0):
         batch_size = len(mol_batch)
 
-        _, tree_vec = self.encode(mol_batch)
+        _, tree_vec, mol_vec = self.encode(mol_batch)
         
         tree_mean = self.T_mean(tree_vec)
+        mol_mean = self.G_mean(mol_vec)
         
-        feature_vec =  tree_mean
+        feature_vec =  torch.cat([tree_mean, mol_mean], dim=1)
         
         return self.ffn(feature_vec)
 
@@ -231,6 +242,45 @@ class EarlyStopping:
             print 'Validation loss decreased', round(self.val_loss_min,6),' -->', round(val_loss,6), '.  Saving model ...'
         torch.save(model.state_dict(), self.path)
         self.val_loss_min = val_loss
+        
+class CrossValScores:
+    """Early stops the training if validation loss doesn't improve after a given patience."""
+    def __init__(self, path='checkpoint.pt'):
+        """
+        Args:
+            patience (int): How long to wait after last time validation loss improved.
+                            Default: 7
+            verbose (bool): If True, prints a message for each validation loss improvement.
+                            Default: False
+            delta (float): Minimum change in the monitored quantity to qualify as an improvement.
+                            Default: 0
+            path (str): Path for the checkpoint to be saved to.
+                            Default: 'checkpoint.pt'
+        """
+        self.best_score = None
+        self.path = path
+        self.best_fold = 0
+
+    def __call__(self, val_loss, model, fold = 0):
+
+        score = -val_loss
+
+        if self.best_score is None:
+            self.best_score = score
+            self.save_checkpoint(val_loss, model)
+        
+          
+        elif score > self.best_score:
+            self.best_score = score
+            self.save_checkpoint(val_loss, model)
+            self.best_fold = fold
+            
+            
+    def save_checkpoint(self, val_loss, model):
+        '''Saves model when validation loss decrease.'''
+        if self.verbose:
+            print 'Validation loss decreased', round(self.val_loss_min,6),' -->', round(val_loss,6), '.  Saving model ...'
+        torch.save(model.state_dict(), self.path)
 
 def train(args, model, device, loader, optimizer):
     model.train()
@@ -242,12 +292,14 @@ def train(args, model, device, loader, optimizer):
             X.append(elem[0])
             y.append(elem[1])
         y = torch.Tensor(y).to(device)
-
         pred = model(X)
         y = y.view(pred.shape).to(torch.float64)
 
+
         loss = criterion(pred.double(), y)
+
         optimizer.zero_grad()
+
         loss.backward()
 
         optimizer.step()
@@ -287,10 +339,9 @@ def eval(args, model, device, loader, scaler, train = False):
 
 def main():
     global SMILES_TO_MOLTREE
+    
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch implementation of pre-training of graph neural networks')
-    parser.add_argument('--enc_type', type=str, default='Only tree',
-                        help='types of encoders')
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
     parser.add_argument('--batch_size', type=int, default=32,
@@ -299,24 +350,22 @@ def main():
                         help='number of epochs to train (default: 100)')
     parser.add_argument('--lr', type=float, default=7e-4,
                         help='learning rate (default: 7e-4)')
+    parser.add_argument('--folds_num', type=int, default=4,
+                        help='number of folds in CV (default: 4).')
     parser.add_argument('--decay', type=float, default=0.005,
                         help='weight decay (default: 0.005)')
     parser.add_argument('--num_layer', type=int, default=3,
                         help='number of GNN message passing layers (default: 3).')
-    parser.add_argument('--ffn_num_layers', type=int, default=3,
-                        help='number of layers in ffn predicor (default: 3).')
-    parser.add_argument('--ffn_hidden_size', type=int, default=28,
-                        help='hidden size of layers in ffn predicor (default: 28).')
-    parser.add_argument('--emb_dim', type=int, default=28,
+    parser.add_argument('--emb_dim', type=int, default=56,
                         help='embedding dimensions (default: 56)')
-    parser.add_argument('--hidden_size', type=int, default=450,
+    parser.add_argument('--hidden_size', type=float, default=450,
                         help='hidden size of ffn (default: 450)')
     parser.add_argument('--patience', type=int, default=50,
                         help='Patience of early stopping (default: 50)')
     parser.add_argument('--raw_path', type=str, default='../../../data/raw/baselines/jtree/',
                         help='path to broken smiles')
-    parser.add_argument('--dataset', type=str, default = '../../../data/3_final_data/split_data', help='root directory of dataset. For now, only classification.')
-    
+    parser.add_argument('--dataset', type=str, default = '../../../data/3_final_data/split_data', help='root directory of dataset')
+    parser.add_argument('--dataset_cv', type=str, default = '../../../data/raw/baselines/jtree/', help='root directory of dataset for cross_validation')
     parser.add_argument('--vocab_path', type=str, default = '../../../../icml18-jtnn/data/zinc/vocab.txt', help='root directory of dataset. For now, only classification.')
     parser.add_argument('--input_model_file', type=str, default = '', help='filename to read the model (if there is any)')
     parser.add_argument('--filename', type=str, default = 'exp_1', help='output filename')
@@ -342,7 +391,7 @@ def main():
         with open(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle'), 'rb') as handle:
             SMILES_TO_MOLTREE = pickle.load(handle)
         print ('Preprocesed molecules have been loaded')
-    
+
     batch_size = args.batch_size
     hidden_size = args.hidden_size
     latent_size = args.emb_dim
@@ -353,122 +402,138 @@ def main():
     
     
     #set up dataset
-    train_dataset = MoleculeDataset(os.path.join(args.dataset, 'logp_wo_averaging_train.csv'), args)
+    train_val_dataset = MoleculeDataset(os.path.join(args.dataset_cv, 'logp_wo_averaging_train_val.csv'), args)
     test_dataset = MoleculeDataset(os.path.join(args.dataset, 'logp_wo_averaging_test.csv'), args)
-    valid_dataset = MoleculeDataset(os.path.join(args.dataset, 'logp_wo_averaging_validation.csv'), args)
+#     valid_dataset = MoleculeDataset(os.path.join(args.dataset, 'logp_wo_averaging_validation.csv'), args)
+    
+    
     
     if not os.path.exists(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle')):
         with open(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle'), 'wb') as handle:
               pickle.dump(SMILES_TO_MOLTREE, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    print(train_dataset[0])
-    print(len(train_dataset))
-    print(len(valid_dataset))
+    print(len(train_val_dataset))
+#     print(len(valid_dataset))
     print(len(test_dataset))
-
-    scaler = StandardScaler()
-    scaled_y = torch.tensor(scaler.fit_transform(train_dataset.data[train_dataset.TARGET_COLUMN].values.reshape(-1, 1)).reshape(-1))
-    train_dataset.data[train_dataset.TARGET_COLUMN] = scaled_y
-
-
-
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=lambda x: x, num_workers=args.num_workers, drop_last=True)
-    val_loader = DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=lambda x: x, num_workers=args.num_workers, drop_last=True)
-    test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=lambda x: x, num_workers=args.num_workers, drop_last=True)
-
-    #set up model
-    model = JOnlyTreePredict(vocab, hidden_size, latent_size, depth, stereo=stereo)
-    model.create_ffn(args.ffn_num_layers, args.ffn_hidden_size)
     
-    for param in model.parameters():
-        if param.dim() == 1:
-            nn.init.constant_(param, 0)
-        else:
-            nn.init.xavier_normal_(param)
     
-    if not args.input_model_file == "":
-        from jtnn_vae import JTNNVAE
-        model_VAE = JTNNVAE(vocab, hidden_size, latent_size*2, depth, stereo=stereo)
-        model_VAE.load_state_dict(torch.load(os.path.join(args.input_model_file,args.model_name)))
-        model.jtnn = model_VAE.jtnn
-        model.embedding = model_VAE.embedding
-        model.T_mean = model_VAE.T_mean
-        model.T_var = model_VAE.T_var
-
-
-    model.to(device)
-
-
-            
-    optimizer = optim.Adam(model.parameters(), lr=lr)
-    scheduler = lr_scheduler.ExponentialLR(optimizer, 0.9)
-    scheduler.step()
+    kf = KFold(n_splits=args.folds_num)
+    num_of_fold = 0
+    cv_scores = CrossValScores(os.path.join(args.log_path, args.filename,'best_model.pt'))
+    for train_index, val_index in kf.split(train_val_dataset):
+        train_dataset, valid_dataset = train_val_dataset[train_index], train_val_dataset[val_index]
+    
+        scaler = StandardScaler()
+        scaled_y = torch.tensor(scaler.fit_transform(train_dataset.data[train_dataset.TARGET_COLUMN].values.reshape(-1, 1)).reshape(-1))
+        train_dataset.data[train_dataset.TARGET_COLUMN] = scaled_y
 
 
 
+        train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=lambda x: x, num_workers=args.num_workers, drop_last=True)
+        val_loader = DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=lambda x: x, num_workers=args.num_workers, drop_last=True)
+        test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=lambda x: x, num_workers=args.num_workers, drop_last=True)
 
-    if not args.filename == "":
+        #set up model
+        model = JTPredict(vocab, hidden_size, latent_size, depth, stereo=stereo)
+        model.create_ffn()
 
-        fname = os.path.join(args.log_path, args.filename)
-        if os.path.exists(fname):
-            shutil.rmtree(fname)
-            print("removed the existing file.")
-        os.makedirs(fname)
-        writer = SummaryWriter(fname)
-        with open(os.path.join(fname, 'parameters.json'), 'w') as f:
-            json.dump(vars(args), f)
+        for param in model.parameters():
+            if param.dim() == 1:
+                nn.init.constant_(param, 0)
+            else:
+                nn.init.xavier_normal_(param)
 
-    early_stopping = EarlyStopping(patience=args.patience, verbose=True, path=os.path.join(fname, args.filename + '.pth'))
+        if not args.input_model_file == "":
+            from jtnn_vae import JTNNVAE
+            model_VAE = JTNNVAE(vocab, hidden_size, latent_size, depth, stereo=stereo)
+            model_VAE.load_state_dict(torch.load(os.path.join(args.input_model_file,args.model_name)))
+            model.jtnn = model_VAE.jtnn
+            model.mpn = model_VAE.mpn
+            model.embedding = model_VAE.embedding
+            model.T_mean = model_VAE.T_mean
+            model.T_var = model_VAE.T_var
+            model.G_mean = model_VAE.G_mean
+            model.G_var = model_VAE.G_var
 
-    for epoch in range(1, args.epochs+1):
-        print("====epoch " + str(epoch))
-        
-        train(args, model, device, train_loader, optimizer)
+        model.to(device)
 
-        print("====Evaluation")
-        if args.eval_train:
-            train_r2, train_rmse = eval(args, model, device, train_loader, scaler, train = True)
-        else:
-            print("omit the training accuracy computation")
-            train_r2, train_rmse = 0, 0
-        val_r2, val_rmse = eval(args, model, device, val_loader, scaler)
-        test_r2, test_rmse = eval(args, model, device, test_loader, scaler)
 
-        print("train r2: %f\ntrain rmse: %f\n val r2: %f\n val rmse: %f\ntest r2: %f\ntest rmse: %f"\
-              %(train_r2, train_rmse, val_r2, val_rmse, test_r2, test_rmse))
+        optimizer = optim.Adam(model.parameters(), lr=lr)
+        scheduler = lr_scheduler.ExponentialLR(optimizer, 0.9)
+        scheduler.step()
 
         if not args.filename == "":
-            writer.add_scalar('data/train r2', train_r2, epoch)
-            writer.add_scalar('data/train rmse', train_rmse, epoch)
 
-            writer.add_scalar('data/val r2', val_r2, epoch)
-            writer.add_scalar('data/val rmse', val_rmse, epoch)
-            writer.add_scalar('data/test r2', test_r2, epoch)
-            writer.add_scalar('data/test rmse', test_rmse, epoch)
+            fname = os.path.join(args.log_path, args.filename,'fold_'+str(num_of_fold))
+            #, exist_ok=True)
+            # #delete the directory if there exists one
+            if os.path.exists(fname):
+                shutil.rmtree(fname)
+                print("removed the existing file.")
+            os.makedirs(fname)
+            writer = SummaryWriter(fname)
+            with open(os.path.join(fname, 'parameters.json'), 'w') as f:
+                json.dump(vars(args), f)
 
-        early_stopping(val_rmse, model, epoch)
 
-        if early_stopping.early_stop:
-            print("Early stopping", epoch)
-            break
 
-        print("")
-    if not args.filename == "":
-        writer.close()
-        with open(os.path.join(fname, 'logs.txt'), 'w') as f:
-            f.write('Best epoch is '+str(epoch)+'\n')
-        # torch.save(model.gnn.state_dict(), os.path.join(fname, args.filename+'.pth'))
-        model.load_state_dict(torch.load(os.path.join(fname, args.filename + '.pth')))
-        train_r2, train_rmse = eval(args, model, device, train_loader, scaler, train = True)
-        val_r2, val_rmse = eval(args, model, device, val_loader, scaler)
-        test_r2, test_rmse = eval(args, model, device, test_loader, scaler)
-        with open(os.path.join(fname, 'logs.txt'), 'a') as f:
-            f.write('Test RMSE is '+str(test_rmse)+'\n')
-            f.write('Test R2 is '+str(test_r2)+'\n')
-            f.write('Val RMSE is '+str(val_rmse)+'\n')
-            f.write('Val R2 is '+str(val_r2)+'\n')
-            f.write('Train RMSE is '+str(train_rmse)+'\n')
-            f.write('Train R2 is '+str(train_r2)+'\n')
 
+        early_stopping = EarlyStopping(patience=args.patience, verbose=True, path=os.path.join(fname, args.filename + '.pth'))
+
+        for epoch in range(1, args.epochs+1):
+            print("====epoch " + str(epoch))
+
+            train(args, model, device, train_loader, optimizer)
+
+            print("====Evaluation")
+            if args.eval_train:
+                train_r2, train_rmse = eval(args, model, device, train_loader, scaler, train = True)
+            else:
+                print("omit the training accuracy computation")
+                train_r2, train_rmse = 0, 0
+            val_r2, val_rmse = eval(args, model, device, val_loader, scaler)
+            test_r2, test_rmse = eval(args, model, device, test_loader, scaler)
+
+            print("train r2: %f\ntrain rmse: %f\n val r2: %f\n val rmse: %f\ntest r2: %f\ntest rmse: %f"\
+                  %(train_r2, train_rmse, val_r2, val_rmse, test_r2, test_rmse))
+
+            # val_acc_list.append(val_acc)
+            # test_acc_list.append(test_acc)
+            # train_acc_list.append(train_acc)
+
+            if not args.filename == "":
+                writer.add_scalar('data/train r2', train_r2, epoch)
+                writer.add_scalar('data/train rmse', train_rmse, epoch)
+
+                writer.add_scalar('data/val r2', val_r2, epoch)
+                writer.add_scalar('data/val rmse', val_rmse, epoch)
+                writer.add_scalar('data/test r2', test_r2, epoch)
+                writer.add_scalar('data/test rmse', test_rmse, epoch)
+
+            early_stopping(val_rmse, model, epoch)
+
+            if early_stopping.early_stop:
+                print("Early stopping", epoch)
+                break
+
+            print("")
+        if not args.filename == "":
+            writer.close()
+            with open(os.path.join(fname, 'logs.txt'), 'w') as f:
+                f.write('Best epoch is '+str(epoch)+'\n')
+            model.load_state_dict(torch.load(os.path.join(fname, args.filename + '.pth')))
+            train_r2, train_rmse = eval(args, model, device, train_loader, scaler, train = True)
+            val_r2, val_rmse = eval(args, model, device, val_loader, scaler)
+            test_r2, test_rmse = eval(args, model, device, test_loader, scaler)
+            with open(os.path.join(fname, 'logs.txt'), 'a') as f:
+                f.write('Test RMSE is '+str(test_rmse)+'\n')
+                f.write('Test R2 is '+str(test_r2)+'\n')
+                f.write('Val RMSE is '+str(val_rmse)+'\n')
+                f.write('Val R2 is '+str(val_r2)+'\n')
+                f.write('Train RMSE is '+str(train_rmse)+'\n')
+                f.write('Train R2 is '+str(train_r2)+'\n')
+            cv_scores(val_rmse, model, num_of_fold)    
+            
+        num_of_fold+=1
 if __name__ == "__main__":
     main()
