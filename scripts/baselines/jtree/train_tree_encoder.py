@@ -309,9 +309,10 @@ def main():
                         help='hidden size of layers in ffn predicor (default: 28).')
     parser.add_argument('--emb_dim', type=int, default=28,
                         help='embedding dimensions (default: 56)')
-    parser.add_argument('--hidden_size', type=float, default=450,
+    parser.add_argument('--hidden_size', type=int, default=450,
                         help='hidden size of ffn (default: 450)')
-    
+    parser.add_argument('--patience', type=int, default=50,
+                        help='Patience of early stopping (default: 50)')
     parser.add_argument('--raw_path', type=str, default='../../../data/raw/baselines/jtree/',
                         help='path to broken smiles')
     parser.add_argument('--dataset', type=str, default = '../../../data/3_final_data/split_data', help='root directory of dataset. For now, only classification.')
@@ -409,8 +410,6 @@ def main():
     if not args.filename == "":
 
         fname = os.path.join(args.log_path, args.filename)
-        #, exist_ok=True)
-        # #delete the directory if there exists one
         if os.path.exists(fname):
             shutil.rmtree(fname)
             print("removed the existing file.")
@@ -419,7 +418,7 @@ def main():
         with open(os.path.join(fname, 'parameters.json'), 'w') as f:
             json.dump(vars(args), f)
 
-    early_stopping = EarlyStopping(patience=50, verbose=True, path=os.path.join(fname, args.filename + '.pth'))
+    early_stopping = EarlyStopping(patience=args.patience, verbose=True, path=os.path.join(fname, args.filename + '.pth'))
 
     for epoch in range(1, args.epochs+1):
         print("====epoch " + str(epoch))
@@ -437,10 +436,6 @@ def main():
 
         print("train r2: %f\ntrain rmse: %f\n val r2: %f\n val rmse: %f\ntest r2: %f\ntest rmse: %f"\
               %(train_r2, train_rmse, val_r2, val_rmse, test_r2, test_rmse))
-
-        # val_acc_list.append(val_acc)
-        # test_acc_list.append(test_acc)
-        # train_acc_list.append(train_acc)
 
         if not args.filename == "":
             writer.add_scalar('data/train r2', train_r2, epoch)

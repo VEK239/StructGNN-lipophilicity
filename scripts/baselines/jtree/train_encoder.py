@@ -317,7 +317,8 @@ def main():
                         help='embedding dimensions (default: 56)')
     parser.add_argument('--hidden_size', type=float, default=450,
                         help='hidden size of ffn (default: 450)')
-    
+    parser.add_argument('--patience', type=int, default=50,
+                        help='Patience of early stopping (default: 50)')
     parser.add_argument('--raw_path', type=str, default='../../../data/raw/baselines/jtree/',
                         help='path to broken smiles')
     parser.add_argument('--dataset', type=str, default = '../../../data/3_final_data/split_data', help='root directory of dataset. For now, only classification.')
@@ -425,7 +426,7 @@ def main():
     
         
         
-    early_stopping = EarlyStopping(patience=50, verbose=True, path=os.path.join(fname, args.filename + '.pth'))
+    early_stopping = EarlyStopping(patience=args.patience, verbose=True, path=os.path.join(fname, args.filename + '.pth'))
 
     for epoch in range(1, args.epochs+1):
         print("====epoch " + str(epoch))
