@@ -15,10 +15,8 @@ import math, random, sys
 from optparse import OptionParser
 from collections import deque
 
-# from jtnn import *
 import rdkit
 
-# from jtnn_enc import JTNNEncoder
 
 import torch
 import torch.nn as nn
@@ -37,6 +35,8 @@ import os
 import shutil
 
 import json
+
+import pickle
 
 from tensorboardX import SummaryWriter
 
@@ -107,14 +107,11 @@ class JOnlyTreePredict(nn.Module):
 
         self.embedding = nn.Embedding(vocab.size(), hidden_size)
         self.jtnn = JTNNEncoder(vocab, hidden_size, self.embedding)
-#         self.mpn = MPN(hidden_size, depth)
         
         self.output_size = 1
 
         self.T_mean = nn.Linear(hidden_size, latent_size)
         self.T_var = nn.Linear(hidden_size, latent_size)
-#         self.G_mean = nn.Linear(hidden_size, latent_size)
-#         self.G_var = nn.Linear(hidden_size, latent_size)
         
         self.use_stereo = stereo
         if stereo:
@@ -126,19 +123,16 @@ class JOnlyTreePredict(nn.Module):
         tree_mess,tree_vec = self.jtnn(root_batch)
 
         smiles_batch = [mol_tree.smiles for mol_tree in mol_batch]
-#         mol_vec = self.mpn(mol2graph(smiles_batch))
         return tree_mess, tree_vec
 
     def encode_latent_mean(self, smiles_list):
         print(smiles_list)
         mol_batch = [MolTree(s) for s in smiles_list]
-#         print(mol_batch)
         for mol_tree in mol_batch:
             mol_tree.recover()
 
         _, tree_vec, mol_vec = self.encode(mol_batch)
         tree_mean = self.T_mean(tree_vec)
-#         mol_mean = self.G_mean(mol_vec)
         return tree_mean
     
     def create_ffn(self, ffn_num_layers = 3, ffn_hidden_size = 50):
@@ -183,7 +177,6 @@ class JOnlyTreePredict(nn.Module):
         _, tree_vec = self.encode(mol_batch)
         
         tree_mean = self.T_mean(tree_vec)
-#         mol_mean = self.G_mean(mol_vec)
         
         feature_vec =  tree_mean
         
@@ -243,26 +236,18 @@ def train(args, model, device, loader, optimizer):
     model.train()
 
     for step, batch in enumerate(tqdm(loader, desc="Iteration")):
-        # print(torch.is_tensor(batch.edge_index),batch.edge_index.dtype)
         X = []
         y = []
         for elem in batch:
             X.append(elem[0])
             y.append(elem[1])
         y = torch.Tensor(y).to(device)
-        # print(torch.is_tensor(batch.edge_index), batch.edge_index.dtype)
-        # print(torch.is_tensor(batch.edge_index),batch.edge_index.dtype)
+
         pred = model(X)
         y = y.view(pred.shape).to(torch.float64)
 
-        #Whether y is non-null or not.
-        #Loss matrix
         loss = criterion(pred.double(), y)
-        #loss matrix after removing null target
-        # loss_mat = torch.where(is_valid, loss_mat, torch.zeros(loss_mat.shape).to(loss_mat.device).to(loss_mat.dtype))
-        #
         optimizer.zero_grad()
-        # loss = torch.sum(loss_mat)/torch.sum(is_valid)
         loss.backward()
 
         optimizer.step()
@@ -296,11 +281,12 @@ def eval(args, model, device, loader, scaler, train = False):
     r2 = r2_score(y_true, y_scores)
     rmse = mean_squared_error(y_true, y_scores)**0.5
 
-    return r2, rmse #y_true.shape[1]
+    return r2, rmse
 
 
 
 def main():
+    global SMILES_TO_MOLTREE
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch implementation of pre-training of graph neural networks')
     parser.add_argument('--enc_type', type=str, default='Only tree',
@@ -351,6 +337,11 @@ def main():
     vocab = [x.strip("\r\n ") for x in open(args.vocab_path)] 
     vocab = Vocab(vocab)
     
+    if os.path.exists(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle')):
+        with open(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle'), 'rb') as handle:
+            SMILES_TO_MOLTREE = pickle.load(handle)
+        print ('Preprocesed molecules have been loaded')
+    
     batch_size = args.batch_size
     hidden_size = args.hidden_size
     latent_size = args.emb_dim
@@ -364,17 +355,20 @@ def main():
     train_dataset = MoleculeDataset(os.path.join(args.dataset, 'logp_wo_averaging_train.csv'), args)
     test_dataset = MoleculeDataset(os.path.join(args.dataset, 'logp_wo_averaging_test.csv'), args)
     valid_dataset = MoleculeDataset(os.path.join(args.dataset, 'logp_wo_averaging_validation.csv'), args)
+    
+    if not os.path.exists(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle')):
+        with open(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle'), 'wb') as handle:
+              pickle.dump(SMILES_TO_MOLTREE, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     print(train_dataset[0])
     print(len(train_dataset))
     print(len(valid_dataset))
     print(len(test_dataset))
-#     print(train_dataset.data[train_dataset.TARGET_COLUMN])
 
     scaler = StandardScaler()
     scaled_y = torch.tensor(scaler.fit_transform(train_dataset.data[train_dataset.TARGET_COLUMN].values.reshape(-1, 1)).reshape(-1))
     train_dataset.data[train_dataset.TARGET_COLUMN] = scaled_y
-#     print(train_dataset.data[train_dataset.TARGET_COLUMN])
+
 
 
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=lambda x: x, num_workers=args.num_workers, drop_last=True)
@@ -396,30 +390,18 @@ def main():
         model_VAE = JTNNVAE(vocab, hidden_size, latent_size*2, depth, stereo=stereo)
         model_VAE.load_state_dict(torch.load(os.path.join(args.input_model_file,args.model_name)))
         model.jtnn = model_VAE.jtnn
-#         model.mpn = model_VAE.mpn
         model.embedding = model_VAE.embedding
         model.T_mean = model_VAE.T_mean
         model.T_var = model_VAE.T_var
-#         model.G_mean = model_VAE.G_mean
-#         model.G_var = model_VAE.G_var
+
 
     model.to(device)
 
-    #set up optimizer
-    #different learning rate for different part of GNN
-#     model_param_group = []
-#     model_param_group.append({"params": model.gnn.parameters()})
 
             
     optimizer = optim.Adam(model.parameters(), lr=lr)
     scheduler = lr_scheduler.ExponentialLR(optimizer, 0.9)
     scheduler.step()
-#     optimizer = optim.Adam(model_param_group, lr=args.lr, weight_decay=args.decay)
-#     print(optimizer)
-
-#     train_acc_list = []
-#     val_acc_list = []
-#     test_acc_list = []
 
 
 
