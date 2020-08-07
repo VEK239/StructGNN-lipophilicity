@@ -8,7 +8,7 @@ sys.path.append('../../../../../icml18-jtnn')
 sys.path.append('../../../../../icml18-jtnn/jtnn')
 
 import torch.optim.lr_scheduler as lr_scheduler
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset
 from torch.autograd import Variable
 
 import math, random, sys
@@ -74,7 +74,7 @@ class MoleculeDataset(Dataset):
             if option in data_file:
                 broken_smiles  = [x.strip("\r\n ") for x in open(os.path.join(args.raw_path,option+'_errs.txt'))] 
                 
-        self.data = self.data[~self.data[SMILES_COLUMN].isin(broken_smiles)]
+        self.data = self.data[~self.data[SMILES_COLUMN].isin(broken_smiles)][:10]
         self.SMILES_COLUMN = SMILES_COLUMN
         self.TARGET_COLUMN = TARGET_COLUMN
         
@@ -257,30 +257,38 @@ class CrossValScores:
             path (str): Path for the checkpoint to be saved to.
                             Default: 'checkpoint.pt'
         """
-        self.best_score = None
+        self.fold_scores = {}
         self.path = path
-        self.best_fold = 0
 
-    def __call__(self, val_loss, model, fold = 0):
+    def __call__(self, test_rmse, test_r2, val_rmse, val_r2, train_rmse, train_r2, model, fold = 0):
 
-        score = -val_loss
-
-        if self.best_score is None:
-            self.best_score = score
-            self.save_checkpoint(val_loss, model)
+        self.fold_scores[fold] = {}
+        self.fold_scores[fold]['test_rmse'] = test_rmse
+        self.fold_scores[fold]['test_r2'] = test_r2
+        self.fold_scores[fold]['val_rmse'] = val_rmse
+        self.fold_scores[fold]['val_r2'] = val_r2
+        self.fold_scores[fold]['train_rmse'] = train_rmse
+        self.fold_scores[fold]['train_r2'] = train_r2
+        self.fold_scores[fold]['model'] = model
+            
+    def save_log_info(self):
+        import numpy as np
         
-          
-        elif score > self.best_score:
-            self.best_score = score
-            self.save_checkpoint(val_loss, model)
-            self.best_fold = fold
-            
-            
-    def save_checkpoint(self, val_loss, model):
-        '''Saves model when validation loss decrease.'''
-        if self.verbose:
-            print 'Validation loss decreased', round(self.val_loss_min,6),' -->', round(val_loss,6), '.  Saving model ...'
-        torch.save(model.state_dict(), self.path)
+        test_rmse = [self.fold_scores[fold]['test_rmse'] for fold in self.fold_scores.keys()]
+        test_r2 = [self.fold_scores[fold]['test_r2'] for fold in self.fold_scores.keys()]
+        val_rmse = [self.fold_scores[fold]['val_rmse'] for fold in self.fold_scores.keys()]
+        val_r2 = [self.fold_scores[fold]['val_r2'] for fold in self.fold_scores.keys()]
+        train_rmse = [self.fold_scores[fold]['train_rmse'] for fold in self.fold_scores.keys()]
+        train_r2 = [self.fold_scores[fold]['train_r2'] for fold in self.fold_scores.keys()]
+
+        
+        with open(os.path.join(self.path, 'logs.txt'), 'w') as f:
+           f.write('Test RMSE is '+str(np.mean(test_rmse))+'+-'+str(np.std(test_rmse))+'\n')
+           f.write('Test R2 is '+str(np.mean(test_r2))+'+-'+str(np.std(test_r2))+'\n')
+           f.write('Val RMSE is '+str(np.mean(val_rmse))+'+-'+str(np.std(val_rmse))+'\n')
+           f.write('Val R2 is '+str(np.mean(val_r2))+'+-'+str(np.std(val_r2))+'\n')
+           f.write('Train RMSE is '+str(np.mean(train_rmse))+'+-'+str(np.std(train_rmse))+'\n')
+           f.write('Train R2 is '+str(np.mean(train_r2))+'+-'+str(np.std(train_r2))+'\n')
 
 def train(args, model, device, loader, optimizer):
     model.train()
@@ -419,13 +427,14 @@ def main():
     
     kf = KFold(n_splits=args.folds_num)
     num_of_fold = 0
-    cv_scores = CrossValScores(os.path.join(args.log_path, args.filename,'best_model.pt'))
+    cv_scores = CrossValScores(os.path.join(args.log_path, args.filename))
     for train_index, val_index in kf.split(train_val_dataset):
-        train_dataset, valid_dataset = train_val_dataset[train_index], train_val_dataset[val_index]
+        train_dataset, valid_dataset = Subset(train_val_dataset, train_index), Subset(train_val_dataset, val_index)
     
         scaler = StandardScaler()
-        scaled_y = torch.tensor(scaler.fit_transform(train_dataset.data[train_dataset.TARGET_COLUMN].values.reshape(-1, 1)).reshape(-1))
-        train_dataset.data[train_dataset.TARGET_COLUMN] = scaled_y
+        scaled_y = torch.tensor(scaler.fit_transform(train_dataset.dataset.data.iloc[train_index][train_dataset.dataset.TARGET_COLUMN].values.reshape(-1, 1)).reshape(-1))
+        true_y = train_dataset.dataset.data.iloc[train_index][train_dataset.dataset.TARGET_COLUMN].values
+        train_dataset.dataset.data.loc[train_index][train_dataset.dataset.TARGET_COLUMN] = scaled_y
 
 
 
@@ -532,8 +541,10 @@ def main():
                 f.write('Val R2 is '+str(val_r2)+'\n')
                 f.write('Train RMSE is '+str(train_rmse)+'\n')
                 f.write('Train R2 is '+str(train_r2)+'\n')
-            cv_scores(val_rmse, model, num_of_fold)    
+        cv_scores(test_rmse, test_r2, val_rmse, val_r2, train_rmse, train_r2, model, num_of_fold)
+        train_dataset.dataset.data.loc[train_index][train_dataset.dataset.TARGET_COLUMN] = true_y
             
         num_of_fold+=1
+    cv_scores.save_log_info()
 if __name__ == "__main__":
     main()
