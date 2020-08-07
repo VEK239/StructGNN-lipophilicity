@@ -74,7 +74,7 @@ class MoleculeDataset(Dataset):
             if option in data_file:
                 broken_smiles  = [x.strip("\r\n ") for x in open(os.path.join(args.raw_path,option+'_errs.txt'))] 
                 
-        self.data = self.data[~self.data[SMILES_COLUMN].isin(broken_smiles)][:10]
+        self.data = self.data[~self.data[SMILES_COLUMN].isin(broken_smiles)]
         self.SMILES_COLUMN = SMILES_COLUMN
         self.TARGET_COLUMN = TARGET_COLUMN
         
