@@ -70,9 +70,10 @@ class MoleculeDataset(Dataset):
         self.data = pd.read_csv(data_file)
         data_options = ['train','val','test']
         
+        broken_smiles = []
         for option in data_options:
             if option in data_file:
-                broken_smiles  = [x.strip("\r\n ") for x in open(os.path.join(args.raw_path,option+'_errs.txt'))] 
+                broken_smiles  = broken_smiles + [x.strip("\r\n ") for x in open(os.path.join(args.raw_path,option+'_errs.txt'))] 
                 
         self.data = self.data[~self.data[SMILES_COLUMN].isin(broken_smiles)]
         self.SMILES_COLUMN = SMILES_COLUMN
