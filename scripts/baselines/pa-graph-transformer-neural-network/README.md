@@ -19,3 +19,7 @@ We’ve also changed train_utils.py to add R2-score calculation.
 ### Experiments directory
 
 A small notebook demonstrating train/valid RMSE for best model’s predictions.
+
+### Symmetry features were added
+
+Adding two atomic and one path feature improved symmetric molecules prediction a little bit.

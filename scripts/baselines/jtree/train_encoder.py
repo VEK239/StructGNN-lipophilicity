@@ -37,6 +37,7 @@ import os
 import shutil
 
 import json
+import pickle
 
 from tensorboardX import SummaryWriter
 
@@ -243,26 +244,20 @@ def train(args, model, device, loader, optimizer):
     model.train()
 
     for step, batch in enumerate(tqdm(loader, desc="Iteration")):
-        # print(torch.is_tensor(batch.edge_index),batch.edge_index.dtype)
         X = []
         y = []
         for elem in batch:
             X.append(elem[0])
             y.append(elem[1])
         y = torch.Tensor(y).to(device)
-        # print(torch.is_tensor(batch.edge_index), batch.edge_index.dtype)
-        # print(torch.is_tensor(batch.edge_index),batch.edge_index.dtype)
         pred = model(X)
         y = y.view(pred.shape).to(torch.float64)
 
-        #Whether y is non-null or not.
-        #Loss matrix
+
         loss = criterion(pred.double(), y)
-        #loss matrix after removing null target
-        # loss_mat = torch.where(is_valid, loss_mat, torch.zeros(loss_mat.shape).to(loss_mat.device).to(loss_mat.dtype))
-        #
+
         optimizer.zero_grad()
-        # loss = torch.sum(loss_mat)/torch.sum(is_valid)
+
         loss.backward()
 
         optimizer.step()
@@ -296,11 +291,13 @@ def eval(args, model, device, loader, scaler, train = False):
     r2 = r2_score(y_true, y_scores)
     rmse = mean_squared_error(y_true, y_scores)**0.5
 
-    return r2, rmse #y_true.shape[1]
+    return r2, rmse
 
 
 
 def main():
+    global SMILES_TO_MOLTREE
+    
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch implementation of pre-training of graph neural networks')
     parser.add_argument('--device', type=int, default=0,
@@ -320,7 +317,8 @@ def main():
                         help='embedding dimensions (default: 56)')
     parser.add_argument('--hidden_size', type=float, default=450,
                         help='hidden size of ffn (default: 450)')
-    
+    parser.add_argument('--patience', type=int, default=50,
+                        help='Patience of early stopping (default: 50)')
     parser.add_argument('--raw_path', type=str, default='../../../data/raw/baselines/jtree/',
                         help='path to broken smiles')
     parser.add_argument('--dataset', type=str, default = '../../../data/3_final_data/split_data', help='root directory of dataset. For now, only classification.')
@@ -346,6 +344,11 @@ def main():
     vocab = [x.strip("\r\n ") for x in open(args.vocab_path)] 
     vocab = Vocab(vocab)
     
+    if os.path.exists(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle')):
+        with open(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle'), 'rb') as handle:
+            SMILES_TO_MOLTREE = pickle.load(handle)
+        print ('Preprocesed molecules have been loaded')
+
     batch_size = args.batch_size
     hidden_size = args.hidden_size
     latent_size = args.emb_dim
@@ -359,17 +362,19 @@ def main():
     train_dataset = MoleculeDataset(os.path.join(args.dataset, 'logp_wo_averaging_train.csv'), args)
     test_dataset = MoleculeDataset(os.path.join(args.dataset, 'logp_wo_averaging_test.csv'), args)
     valid_dataset = MoleculeDataset(os.path.join(args.dataset, 'logp_wo_averaging_validation.csv'), args)
+    
+    if not os.path.exists(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle')):
+        with open(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle'), 'wb') as handle:
+              pickle.dump(SMILES_TO_MOLTREE, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    print(train_dataset[0])
     print(len(train_dataset))
     print(len(valid_dataset))
     print(len(test_dataset))
-#     print(train_dataset.data[train_dataset.TARGET_COLUMN])
 
     scaler = StandardScaler()
     scaled_y = torch.tensor(scaler.fit_transform(train_dataset.data[train_dataset.TARGET_COLUMN].values.reshape(-1, 1)).reshape(-1))
     train_dataset.data[train_dataset.TARGET_COLUMN] = scaled_y
-#     print(train_dataset.data[train_dataset.TARGET_COLUMN])
+
 
 
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=lambda x: x, num_workers=args.num_workers, drop_last=True)
@@ -397,27 +402,13 @@ def main():
         model.T_var = model_VAE.T_var
         model.G_mean = model_VAE.G_mean
         model.G_var = model_VAE.G_var
-
+        
     model.to(device)
-
-    #set up optimizer
-    #different learning rate for different part of GNN
-#     model_param_group = []
-#     model_param_group.append({"params": model.gnn.parameters()})
 
             
     optimizer = optim.Adam(model.parameters(), lr=lr)
     scheduler = lr_scheduler.ExponentialLR(optimizer, 0.9)
     scheduler.step()
-#     optimizer = optim.Adam(model_param_group, lr=args.lr, weight_decay=args.decay)
-#     print(optimizer)
-
-#     train_acc_list = []
-#     val_acc_list = []
-#     test_acc_list = []
-
-
-
 
     if not args.filename == "":
 
@@ -431,8 +422,11 @@ def main():
         writer = SummaryWriter(fname)
         with open(os.path.join(fname, 'parameters.json'), 'w') as f:
             json.dump(vars(args), f)
-
-    early_stopping = EarlyStopping(patience=50, verbose=True, path=os.path.join(fname, args.filename + '.pth'))
+        
+    
+        
+        
+    early_stopping = EarlyStopping(patience=args.patience, verbose=True, path=os.path.join(fname, args.filename + '.pth'))
 
     for epoch in range(1, args.epochs+1):
         print("====epoch " + str(epoch))
