@@ -20,7 +20,7 @@ STRUCT_TO_NUM = {
     'ACID': 2,
     'AMIN': 3,
     'ESTER': 4,
-    'SULFONEAMID': 5
+    'SULFONAMID': 5
 }
 
 
@@ -69,18 +69,6 @@ def get_acids_for_molecule(mol):
     return [list(acid) for acid in acids]
 
 
-def get_amins_for_molecule(mol):
-    """
-    Finds all amino parts in a given RDKit mol
-    :param mol: The given RDKit molecule
-    :return: A list of amino parts in a mol
-    """
-    amin_pattern = Chem.MolFromSmarts('[NX3;H2,H1;!$(NC=O)]')
-    amins = mol.GetSubstructMatches(amin_pattern)
-    amins = [list(amin) for amin in amins]
-    return [[amin[0] if mol.GetAtomWithIdx(amin[0]).GetSymbol() == 'N' else amin[1]] for amin in amins]
-
-
 def get_esters_for_molecule(mol):
     """
     Finds all ester parts in a given RDKit mol
@@ -103,24 +91,42 @@ def get_esters_for_molecule(mol):
     return ester_atoms
 
 
-def get_sulfoneamids_for_molecule(mol):
+def get_amins_for_molecule(mol):
     """
-    Finds all sulfoneamid parts in a given RDKit mol
+    Finds all amino parts in a given RDKit mol
     :param mol: The given RDKit molecule
-    :return: A list of sulfoneamid parts in a mol
+    :return: A list of amino parts in a mol
+    """
+    sulfonamids = get_sulfonamids_for_molecule(mol)
+    sulfonamid_atoms = []
+    for sulfo in sulfonamids:
+        for atom in sulfo:
+            sulfonamid_atoms.append(atom)
+    amin_pattern = Chem.MolFromSmarts('[NX3;H2,H1;!$(NC=O)]')
+    amins = mol.GetSubstructMatches(amin_pattern)
+    amins = [list(amin) for amin in amins]
+    amins = [[amin[0] if mol.GetAtomWithIdx(amin[0]).GetSymbol() == 'N' else amin[1]] for amin in amins]
+    return [amin for amin in amins if amin[0] not in sulfonamid_atoms]
+
+
+def get_sulfonamids_for_molecule(mol):
+    """
+    Finds all sulfonamid parts in a given RDKit mol
+    :param mol: The given RDKit molecule
+    :return: A list of sulfonamid parts in a mol
     """
     sulphoneamid_pattern = Chem.MolFromSmarts(
         '[$([#16X4]([NX3])(=[OX1])(=[OX1])[#6]),$([#16X4+2]([NX3])([OX1-])([OX1-])[#6])]')
-    sulfoneamids = mol.GetSubstructMatches(sulphoneamid_pattern)
-    sulfoneamid_atoms = []
-    for sulfoneamid in sulfoneamids:
-        sulfoneamid = list(sulfoneamid)
-        atoms = [sulfoneamid[0]]
+    sulfonamids = mol.GetSubstructMatches(sulphoneamid_pattern)
+    sulfonamid_atoms = []
+    for sulfonamid in sulfonamids:
+        sulfonamid = list(sulfonamid)
+        atoms = [sulfonamid[0]]
         for neighbor in mol.GetAtomWithIdx(atoms[0]).GetNeighbors():
             if neighbor.GetSymbol() != 'C':
                 atoms.append(neighbor.GetIdx())
-        sulfoneamid_atoms.append(atoms)
-    return sulfoneamid_atoms
+        sulfonamid_atoms.append(atoms)
+    return sulfonamid_atoms
 
 
 def structure_encoding(atoms):
@@ -191,10 +197,11 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
 
 
 class Atom:
-    def __init__(self, idx, atom_representation, symbol=''):
+    def __init__(self, idx, atom_representation, atom_type, symbol=''):
         self.symbol = symbol
         self.idx = idx
         self.atom_representation = atom_representation
+        self.atom_type = atom_type
         self.bonds = []
 
     def add_bond(self, bond):
@@ -253,12 +260,12 @@ def create_molecule_for_smiles(smiles, args):
         acids = get_acids_for_molecule(mol)
         esters = get_esters_for_molecule(mol)
         amins = get_amins_for_molecule(mol)
-        sulfoneamids = get_sulfoneamids_for_molecule(mol)
+        sulfonamids = get_sulfonamids_for_molecule(mol)
     else:
         acids = []
         esters = []
         amins = []
-        sulfoneamids = []
+        sulfonamids = []
 
     used_atoms = set()
     mol_bonds = []
@@ -266,13 +273,13 @@ def create_molecule_for_smiles(smiles, args):
     idx_to_atom = defaultdict(set)
 
     for structure_type in [[rings, 'RING'], [acids, 'ACID'], [esters, 'ESTER'], [amins, 'AMIN'],
-                           [sulfoneamids, 'SULFONEAMID']]:
+                           [sulfonamids, 'SULFONAMID']]:
         substructure_type_string = structure_type[1]
         substructures = structure_type[0]
         for substruct in substructures:
             mapping = generate_substructure_sum_vector_mapping(substruct, mol, substructure_type_string, args)
             substruct_atom = Atom(idx=(min(*substruct) if len(substruct) > 1 else substruct[0]),
-                                  atom_representation=mapping)
+                                  atom_representation=mapping, atom_type=substructure_type_string)
             mol_atoms.append(substruct_atom)
             for idx in substruct:
                 idx_to_atom[idx].add(substruct_atom)
@@ -282,7 +289,7 @@ def create_molecule_for_smiles(smiles, args):
         atom_idx = atom.GetIdx()
         if atom_idx not in used_atoms:
             atom_repr = generate_substructure_sum_vector_mapping([atom_idx], mol, 'ATOM', args)
-            custom_atom = Atom(idx=atom_idx, atom_representation=atom_repr, symbol=atom.GetSymbol())
+            custom_atom = Atom(idx=atom_idx, atom_representation=atom_repr, symbol=atom.GetSymbol(), atom_type='ATOM')
             mol_atoms.append(custom_atom)
             idx_to_atom[atom_idx].add(custom_atom)
 

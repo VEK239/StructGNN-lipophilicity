@@ -15,15 +15,18 @@ THREE_D_DISTANCE_BINS = list(range(0, THREE_D_DISTANCE_MAX + 1, THREE_D_DISTANCE
 BOND_FDIM = 14
 
 
-def get_atom_fdim_with_substructures(use_substructures=False) -> int:
+def get_atom_fdim_with_substructures(use_substructures=False, merge_cycles=False) -> int:
     """Gets the dimensionality of the atom feature vector."""
-    # atom_fdim = 160
-    # if use_substructures:
-    #     atom_fdim += 5
-    return 165 if use_substructures else 160
+    atom_fdim = 160
+    if use_substructures:
+        atom_fdim += 5
+    if merge_cycles:
+        atom_fdim += 5
+    return atom_fdim
 
 
-def get_bond_fdim_with_substructures(atom_messages: bool = False, use_substructures=False) -> int:
+def get_bond_fdim_with_substructures(atom_messages: bool = False, use_substructures: bool = False,
+                                     merge_cycles: bool = False) -> int:
     """
     Gets the dimensionality of the bond feature vector.
 
@@ -32,7 +35,7 @@ def get_bond_fdim_with_substructures(atom_messages: bool = False, use_substructu
                           Otherwise it contains both atom and bond features.
     :return: The dimensionality of the bond feature vector.
     """
-    return BOND_FDIM + (not atom_messages) * get_atom_fdim_with_substructures(use_substructures)
+    return BOND_FDIM + (not atom_messages) * get_atom_fdim_with_substructures(use_substructures, merge_cycles)
 
 
 def atom_features_for_substructures(atom) -> List[Union[bool, int, float]]:
@@ -149,8 +152,10 @@ class BatchMolGraphWithSubstructures:
         r"""
         :param mol_graphs: A list of :class:`MolGraph`\ s from which to construct the :class:`BatchMolGraph`.
         """
-        self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.no_rings_use_substructures)
-        self.bond_fdim = get_bond_fdim_with_substructures(use_substructures=args.no_rings_use_substructures)
+        self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.no_rings_use_substructures,
+                                                          merge_cycles=args.no_rings_merge)
+        self.bond_fdim = get_bond_fdim_with_substructures(use_substructures=args.no_rings_use_substructures,
+                                                          merge_cycles=args.no_rings_merge)
 
         # Start n_atoms and n_bonds at 1 b/c zero padding
         self.n_atoms = 1  # number of atoms (start at 1 b/c need index 0 as padding)
@@ -192,8 +197,8 @@ class BatchMolGraphWithSubstructures:
         self.a2a = None  # only needed if using atom messages
 
     def get_components(self, args) -> Tuple[torch.FloatTensor, torch.FloatTensor,
-                                                       torch.LongTensor, torch.LongTensor, torch.LongTensor,
-                                                       List[Tuple[int, int]], List[Tuple[int, int]]]:
+                                            torch.LongTensor, torch.LongTensor, torch.LongTensor,
+                                            List[Tuple[int, int]], List[Tuple[int, int]]]:
         """
         Returns the components of the :class:`BatchMolGraph`.
 
