@@ -1,15 +1,48 @@
 import itertools
 import json
+from collections import defaultdict
 from functools import reduce
 
 import pandas as pd
 from rdkit import Chem
+from rdkit.Chem import Descriptors
 
 
 def get_cycles_for_molecule(mol):
     all_cycles = Chem.GetSymmSSSR(mol)
-    all_cycles = [list(ring) for ring in all_cycles]
+    all_cycles = [set(ring) for ring in all_cycles]
+    atom_to_ring = defaultdict(set)
+    for cycle_idx, cycle in enumerate(all_cycles):
+        for atom in cycle:
+            atom_to_ring[atom].add(cycle_idx)
+    rings_to_merge = [1]
+    while rings_to_merge:
+        rings_to_merge = None
+        for atom, atom_cycles in atom_to_ring.items():
+            if len(atom_cycles) > 1:
+                rings_to_merge = atom_cycles.copy()
+        if rings_to_merge:
+            ring_new_idx = min(rings_to_merge)
+            for ring_idx in rings_to_merge:
+                for atom in all_cycles[ring_idx]:
+                    all_cycles[ring_new_idx].add(atom)
+                    atom_to_ring[atom].remove(ring_idx)
+                    atom_to_ring[atom].add(ring_new_idx)
+            for ring_idx in rings_to_merge:
+                if ring_idx != ring_new_idx:
+                    all_cycles[ring_idx] = []
+    all_cycles = [list(cycle) for cycle in all_cycles if len(cycle) > 2]
     return all_cycles
+
+
+def generate_submol(ring, mol):
+    bonds = set()
+    for atom_idx_1 in ring:
+        for atom_idx_2 in ring:
+            bond = mol.GetBondBetweenAtoms(atom_idx_1, atom_idx_2)
+            if bond:
+                bonds.add(bond.GetIdx())
+    return Chem.PathToSubmol(mol, list(bonds))
 
 
 class RingsDictionaryHolder:
@@ -81,22 +114,9 @@ class RingsDictionaryHolder:
                         self.rings_dict[ring_string] = self.generate_ring_sum_vector_mapping(ring, mol)
 
     def generate_ring_symbol(self, ring, mol):
-        bonds = [self.BT_MAPPING_CHAR[mol.GetBondBetweenAtoms(ring[i], ring[(i + 1) % len(ring)]).GetBondType()] for i
-                 in range(len(ring))]
-        atoms = [mol.GetAtomWithIdx(i).GetSymbol() for i in ring]
-        found_in_dict = None
-
-        assert len(atoms) > 2
-        for i in range(len(atoms)):
-            cur_atoms = atoms[i:] + atoms[:i]
-            cur_bonds = bonds[i:] + bonds[:i]
-            elements = [cur_atoms, cur_bonds]
-            ring_tuple = (i for i in itertools.chain.from_iterable(elements))
-            ring_string = ''.join(ring_tuple)
-            if ring_string in self.rings_dict.keys():
-                found_in_dict = self.rings_dict[ring_string]
-                break
-        return ring_string, found_in_dict
+        submol = generate_submol(ring, mol)
+        ring_symbol = Chem.MolToSmiles(submol)
+        return ring_symbol, ring_symbol in self.rings_dict
 
     def create_hash_for_ring(self, ring, mol):
         bonds = [self.BT_MAPPING_INT[mol.GetBondBetweenAtoms(ring[i], ring[(i + 1) % len(ring)]).GetBondType()] for i in
@@ -133,7 +153,7 @@ class RingsDictionaryHolder:
         return enc
 
     def hydrogens_count_encoding(self, value):
-        enc = [0 for _ in range(60)]
+        enc = [0 for _ in range(65)]
         enc[int(value)] = 1
         return enc
 
@@ -143,28 +163,36 @@ class RingsDictionaryHolder:
         return enc
 
     def generate_ring_sum_vector_mapping(self, ring, mol):
+        submol = generate_submol(ring, mol)
         atoms = [mol.GetAtomWithIdx(i) for i in ring]
-        # ring_atomic_charge = sum(atom.GetAtomicNum() for atom in atoms)
+
         ring_atomic_encoding = self.structure_encoding(atoms)
-        # ring_atomic_encoding = self.generate_ring_one_hot_class_mapping(ring, mol, True)
-        # print(ring_atomic_encoding)
-        # ring_atomic_encoding = self.create_one_hot_for_ring(ring_atomic_encoding)
-        ring_valence = sum(atom.GetExplicitValence() for atom in atoms) - 2 * sum(
-            [self.BT_MAPPING_INT[mol.GetBondBetweenAtoms(ring[i], ring[(i + 1) % len(ring)]).GetBondType()] for i in
-             range(len(ring))])
-        # print(ring_valence)
+
+        implicit_ring_valence = 0
+        for i in range(len(atoms)):
+            for j in range(i, len(atoms)):
+                bond = mol.GetBondBetweenAtoms(ring[i], ring[j])
+                if bond:
+                    implicit_ring_valence += self.BT_MAPPING_INT[
+                        mol.GetBondBetweenAtoms(ring[i], ring[j]).GetBondType()]
+        ring_valence = sum(atom.GetExplicitValence() for atom in atoms) - 2 * implicit_ring_valence
         ring_valence_array = self.get_valence(ring_valence)
+
         ring_formal_charge = sum(atom.GetFormalCharge() for atom in atoms)
+
         ring_num_Hs = sum(atom.GetTotalNumHs() for atom in atoms)
+        print(ring_num_Hs)
         ring_Hs_array = self.hydrogens_count_encoding(ring_num_Hs)
-        arom = [mol.GetBondBetweenAtoms(ring[i - 1], ring[i]).GetIsAromatic() for i
-                in range(len(ring))]
-        ring_is_aromatic = int(reduce(lambda x, y: x or y, arom))
-        ring_mass = sum(atom.GetMass() for atom in atoms)
-        ring_edges_sum = sum([self.BT_MAPPING_INT[mol.GetBondBetweenAtoms(ring[i], ring[(i + 1) % len(ring)]).GetBondType()] for i in
-             range(len(ring))])
-        features = ring_atomic_encoding + ring_valence_array + ring_Hs_array + [ring_formal_charge, ring_is_aromatic,
-                                                                                ring_mass * 0.01, 1, ring_edges_sum * 0.1]
+
+        # arom = submol.GetIsAromatic()
+        ring_is_aromatic = 1 if len(submol.GetAromaticAtoms()) > 0 else 0
+
+        ring_mass = Descriptors.ExactMolWt(submol)
+
+        ring_edges_sum = implicit_ring_valence
+
+        features = ring_atomic_encoding + ring_valence_array + ring_Hs_array + \
+                   [ring_formal_charge, ring_is_aromatic, ring_mass * 0.01, 1, ring_edges_sum * 0.1]
         return tuple(features)
 
 
@@ -185,3 +213,9 @@ if __name__ == "__main__":
     rings_dictionary_holder = RingsDictionaryHolder('rings_logp_features.json', 'sum-vector')
     rings_dictionary_holder.generate_ring_mapping(data)
     rings_dictionary_holder.save_rings_to_json()
+    # mol = Chem.MolFromSmiles('C1OC1C1CO1')
+    # print(mol.GetNumAtoms())
+    # cycles = get_cycles_for_molecule(mol)
+    # print(cycles)
+    # for cycle in cycles:
+    #     print(rings_dictionary_holder.generate_ring_symbol(cycle, mol))

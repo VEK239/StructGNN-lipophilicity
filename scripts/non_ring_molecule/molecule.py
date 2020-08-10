@@ -1,6 +1,9 @@
+from collections import defaultdict
+
 from rdkit import Chem
 import pandas as pd
 from ring_dictionary_creating import RingsDictionaryHolder, get_cycles_for_molecule
+from tqdm import tqdm
 
 
 class Atom:
@@ -19,21 +22,22 @@ class Atom:
 
 
 class Bond:
-    def __init__(self, rdkit_atom, idx, out_atom_idx, in_atom_idx, bond_type):
-        self.rdkit_atom = rdkit_atom
+    def __init__(self, rdkit_bond, idx, out_atom_idx, in_atom_idx, bond_type):
+        self.rdkit_bond = rdkit_bond
         self.idx = idx
         self.out_atom_idx = out_atom_idx
         self.in_atom_idx = in_atom_idx
         self.bond_type = bond_type
 
-    def get_rdkit_atom(self):
-        return self.rdkit_atom
+    def get_rdkit_bond(self):
+        return self.rdkit_bond
 
 
 class Molecule:
-    def __init__(self, atoms, bonds):
+    def __init__(self, atoms, bonds, rdkit_mol):
         self.atoms = atoms
         self.bonds = bonds
+        self.rdkit_mol = rdkit_mol
 
     def get_bond(self, atom_1, atom_2):
         # If bond does not exist between atom_1 and atom_2, return None
@@ -81,8 +85,9 @@ def create_molecule_for_smiles(rings_dictionary_holder, smiles, representation_t
                     atom_repr[atom.GetAtomicNum()] = 1
                 elif representation_type == 'sum-vector':
                     atom_repr = tuple(
-                        [atom.GetAtomicNum(), atom.GetExplicitValence(), atom.GetFormalCharge(), atom.GetTotalNumHs(),
-                         int(atom.GetIsAromatic()), atom.GetMass()])
+                        rings_dictionary_holder.structure_encoding([atom]) + rings_dictionary_holder.get_valence(
+                            atom.GetExplicitValence()) + rings_dictionary_holder.hydrogens_count_encoding(atom.GetTotalNumHs()) + [atom.GetFormalCharge(),
+                                                          int(atom.GetIsAromatic()), atom.GetMass() * 0.01, 0, 0])
 
                 custom_atom = Atom(idx=atom_idx, atom_representation=atom_repr, symbol=atom.GetSymbol())
                 mol_atoms.append(custom_atom)
@@ -105,25 +110,27 @@ def create_molecule_for_smiles(rings_dictionary_holder, smiles, representation_t
             start_atom.add_bond(custom_bond)
             end_atom.add_bond(custom_bond)
 
-    custom_mol = Molecule(mol_atoms, mol_bonds)
+    custom_mol = Molecule(mol_atoms, mol_bonds, mol)
     return custom_mol
 
 
 def create_custom_mols_for_data(data, representation_type, rings_data_file):
     custom_mols = []
-    for smi in data.smiles:
+    smiles = list(data.smiles)
+    for i in tqdm(range(len(smiles))):
+        smi = smiles[i]
         assert representation_type in ['mass', 'one-hot', 'one-hot-aromatic', 'sum-vector']
         rings_dictionary_holder = RingsDictionaryHolder(rings_data_file, representation_type)
         rings_dictionary_holder.read_json_rings_dict()
         custom_mols.append(create_molecule_for_smiles(rings_dictionary_holder, smi, representation_type))
-
+    return custom_mols
 
 if __name__ == "__main__":
     representation_type = 'sum-vector'
-    rings_data_file = 'rings_zinc_features.json'
+    rings_data_file = 'rings_logp_features.json'
+    data = pd.read_csv('../../data/3_final_data/logP.csv')
     assert representation_type in ['mass', 'one-hot', 'one-hot-aromatic', 'sum-vector']
-    rings_dictionary_holder = RingsDictionaryHolder(rings_data_file, representation_type)
-    rings_dictionary_holder.read_json_rings_dict()
-    custom_mol = create_molecule_for_smiles(rings_dictionary_holder, 'C1COC2C(O1)OCCO2', representation_type)
-    print(custom_mol.get_num_atoms())
-    custom_mol.prnt()
+    mols = create_custom_mols_for_data(data, representation_type, rings_data_file)
+    atoms_count = pd.DataFrame({'custom_count': [mol.get_num_atoms() for mol in mols], 'rdkit_count':
+        [mol.rdkit_mol.GetNumAtoms() for mol in mols]})
+    atoms_count.to_csv('atoms_count.csv')
