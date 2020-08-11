@@ -143,10 +143,11 @@ try:
         :param mol: A molecule (i.e., either a SMILES or an RDKit molecule).
         :return: A 1D numpy array containing the RDKit 2D normalized features.
         """
+        feature_names = rdDescriptors.RDKIT_PROPS["1.0.0"].copy()
+        feature_names = feature_names.remove("MolLogP")
         smiles = Chem.MolToSmiles(mol, isomericSmiles=True) if type(mol) != str else mol
-        generator = rdNormalizedDescriptors.RDKit2DNormalized()
+        generator = rdNormalizedDescriptors.RDKit2DNormalized(feature_names)
         features = generator.process(smiles)[1:]
-        features = features[:47] + features[48:]
 
         return features
 

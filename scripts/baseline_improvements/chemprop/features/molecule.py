@@ -224,17 +224,24 @@ class Bond:
 
 
 class Molecule:
-    def __init__(self, atoms, bonds, rdkit_mol):
+    def __init__(self, atoms, bonds, rdkit_mol, custom_atom_idx_to_usual_idx):
         self.atoms = atoms
         self.bonds = bonds
         self.rdkit_mol = rdkit_mol
+        self.custom_atom_idx_to_usual_idx = custom_atom_idx_to_usual_idx
 
-    def get_bond(self, atom_1, atom_2):
+    def get_bond(self, atom_1_idx, atom_2_idx):
         # If bond does not exist between atom_1 and atom_2, return None
-        for bond in self.atoms[atom_1].bonds:
-            if atom_2 == bond.out_atom_idx or atom_2 == bond.in_atom_idx:
+        for bond in self.atoms[atom_1_idx].bonds:
+            if atom_2_idx == bond.out_atom_idx or atom_2_idx == bond.in_atom_idx:
                 return bond
         return None
+
+    def get_real_indices_for_atom(self, atom_idx):
+        return self.custom_atom_idx_to_usual_idx[atom_idx]
+
+    def get_rdkit_mol(self):
+        return self.rdkit_mol
 
     def get_atoms(self):
         return self.atoms
@@ -271,6 +278,8 @@ def create_molecule_for_smiles(smiles, args):
     mol_bonds = []
     mol_atoms = []
     idx_to_atom = defaultdict(set)
+    custom_atom_idx_to_idx = defaultdict(set)
+    min_not_used_idx = 0
 
     for structure_type in [[rings, 'RING'], [acids, 'ACID'], [esters, 'ESTER'], [amins, 'AMIN'],
                            [sulfonamids, 'SULFONAMID']]:
@@ -278,31 +287,35 @@ def create_molecule_for_smiles(smiles, args):
         substructures = structure_type[0]
         for substruct in substructures:
             mapping = generate_substructure_sum_vector_mapping(substruct, mol, substructure_type_string, args)
-            substruct_atom = Atom(idx=(min(*substruct) if len(substruct) > 1 else substruct[0]),
+            substruct_atom = Atom(idx=min_not_used_idx,
                                   atom_representation=mapping, atom_type=substructure_type_string)
+            min_not_used_idx += 1
             mol_atoms.append(substruct_atom)
             for idx in substruct:
                 idx_to_atom[idx].add(substruct_atom)
                 used_atoms.add(idx)
+                custom_atom_idx_to_idx[min_not_used_idx - 1].add(idx)
 
     for atom in mol.GetAtoms():
         atom_idx = atom.GetIdx()
         if atom_idx not in used_atoms:
             atom_repr = generate_substructure_sum_vector_mapping([atom_idx], mol, 'ATOM', args)
-            custom_atom = Atom(idx=atom_idx, atom_representation=atom_repr, symbol=atom.GetSymbol(), atom_type='ATOM')
+            custom_atom = Atom(idx=min_not_used_idx, atom_representation=atom_repr, symbol=atom.GetSymbol(), atom_type='ATOM')
+            min_not_used_idx += 1
             mol_atoms.append(custom_atom)
             idx_to_atom[atom_idx].add(custom_atom)
+            custom_atom_idx_to_idx[min_not_used_idx - 1].add(atom_idx)
 
     for idx, bond in enumerate(mol.GetBonds()):
         start_atoms = idx_to_atom[bond.GetBeginAtomIdx()]
         end_atoms = idx_to_atom[bond.GetEndAtomIdx()]
         if len(start_atoms & end_atoms) == 0:
-            custom_bond = Bond(bond, idx, start_atoms, end_atoms, bond.GetBondType())
+            custom_bond = Bond(bond, idx, list(start_atoms)[0].idx, list(end_atoms)[0].idx, bond.GetBondType())
             mol_bonds.append(custom_bond)
             for start_atom in start_atoms:
                 start_atom.add_bond(custom_bond)
             for end_atom in end_atoms:
                 end_atom.add_bond(custom_bond)
 
-    custom_mol = Molecule(mol_atoms, mol_bonds, mol)
+    custom_mol = Molecule(mol_atoms, mol_bonds, mol, custom_atom_idx_to_idx)
     return custom_mol

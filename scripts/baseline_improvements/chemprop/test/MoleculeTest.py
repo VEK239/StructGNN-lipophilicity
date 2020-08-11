@@ -147,6 +147,14 @@ class MoleculeTest(unittest.TestCase):
         self.assertEqual(len(mol.atoms), 3)
         self.assertEqual(3, len([atom for atom in mol.atoms if atom.atom_type == 'RING']))
 
+    def test_big_molecule(self):
+        args = TrainArgs()
+        args.substructures_merge = False
+        args.substructures_use_substructures = True
+        smi = "C1=CC=C(C(=C1CC(C)C)CCCCNCCN)C(=O)O"
+        mol = create_molecule_for_smiles(smi, args)
+        self.assertEqual(len(mol.bonds), 13)
+
 
 if __name__ == '__main__':
     unittest.main()

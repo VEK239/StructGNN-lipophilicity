@@ -67,7 +67,7 @@ def bond_features_for_substructures(bond: Chem.rdchem.Bond) -> List[Union[bool, 
             (bond.GetIsConjugated() if bt is not None else 0),
             (bond.IsInRing() if bt is not None else 0)
         ]
-        fbond += onek_encoding_unk(int(bond.GetStereo()), list(range(6)))
+        fbond += onek_encoding_unk(int(bond.GetStereo()), 6)
     return fbond
 
 
@@ -108,10 +108,15 @@ class MolGraphWithSubstructures:
         for _ in range(self.n_atoms):
             self.a2b.append([])
 
+        bonds_set = set()
         # Get bond features
         for a1 in range(self.n_atoms):
             for a2 in range(a1 + 1, self.n_atoms):
                 bond = mol.get_bond(a1, a2)
+                if bond in bonds_set:
+                    continue
+                else:
+                    bonds_set.add(bond)
 
                 if bond is None:
                     continue
