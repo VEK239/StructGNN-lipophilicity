@@ -152,10 +152,10 @@ class BatchMolGraphWithSubstructures:
         r"""
         :param mol_graphs: A list of :class:`MolGraph`\ s from which to construct the :class:`BatchMolGraph`.
         """
-        self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.no_rings_use_substructures,
-                                                          merge_cycles=args.no_rings_merge)
-        self.bond_fdim = get_bond_fdim_with_substructures(use_substructures=args.no_rings_use_substructures,
-                                                          merge_cycles=args.no_rings_merge)
+        self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
+                                                          merge_cycles=args.substructures_merge)
+        self.bond_fdim = get_bond_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
+                                                          merge_cycles=args.substructures_merge)
 
         # Start n_atoms and n_bonds at 1 b/c zero padding
         self.n_atoms = 1  # number of atoms (start at 1 b/c need index 0 as padding)
@@ -217,9 +217,9 @@ class BatchMolGraphWithSubstructures:
         :return: A tuple containing PyTorch tensors with the atom features, bond features, graph structure,
                  and scope of the atoms and bonds (i.e., the indices of the molecules they belong to).
         """
-        if args.no_rings_atom_messages:
-            f_bonds = self.f_bonds[:, :get_bond_fdim_with_substructures(atom_messages=args.no_rings_atom_messages,
-                                                                        use_substructures=args.no_rings_use_substructures)]
+        if args.substructures_atom_messages:
+            f_bonds = self.f_bonds[:, :get_bond_fdim_with_substructures(atom_messages=args.substructures_atom_messages,
+                                                                        use_substructures=args.substructures_use_substructures)]
         else:
             f_bonds = self.f_bonds
 

@@ -16,13 +16,13 @@ from scripts.baseline_improvements.chemprop.train import cross_validate
 from scripts.baseline_improvements.chemprop.utils import create_logger, makedirs, timeit
 
 SPACE = {
-    'rings_hidden_size': hp.choice('rings_hidden_size', [300, 600]),
-    'no_rings_hidden_size': hp.choice('no_rings_hidden_size', [300, 600]),
-    'rings_depth': hp.quniform('rings_depth', low=2, high=10, q=2),
-    'no_rings_depth': hp.quniform('no_rings_depth', low=2, high=10, q=2),
-    'no_rings_use_substructures': hp.choice('no_rings_use_substructures', [True, False]),
+    'no_substructures_hidden_size': hp.choice('no_substructures_hidden_size', [300, 600]),
+    'substructures_hidden_size': hp.choice('substructures_hidden_size', [300, 600]),
+    'no_substructures_depth': hp.quniform('no_substructures_depth', low=2, high=10, q=2),
+    'substructures_depth': hp.quniform('substructures_depth', low=2, high=10, q=2),
+    'substructures_use_substructures': hp.choice('substructures_use_substructures', [True, False]),
 }
-INT_KEYS = ['rings_hidden_size', 'no_rings_hidden_size', 'rings_depth', 'no_rings_depth']
+INT_KEYS = ['no_substructures_hidden_size', 'substructures_hidden_size', 'no_substructures_depth', 'substructures_depth']
 
 
 @timeit(logger_name=HYPEROPT_LOGGER_NAME)
@@ -65,7 +65,7 @@ def hyperopt(args: HyperoptArgs) -> None:
         for key, value in hyperparams.items():
             setattr(hyper_args, key, value)
 
-        hyper_args.ffn_hidden_size = hyper_args.rings_hidden_size + hyper_args.no_rings_hidden_size
+        hyper_args.ffn_hidden_size = hyper_args.no_substructures_hidden_size + hyper_args.substructures_hidden_size
 
         # Record hyperparameters
         logger.info(hyperparams)

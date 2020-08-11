@@ -26,18 +26,18 @@ class MPNEncoder(nn.Module):
         self.atom_fdim = atom_fdim
         self.bond_fdim = bond_fdim
         self.args = args
-        if model_type == 'rings':
-            self.atom_messages = args.rings_atom_messages
-            self.depth = args.rings_depth
-            self.hidden_size = args.rings_hidden_size
-            self.atom_messages = args.rings_undirected
-            self.undirected = args.rings_undirected
+        if model_type == 'no_substructures':
+            self.atom_messages = args.no_substructures_atom_messages
+            self.depth = args.no_substructures_depth
+            self.hidden_size = args.no_substructures_hidden_size
+            self.atom_messages = args.no_substructures_undirected
+            self.undirected = args.no_substructures_undirected
         else:
-            self.atom_messages = args.no_rings_atom_messages
-            self.hidden_size = args.no_rings_hidden_size
-            self.depth = args.no_rings_depth
-            self.atom_messages = args.no_rings_undirected
-            self.undirected = args.no_rings_undirected
+            self.atom_messages = args.substructures_atom_messages
+            self.hidden_size = args.substructures_hidden_size
+            self.depth = args.substructures_depth
+            self.atom_messages = args.substructures_undirected
+            self.undirected = args.substructures_undirected
         self.bias = args.bias
         self.dropout = args.dropout
         self.layers_per_message = 1
@@ -82,7 +82,7 @@ class MPNEncoder(nn.Module):
         :param features_batch: A list of numpy arrays containing additional features.
         :return: A PyTorch tensor of shape :code:`(num_molecules, hidden_size)` containing the encoding of each molecule.
         """
-        if self.use_input_features and self.model_type == 'rings':
+        if self.use_input_features and self.model_type == 'no_substructures':
             features_batch = torch.from_numpy(np.stack(features_batch)).float().to(self.device)
 
             if self.features_only:
@@ -146,7 +146,7 @@ class MPNEncoder(nn.Module):
 
         mol_vecs = torch.stack(mol_vecs, dim=0)  # (num_molecules, hidden_size)
 
-        if self.use_input_features and self.model_type == 'rings':
+        if self.use_input_features and self.model_type == 'no_substructures':
             features_batch = features_batch.to(mol_vecs)
             if len(features_batch.shape) == 1:
                 features_batch = features_batch.view([1, features_batch.shape[0]])
@@ -170,15 +170,15 @@ class MPN(nn.Module):
         self.args = args
         super(MPN, self).__init__()
         self.model_type = model_type
-        if self.model_type == 'rings':
+        if self.model_type == 'no_substructures':
             self.atom_fdim = get_atom_fdim()
-            self.bond_fdim = get_bond_fdim(atom_messages=args.rings_atom_messages)
+            self.bond_fdim = get_bond_fdim(atom_messages=args.no_substructures_atom_messages)
         else:
-            self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.no_rings_use_substructures,
-                                                              merge_cycles=args.no_rings_merge)
-            self.bond_fdim = get_bond_fdim_with_substructures(atom_messages=args.no_rings_atom_messages,
-                                                              use_substructures=args.no_rings_use_substructures,
-                                                              merge_cycles=args.no_rings_merge)
+            self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
+                                                              merge_cycles=args.substructures_merge)
+            self.bond_fdim = get_bond_fdim_with_substructures(atom_messages=args.substructures_atom_messages,
+                                                              use_substructures=args.substructures_use_substructures,
+                                                              merge_cycles=args.substructures_merge)
         self.encoder = MPNEncoder(args, model_type, self.atom_fdim, self.bond_fdim)
 
     def forward(self,
@@ -193,7 +193,7 @@ class MPN(nn.Module):
         :return: A PyTorch tensor of shape :code:`(num_molecules, hidden_size)` containing the encoding of each molecule.
         """
         if type(batch) != BatchMolGraph and type(batch) != BatchMolGraphWithSubstructures:
-            if self.model_type == 'rings':
+            if self.model_type == 'no_substructures':
                 batch = mol2graph(batch)
             else:
                 batch = mol2graph_with_substructures(batch, args=self.args)

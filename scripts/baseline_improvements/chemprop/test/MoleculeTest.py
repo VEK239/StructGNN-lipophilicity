@@ -8,8 +8,8 @@ class MoleculeTest(unittest.TestCase):
 
     def test_atom_count_wo_substructures(self):
         args = TrainArgs()
-        args.no_rings_merge = False
-        args.no_rings_use_substructures = False
+        args.substructures_merge = False
+        args.substructures_use_substructures = False
 
         smi = "Nc1ccc(O)c2ncccc12"
         mol = create_molecule_for_smiles(smi, args)
@@ -17,8 +17,8 @@ class MoleculeTest(unittest.TestCase):
 
     def test_bond_count_wo_substructures(self):
         args = TrainArgs()
-        args.no_rings_merge = False
-        args.no_rings_use_substructures = False
+        args.substructures_merge = False
+        args.substructures_use_substructures = False
 
         smi = "Nc1ccc(O)c2ncccc12"
         mol = create_molecule_for_smiles(smi, args)
@@ -26,8 +26,8 @@ class MoleculeTest(unittest.TestCase):
 
     def test_atom_count_with_esters(self):
         args = TrainArgs()
-        args.no_rings_merge = False
-        args.no_rings_use_substructures = True
+        args.substructures_merge = False
+        args.substructures_use_substructures = True
 
         smi = "CC#CC#CC#CC=CC(=O)OC"
         mol = create_molecule_for_smiles(smi, args)
@@ -35,8 +35,8 @@ class MoleculeTest(unittest.TestCase):
 
     def test_bond_count_with_esters(self):
         args = TrainArgs()
-        args.no_rings_merge = False
-        args.no_rings_use_substructures = True
+        args.substructures_merge = False
+        args.substructures_use_substructures = True
 
         smi = "CC#CC#CC#CC=CC(=O)OC"
         mol = create_molecule_for_smiles(smi, args)
@@ -45,8 +45,8 @@ class MoleculeTest(unittest.TestCase):
 
     def test_atom_count_with_amins(self):
         args = TrainArgs()
-        args.no_rings_merge = False
-        args.no_rings_use_substructures = True
+        args.substructures_merge = False
+        args.substructures_use_substructures = True
 
         smi = "CCC(C)CCCN"
         mol = create_molecule_for_smiles(smi, args)
@@ -54,8 +54,8 @@ class MoleculeTest(unittest.TestCase):
 
     def test_bond_count_with_amins(self):
         args = TrainArgs()
-        args.no_rings_merge = False
-        args.no_rings_use_substructures = True
+        args.substructures_merge = False
+        args.substructures_use_substructures = True
 
         smi = "CCC(C)CCCN"
 
@@ -64,8 +64,8 @@ class MoleculeTest(unittest.TestCase):
 
     def test_atom_count_with_acids(self):
         args = TrainArgs()
-        args.no_rings_merge = False
-        args.no_rings_use_substructures = True
+        args.substructures_merge = False
+        args.substructures_use_substructures = True
 
         smi = "CC(=O)O"
         mol = create_molecule_for_smiles(smi, args)
@@ -78,8 +78,8 @@ class MoleculeTest(unittest.TestCase):
 
     def test_bond_count_with_acids(self):
         args = TrainArgs()
-        args.no_rings_merge = False
-        args.no_rings_use_substructures = True
+        args.substructures_merge = False
+        args.substructures_use_substructures = True
 
         smi = "CC(=O)O"
         mol = create_molecule_for_smiles(smi, args)
@@ -88,8 +88,8 @@ class MoleculeTest(unittest.TestCase):
 
     def test_atom_count_with_sulfonamids(self):
         args = TrainArgs()
-        args.no_rings_merge = False
-        args.no_rings_use_substructures = True
+        args.substructures_merge = False
+        args.substructures_use_substructures = True
 
         smi = "O=S(=O)(c1ccccc1)N"
         mol = create_molecule_for_smiles(smi, args)
@@ -99,8 +99,8 @@ class MoleculeTest(unittest.TestCase):
 
     def test_bond_count_with_sulfonamids(self):
         args = TrainArgs()
-        args.no_rings_merge = False
-        args.no_rings_use_substructures = True
+        args.substructures_merge = False
+        args.substructures_use_substructures = True
 
         smi = "O=S(=O)(c1ccccc1)N"
         mol = create_molecule_for_smiles(smi, args)
@@ -108,8 +108,8 @@ class MoleculeTest(unittest.TestCase):
 
     def test_atom_types_with_substructures(self):
         args = TrainArgs()
-        args.no_rings_merge = False
-        args.no_rings_use_substructures = True
+        args.substructures_merge = False
+        args.substructures_use_substructures = True
 
         smi = "O=S(=O)(c1cc(N)cc(CCC(=O)O)c1)N"
         mol = create_molecule_for_smiles(smi, args)
@@ -122,8 +122,8 @@ class MoleculeTest(unittest.TestCase):
 
     def test_bond_count_with_substructures(self):
         args = TrainArgs()
-        args.no_rings_merge = False
-        args.no_rings_use_substructures = True
+        args.substructures_merge = False
+        args.substructures_use_substructures = True
 
         smi = "O=S(=O)(c1cc(N)cc(CCC(=O)O)c1)N"
         mol = create_molecule_for_smiles(smi, args)
@@ -132,16 +132,16 @@ class MoleculeTest(unittest.TestCase):
 
     def test_bond_count_for_duplicated_bonds(self):
         args = TrainArgs()
-        args.no_rings_merge = False
-        args.no_rings_use_substructures = True
+        args.substructures_merge = False
+        args.substructures_use_substructures = True
         smi = "C1CCC2C(C1)C3C2CCCC3"
         mol = create_molecule_for_smiles(smi, args)
         self.assertEqual(len(mol.bonds), 0)
 
     def test_atom_count_for_duplicated_bonds(self):
         args = TrainArgs()
-        args.no_rings_merge = False
-        args.no_rings_use_substructures = True
+        args.substructures_merge = False
+        args.substructures_use_substructures = True
         smi = "C1CCC2C(C1)C3C2CCCC3"
         mol = create_molecule_for_smiles(smi, args)
         self.assertEqual(len(mol.atoms), 3)

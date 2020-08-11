@@ -195,25 +195,25 @@ class TrainArgs(CommonArgs):
     # Model arguments
     bias: bool = False
     """Whether to add bias to linear layers."""
-    rings_hidden_size: int = 300
-    no_rings_hidden_size: int = 300
+    no_substructures_hidden_size: int = 300
+    substructures_hidden_size: int = 300
     """Dimensionality of hidden layers in MPN."""
-    rings_depth: int = 3
-    no_rings_depth: int = 3
+    no_substructures_depth: int = 3
+    substructures_depth: int = 3
     """Number of message passing steps."""
     dropout: float = 0.0
     """Dropout probability."""
     activation: Literal['ReLU', 'LeakyReLU', 'PReLU', 'tanh', 'SELU', 'ELU'] = 'ReLU'
     """Activation function."""
-    rings_atom_messages: bool = False
-    no_rings_atom_messages: bool = False
+    no_substructures_atom_messages: bool = False
+    substructures_atom_messages: bool = False
     """Centers messages on atoms instead of on bonds."""
-    no_rings_merge: bool = False
+    substructures_merge: bool = False
     """Merges neighboring rings."""
-    no_rings_use_substructures: bool = False
+    substructures_use_substructures: bool = False
     """Generates chemical substructures."""
-    rings_undirected: bool = False
-    no_rings_undirected: bool = False
+    no_substructures_undirected: bool = False
+    substructures_undirected: bool = False
     """Undirected edges (always sum the two relevant bond vectors)."""
     ffn_hidden_size: int = None
     """Hidden dim for higher-capacity FFN (defaults to hidden_size)."""
@@ -360,14 +360,14 @@ class TrainArgs(CommonArgs):
 
         # Handle FFN hidden size
         if self.ffn_hidden_size is None:
-            self.ffn_hidden_size = self.rings_hidden_size + self.no_rings_hidden_size
+            self.ffn_hidden_size = self.no_substructures_hidden_size + self.substructures_hidden_size
 
         # Handle MPN variants
-        if self.rings_atom_messages and self.rings_undirected:
+        if self.no_substructures_atom_messages and self.no_substructures_undirected:
             raise ValueError('Undirected is unnecessary when using atom_messages '
                              'since atom_messages are by their nature undirected.')
 
-        if self.no_rings_atom_messages and self.no_rings_undirected:
+        if self.substructures_atom_messages and self.substructures_undirected:
             raise ValueError('Undirected is unnecessary when using atom_messages '
                              'since atom_messages are by their nature undirected.')
 

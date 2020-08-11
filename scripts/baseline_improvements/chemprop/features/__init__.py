@@ -26,7 +26,6 @@ __all__ = [
     'get_bond_fdim_with_substructures',
     'mol2graph_with_substructures',
     'MolGraphWithSubstructures',
-    'onek_encoding_unk_wo_rings',
     'load_features',
     'save_features'
 ]

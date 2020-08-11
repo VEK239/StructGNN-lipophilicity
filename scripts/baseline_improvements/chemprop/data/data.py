@@ -14,8 +14,8 @@ from scripts.baseline_improvements.chemprop.features import BatchMolGraph, MolGr
     MolGraphWithSubstructures
 
 # Cache of graph featurizations
-SMILES_TO_GRAPH_RINGS: Dict[str, MolGraph] = {}
-SMILES_TO_GRAPH_NO_RINGS: Dict[str, MolGraphWithSubstructures] = {}
+SMILES_TO_GRAPH_NO_SUBSTRUCTURES: Dict[str, MolGraph] = {}
+SMILES_TO_GRAPH_SUBSTRUCTURES: Dict[str, MolGraphWithSubstructures] = {}
 
 
 class MoleculeDatapoint:
@@ -102,15 +102,15 @@ class MoleculeDataset(Dataset):
         """
         self._data = data
         self._scaler = None
-        self._batch_graph_wo_rings = None
-        self._batch_graph_rings = None
+        self._batch_graph_wo_no_substructures = None
+        self._batch_graph_no_substructures = None
         self._random = Random()
 
     def smiles(self) -> List[str]:
         """
         Returns a list containing the SMILES associated with each molecule.
 
-        :return: A list of SMILES strings.
+        :return: A list of SMILES stno_substructures.
         """
         return [d.smiles for d in self._data]
 
@@ -137,28 +137,28 @@ class MoleculeDataset(Dataset):
                       for each molecule in a global cache.
         :return: A :class:`~chemprop.features.BatchMolGraph` containing the graph featurization of all the molecules.
         """
-        if self._batch_graph_wo_rings is None or self._batch_graph_rings is None:
-            rings_mol_graphs = []
-            no_rings_mol_graphs = []
+        if self._batch_graph_wo_no_substructures is None or self._batch_graph_no_substructures is None:
+            no_substructures_mol_graphs = []
+            substructures_mol_graphs = []
             for d in self._data:
-                if d.smiles in SMILES_TO_GRAPH_RINGS and d.smiles in SMILES_TO_GRAPH_NO_RINGS:
-                    ring_mol_graph = SMILES_TO_GRAPH_RINGS[d.smiles]
-                    no_ring_mol_graph = SMILES_TO_GRAPH_NO_RINGS[d.smiles]
+                if d.smiles in SMILES_TO_GRAPH_NO_SUBSTRUCTURES and d.smiles in SMILES_TO_GRAPH_SUBSTRUCTURES:
+                    ring_mol_graph = SMILES_TO_GRAPH_NO_SUBSTRUCTURES[d.smiles]
+                    no_ring_mol_graph = SMILES_TO_GRAPH_SUBSTRUCTURES[d.smiles]
                 else:
                     ring_mol_graph = MolGraph(d.mol)
                     no_ring_mol_graph = MolGraphWithSubstructures(d.smiles, args)
                     if cache:
-                        SMILES_TO_GRAPH_RINGS[d.smiles] = ring_mol_graph
-                        SMILES_TO_GRAPH_NO_RINGS[d.smiles] = no_ring_mol_graph
-                rings_mol_graphs.append(ring_mol_graph)
-                no_rings_mol_graphs.append(no_ring_mol_graph)
+                        SMILES_TO_GRAPH_NO_SUBSTRUCTURES[d.smiles] = ring_mol_graph
+                        SMILES_TO_GRAPH_SUBSTRUCTURES[d.smiles] = no_ring_mol_graph
+                no_substructures_mol_graphs.append(ring_mol_graph)
+                substructures_mol_graphs.append(no_ring_mol_graph)
 
-            self._batch_graph_rings = BatchMolGraph(rings_mol_graphs)
-            self._batch_graph_wo_rings = BatchMolGraphWithSubstructures(no_rings_mol_graphs, args=args)
-        if model_type == 'rings':
-            return self._batch_graph_rings
+            self._batch_graph_no_substructures = BatchMolGraph(no_substructures_mol_graphs)
+            self._batch_graph_wo_no_substructures = BatchMolGraphWithSubstructures(substructures_mol_graphs, args=args)
+        if model_type == 'no_substructures':
+            return self._batch_graph_no_substructures
         else:
-            return self._batch_graph_wo_rings
+            return self._batch_graph_wo_no_substructures
 
     def features(self) -> List[np.ndarray]:
         """
@@ -350,7 +350,7 @@ def construct_molecule_batch(data: List[MoleculeDatapoint], cache: bool = False)
     """
     data = MoleculeDataset(data)
     # data.batch_graph(cache=cache,
-    #                  model_type='rings', )  # Forces computation and caching of the BatchMolGraph for the molecules
+    #                  model_type='no_substructures', )  # Forces computation and caching of the BatchMolGraph for the molecules
 
     return data
 

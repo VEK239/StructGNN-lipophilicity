@@ -178,7 +178,7 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
     substruct_formal_charge = sum(atom.GetFormalCharge() for atom in atoms)
 
     substruct_num_Hs = sum(atom.GetTotalNumHs() for atom in atoms)
-    substruct_Hs_array = onek_encoding_unk(substruct_num_Hs, 65 if args.no_rings_merge else 60)
+    substruct_Hs_array = onek_encoding_unk(substruct_num_Hs, 65 if args.substructures_merge else 60)
 
     substruct_is_aromatic = 1 if sum(atom.GetIsAromatic() for atom in atoms) > 0 else 0
 
@@ -186,7 +186,7 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
 
     substruct_edges_sum = implicit_substruct_valence
 
-    if args.no_rings_use_substructures:
+    if args.substructures_use_substructures:
         substruct_type = onek_encoding_unk(STRUCT_TO_NUM[structure_type], len(STRUCT_TO_NUM))
     else:
         substruct_type = [1 if structure_type == 'RING' else 0]
@@ -255,8 +255,8 @@ class Molecule:
 def create_molecule_for_smiles(smiles, args):
     mol = Chem.MolFromSmiles(smiles)
 
-    rings = get_cycles_for_molecule(mol, args.no_rings_merge)
-    if args.no_rings_use_substructures:
+    rings = get_cycles_for_molecule(mol, args.substructures_merge)
+    if args.substructures_use_substructures:
         acids = get_acids_for_molecule(mol)
         esters = get_esters_for_molecule(mol)
         amins = get_amins_for_molecule(mol)

@@ -48,8 +48,8 @@ class MoleculeModel(nn.Module):
 
         :param args: A :class:`~chemprop.args.TrainArgs` object containing model arguments.
         """
-        self.rings_encoder = MPN(args, 'rings')
-        self.no_rings_encoder = MPN(args, 'no-rings')
+        self.no_substructures_encoder = MPN(args, 'no_substructures')
+        self.substructures_encoder = MPN(args, 'substructures')
 
     def create_ffn(self, args: TrainArgs) -> None:
         """
@@ -63,7 +63,7 @@ class MoleculeModel(nn.Module):
         if args.features_only:
             first_linear_dim = args.features_size
         else:
-            first_linear_dim = args.rings_hidden_size + args.no_rings_hidden_size
+            first_linear_dim = args.no_substructures_hidden_size + args.substructures_hidden_size
             if args.use_input_features:
                 first_linear_dim += args.features_size
 
@@ -111,8 +111,8 @@ class MoleculeModel(nn.Module):
         return self.ffn[:-1](self.encoder(batch, features_batch))
 
     def forward(self,
-                rings_batch: Union[List[str], List[Chem.Mol], BatchMolGraph],
-                no_rings_batch: Union[List[str], List[Chem.Mol], BatchMolGraphWithSubstructures],
+                no_substructures_batch: Union[List[str], List[Chem.Mol], BatchMolGraph],
+                substructures_batch: Union[List[str], List[Chem.Mol], BatchMolGraphWithSubstructures],
                 features_batch: List[np.ndarray] = None) -> torch.FloatTensor:
         """
         Runs the :class:`MoleculeModel` on input.
@@ -124,13 +124,13 @@ class MoleculeModel(nn.Module):
                  or molecule features if :code:`self.featurizer=True`.
         """
         if self.featurizer:
-            return self.featurize(rings_batch, features_batch)
+            return self.featurize(no_substructures_batch, features_batch)
 
-        # out = concatenate([self.rings_encoder(rings_batch, features_batch).cpu().data.numpy(),
-        #                    self.no_rings_encoder(no_rings_batch, features_batch).cpu().data.numpy()], axis=1)
+        # out = concatenate([self.no_substructures_encoder(no_substructures_batch, features_batch).cpu().data.numpy(),
+        #                    self.substructures_encoder(substructures_batch, features_batch).cpu().data.numpy()], axis=1)
 
-        out = torch.cat((self.rings_encoder(rings_batch, features_batch),
-                           self.no_rings_encoder(no_rings_batch)), dim=1)
+        out = torch.cat((self.no_substructures_encoder(no_substructures_batch, features_batch),
+                           self.substructures_encoder(substructures_batch)), dim=1)
         output = self.ffn(out)
 
         # Don't apply sigmoid during training b/c using BCEWithLogitsLoss
