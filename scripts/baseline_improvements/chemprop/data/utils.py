@@ -342,6 +342,15 @@ def split_data(data: MoleculeDataset,
     elif split_type == 'scaffold_balanced':
         return scaffold_split(data, sizes=sizes, balanced=True, seed=seed, logger=logger)
 
+
+    elif split_type == 'one_out_crossval':
+        part_size = len(data) // args.num_folds
+        val_fold = args.seed
+        valid = [data[i] for i in range(len(data)) if val_fold * part_size <= i < (val_fold + 1) * part_size]
+        train = [data[i] for i in range(len(data)) if i < val_fold * part_size or i >= (val_fold + 1) * part_size]
+        return MoleculeDataset(train), MoleculeDataset(valid), MoleculeDataset([])
+
+
     elif split_type == 'random':
         data.shuffle(seed=seed)
 

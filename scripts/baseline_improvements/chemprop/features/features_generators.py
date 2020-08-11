@@ -134,22 +134,24 @@ try:
         features = generator.process(smiles)[1:]
 
         return features
+
+    @register_features_generator('rdkit_2d_normalized_wo_MolLogP')
+    def rdkit_2d_normalized_features_generator(mol: Molecule) -> np.ndarray:
+        """
+        Generates RDKit 2D normalized features for a molecule.
+
+        :param mol: A molecule (i.e., either a SMILES or an RDKit molecule).
+        :return: A 1D numpy array containing the RDKit 2D normalized features.
+        """
+        smiles = Chem.MolToSmiles(mol, isomericSmiles=True) if type(mol) != str else mol
+        generator = rdNormalizedDescriptors.RDKit2DNormalized()
+        features = generator.process(smiles)[1:]
+        features = features[:47] + features[48:]
+
+        return features
+
 except ImportError:
     pass
-
-
-@register_features_generator('without_cycles')
-def custom_features_generator(mol: Molecule) -> np.ndarray:
-    # If you want to use the SMILES string
-    smiles = Chem.MolToSmiles(mol, isomericSmiles=True) if type(mol) != str else mol
-
-    # If you want to use the RDKit molecule
-    mol = Chem.MolFromSmiles(mol) if type(mol) == str else mol
-
-    # Replace this with code which generates features from the molecule
-    features = np.array([0, 0, 1])
-
-    return features
 
 
 """

@@ -73,7 +73,7 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
         train_data, _, test_data = split_data(data=data, split_type=args.split_type, sizes=(0.8, 0.0, 0.2),
                                               seed=args.seed, args=args, logger=logger)
     elif args.separate_test_path:
-        train_data, val_data, _ = split_data(data=data, split_type=args.split_type, sizes=(0.8, 0.2, 0.0),
+        train_data, val_data, _ = split_data(data=data, split_type=args.split_type, sizes=(0.75, 0.25, 0.0),
                                              seed=args.seed, args=args, logger=logger)
     else:
         train_data, val_data, test_data = split_data(data=data, split_type=args.split_type, sizes=args.split_sizes,
@@ -199,6 +199,8 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
         # Run training
         best_score = float('inf') if args.minimize_score else -float('inf')
         best_epoch, n_iter = 0, 0
+        early_stopping_counter = 0
+        last_val_rmse = float('inf') if args.minimize_score else -float('inf')
         for epoch in trange(args.epochs):
             debug(f'Epoch {epoch}')
 
@@ -225,15 +227,23 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
                 logger=logger,
                 args=args
             )
-
             # Average validation score
-            avg_val_score = np.nanmean(val_scores)
+            avg_val_score = np.nanmean(val_scores[0])
             debug(f'Validation {args.metric} = {avg_val_score:.6f}')
+            info(f'Validation r2 = {val_scores[1]:.6f}')
             writer.add_scalar(f'validation_{args.metric}', avg_val_score, n_iter)
-
+            print(avg_val_score, last_val_rmse, early_stopping_counter)
+            if avg_val_score < last_val_rmse:
+                early_stopping_counter = 0
+                last_val_rmse = avg_val_score
+            else:
+                early_stopping_counter += 1
+                if args.early_stopping and early_stopping_counter >= args.early_stopping:
+                    info('Early stopping')
+                    break
             if args.show_individual_scores:
                 # Individual validation scores
-                for task_name, val_score in zip(args.task_names, val_scores):
+                for task_name, val_score in zip(args.task_names, val_scores[0]):
                     debug(f'Validation {task_name} {args.metric} = {val_score:.6f}')
                     writer.add_scalar(f'validation_{task_name}_{args.metric}', val_score, n_iter)
 
@@ -267,15 +277,15 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
             sum_test_preds += np.array(test_preds)
 
         # Average test score
-        avg_test_score = np.nanmean(test_scores)
-        info(f'Model {model_idx} test {args.metric} = {avg_test_score:.6f}')
-        writer.add_scalar(f'test_{args.metric}', avg_test_score, 0)
+        info(f'Model {model_idx} test {args.metric} = {test_scores[0]:.6f}')
+        info(f'Model {model_idx} test R2 = {test_scores[1]:.6f}')
+        writer.add_scalar(f'test_{args.metric}', test_scores[0], 0)
 
-        if args.show_individual_scores:
-            # Individual test scores
-            for task_name, test_score in zip(args.task_names, test_scores):
-                info(f'Model {model_idx} test {task_name} {args.metric} = {test_score:.6f}')
-                writer.add_scalar(f'test_{task_name}_{args.metric}', test_score, n_iter)
+        # if args.show_individual_scores:
+        #     Individual test scores
+        #     for task_name, test_score in zip(args.task_names, test_scores):
+        #         info(f'Model {model_idx} test {task_name} {args.metric} = {test_score:.6f}')
+        #         writer.add_scalar(f'test_{task_name}_{args.metric}', test_score, n_iter)
         writer.close()
 
     # Evaluate ensemble on test set
@@ -291,12 +301,12 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
     )
 
     # Average ensemble score
-    avg_ensemble_test_score = np.nanmean(ensemble_scores)
+    avg_ensemble_test_score = np.nanmean(ensemble_scores[0])
     info(f'Ensemble test {args.metric} = {avg_ensemble_test_score:.6f}')
 
     # Individual ensemble scores
     if args.show_individual_scores:
-        for task_name, ensemble_score in zip(args.task_names, ensemble_scores):
+        for task_name, ensemble_score in zip(args.task_names, ensemble_scores[0]):
             info(f'Ensemble test {task_name} {args.metric} = {ensemble_score:.6f}')
 
     return ensemble_scores

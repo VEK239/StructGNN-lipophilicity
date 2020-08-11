@@ -147,7 +147,8 @@ class TrainArgs(CommonArgs):
     """Path to separate val set, optional."""
     separate_test_path: str = None
     """Path to separate test set, optional."""
-    split_type: Literal['random', 'scaffold_balanced', 'predetermined', 'crossval', 'index_predetermined'] = 'random'
+    split_type: Literal[
+        'random', 'scaffold_balanced', 'predetermined', 'crossval', 'index_predetermined', 'one_out_crossval'] = 'random'
     """Method of splitting the data into train/val/test."""
     split_sizes: Tuple[float, float, float] = (0.8, 0.1, 0.1)
     """Split proportions for train/validation/test sets."""
@@ -240,6 +241,7 @@ class TrainArgs(CommonArgs):
     Number of epochs during which learning rate increases linearly from :code:`init_lr` to :code:`max_lr`.
     Afterwards, learning rate decreases exponentially from :code:`max_lr` to :code:`final_lr`.
     """
+    early_stopping: int = None
     init_lr: float = 1e-4
     """Initial learning rate."""
     max_lr: float = 1e-3
