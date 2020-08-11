@@ -276,7 +276,7 @@ def split_data(data: MoleculeDataset,
             args.folds_file, args.val_fold_index, args.test_fold_index
     else:
         folds_file = val_fold_index = test_fold_index = None
-    
+
     if split_type == 'crossval':
         index_set = args.crossval_index_sets[args.seed]
         data_split = []
@@ -288,7 +288,7 @@ def split_data(data: MoleculeDataset,
             data_split.append([data[i] for i in split_indices])
         train, val, test = tuple(data_split)
         return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset(test)
-    
+
     elif split_type == 'index_predetermined':
         split_indices = args.crossval_index_sets[args.seed]
 
@@ -338,10 +338,9 @@ def split_data(data: MoleculeDataset,
             val = train_val[train_size:]
 
         return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset(test)
-    
+
     elif split_type == 'scaffold_balanced':
         return scaffold_split(data, sizes=sizes, balanced=True, seed=seed, logger=logger)
-
 
     elif split_type == 'one_out_crossval':
         part_size = len(data) // args.num_folds
@@ -349,7 +348,6 @@ def split_data(data: MoleculeDataset,
         valid = [data[i] for i in range(len(data)) if val_fold * part_size <= i < (val_fold + 1) * part_size]
         train = [data[i] for i in range(len(data)) if i < val_fold * part_size or i >= (val_fold + 1) * part_size]
         return MoleculeDataset(train), MoleculeDataset(valid), MoleculeDataset([])
-
 
     elif split_type == 'random':
         data.shuffle(seed=seed)
