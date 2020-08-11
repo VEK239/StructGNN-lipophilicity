@@ -1,7 +1,9 @@
 import unittest
-from scripts.baseline_improvements.chemprop.features.molecule import create_molecule_for_smiles
-from scripts.baseline_improvements.chemprop.args import TrainArgs
+
 from rdkit import Chem
+
+from scripts.baseline_improvements.chemprop.args import TrainArgs
+from scripts.baseline_improvements.chemprop.features.molecule import create_molecule_for_smiles
 
 
 class MoleculeTest(unittest.TestCase):
@@ -41,7 +43,6 @@ class MoleculeTest(unittest.TestCase):
         smi = "CC#CC#CC#CC=CC(=O)OC"
         mol = create_molecule_for_smiles(smi, args)
         self.assertEqual(len(mol.bonds), 10)  # no bonds inside ester
-
 
     def test_atom_count_with_amins(self):
         args = TrainArgs()
@@ -84,7 +85,6 @@ class MoleculeTest(unittest.TestCase):
         smi = "CC(=O)O"
         mol = create_molecule_for_smiles(smi, args)
         self.assertEqual(len(mol.bonds), 1)
-
 
     def test_atom_count_with_sulfonamids(self):
         args = TrainArgs()
@@ -146,7 +146,6 @@ class MoleculeTest(unittest.TestCase):
         mol = create_molecule_for_smiles(smi, args)
         self.assertEqual(len(mol.atoms), 3)
         self.assertEqual(3, len([atom for atom in mol.atoms if atom.atom_type == 'RING']))
-
 
 
 if __name__ == '__main__':

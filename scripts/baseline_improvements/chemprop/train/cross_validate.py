@@ -62,11 +62,11 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
                 info(f'\t\tSeed {init_seed + fold_num} ==> test {task_name} {args.metric} = {score:.6f}')
     # Report scores for each fold
     for fold_num, scores in enumerate(all_scores_r2):
-        info(f'\tSeed {init_seed + fold_num} ==> test {args.metric} = {np.nanmean(scores):.6f}')
+        info(f'\tSeed {init_seed + fold_num} ==> test r2 = {np.nanmean(scores):.6f}')
 
         if args.show_individual_scores:
             for task_name, score in zip(args.task_names, scores):
-                info(f'\t\tSeed {init_seed + fold_num} ==> test {task_name} {args.metric} = {score:.6f}')
+                info(f'\t\tSeed {init_seed + fold_num} ==> test {task_name} r2 = {score:.6f}')
 
     # Report scores across models
     avg_scores = np.nanmean(all_scores_rmse, axis=1)  # average score for each model across tasks
@@ -74,8 +74,8 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
     info(f'Overall test {args.metric} = {mean_score:.6f} +/- {std_score:.6f}')
 
     avg_scores = np.nanmean(all_scores_r2, axis=1)  # average score for each model across tasks
-    mean_score, std_score = np.nanmean(avg_scores), np.nanstd(avg_scores)
-    info(f'Overall test {args.metric} = {mean_score:.6f} +/- {std_score:.6f}')
+    mean_score_r2, std_score_r2 = np.nanmean(avg_scores), np.nanstd(avg_scores)
+    info(f'Overall test r2 = {mean_score_r2:.6f} +/- {std_score_r2:.6f}')
 
     if args.show_individual_scores:
         for task_num, task_name in enumerate(args.task_names):

@@ -1,4 +1,3 @@
-# from scripts.baseline_improvements.chemprop.args import TrainArgs
 from scripts.baseline_improvements.chemprop.features.molecule import Molecule, create_molecule_for_smiles, \
     onek_encoding_unk
 from typing import List, Tuple, Union
@@ -117,7 +116,7 @@ class MolGraphWithSubstructures:
                 if bond is None:
                     continue
 
-                f_bond = bond_features_for_substructures(bond.get_rdkit_atom())
+                f_bond = bond_features_for_substructures(bond.get_rdkit_bond())
                 self.f_bonds.append(self.f_atoms[a1] + f_bond)
                 self.f_bonds.append(self.f_atoms[a2] + f_bond)
 
