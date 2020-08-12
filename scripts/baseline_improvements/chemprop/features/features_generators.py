@@ -144,7 +144,7 @@ try:
         :return: A 1D numpy array containing the RDKit 2D normalized features.
         """
         feature_names = rdDescriptors.RDKIT_PROPS["1.0.0"].copy()
-        feature_names = feature_names.remove("MolLogP")
+        feature_names.remove('MolLogP')
         smiles = Chem.MolToSmiles(mol, isomericSmiles=True) if type(mol) != str else mol
         generator = rdNormalizedDescriptors.RDKit2DNormalized(feature_names)
         features = generator.process(smiles)[1:]

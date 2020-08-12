@@ -102,7 +102,7 @@ class MoleculeDataset(Dataset):
         """
         self._data = data
         self._scaler = None
-        self._batch_graph_wo_no_substructures = None
+        self._batch_graph_substructures = None
         self._batch_graph_no_substructures = None
         self._random = Random()
 
@@ -137,7 +137,7 @@ class MoleculeDataset(Dataset):
                       for each molecule in a global cache.
         :return: A :class:`~chemprop.features.BatchMolGraph` containing the graph featurization of all the molecules.
         """
-        if self._batch_graph_wo_no_substructures is None or self._batch_graph_no_substructures is None:
+        if self._batch_graph_substructures is None or self._batch_graph_no_substructures is None:
             no_substructures_mol_graphs = []
             substructures_mol_graphs = []
             for d in self._data:
@@ -154,11 +154,11 @@ class MoleculeDataset(Dataset):
                 substructures_mol_graphs.append(no_ring_mol_graph)
 
             self._batch_graph_no_substructures = BatchMolGraph(no_substructures_mol_graphs)
-            self._batch_graph_wo_no_substructures = BatchMolGraphWithSubstructures(substructures_mol_graphs, args=args)
+            self._batch_graph_substructures = BatchMolGraphWithSubstructures(substructures_mol_graphs, args=args)
         if model_type == 'no_substructures':
             return self._batch_graph_no_substructures
         else:
-            return self._batch_graph_wo_no_substructures
+            return self._batch_graph_substructures
 
     def features(self) -> List[np.ndarray]:
         """
