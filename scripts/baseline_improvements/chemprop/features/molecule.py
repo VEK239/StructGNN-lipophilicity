@@ -141,7 +141,7 @@ def structure_encoding(atoms):
     return enc
 
 
-def onek_encoding_unk(value, choices_len):
+def onek_encoding(value, choices_len):
     """
     Creates a one-hot encoding.
     :param value: The value for which the encoding should be one.
@@ -173,12 +173,12 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
                 implicit_substruct_valence += BT_MAPPING_INT[
                     mol.GetBondBetweenAtoms(substruct[i], substruct[j]).GetBondType()]
     substruct_valence = sum(atom.GetExplicitValence() for atom in atoms) - 2 * implicit_substruct_valence
-    substruct_valence_array = onek_encoding_unk(substruct_valence, 40)
+    substruct_valence_array = onek_encoding(substruct_valence, 40)
 
     substruct_formal_charge = sum(atom.GetFormalCharge() for atom in atoms)
 
     substruct_num_Hs = sum(atom.GetTotalNumHs() for atom in atoms)
-    substruct_Hs_array = onek_encoding_unk(substruct_num_Hs, 65 if args.substructures_merge else 60)
+    substruct_Hs_array = onek_encoding(substruct_num_Hs, 65 if args.substructures_merge else 60)
 
     substruct_is_aromatic = 1 if sum(atom.GetIsAromatic() for atom in atoms) > 0 else 0
 
@@ -187,7 +187,7 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
     substruct_edges_sum = implicit_substruct_valence
 
     if args.substructures_use_substructures:
-        substruct_type = onek_encoding_unk(STRUCT_TO_NUM[structure_type], len(STRUCT_TO_NUM))
+        substruct_type = onek_encoding(STRUCT_TO_NUM[structure_type], len(STRUCT_TO_NUM))
     else:
         substruct_type = [1 if structure_type == 'RING' else 0]
 

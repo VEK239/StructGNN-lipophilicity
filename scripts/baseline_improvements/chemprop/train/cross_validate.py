@@ -75,6 +75,7 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
     mean_score, std_score = np.nanmean(avg_scores), np.nanstd(avg_scores)
     info(f'Overall test {args.metric} = {mean_score:.6f} +/- {std_score:.6f}')
 
+    all_scores_r2 = [[i] for i in all_scores_r2]
     avg_scores = np.nanmean(all_scores_r2, axis=1)  # average score for each model across tasks
     mean_score_r2, std_score_r2 = np.nanmean(avg_scores), np.nanstd(avg_scores)
     info(f'Overall test r2 = {mean_score_r2:.6f} +/- {std_score_r2:.6f}')
@@ -91,6 +92,7 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
                         [f'Fold {i} {args.metric}' for i in range(args.num_folds)])
 
         for task_num, task_name in enumerate(args.task_names):
+            all_scores_rmse = np.array(all_scores_rmse)
             task_scores = all_scores_rmse[:, task_num]
             mean, std = np.nanmean(task_scores), np.nanstd(task_scores)
             writer.writerow([task_name, mean, std] + task_scores.tolist())

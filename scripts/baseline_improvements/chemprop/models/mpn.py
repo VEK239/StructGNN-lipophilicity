@@ -30,13 +30,11 @@ class MPNEncoder(nn.Module):
             self.atom_messages = args.no_substructures_atom_messages
             self.depth = args.no_substructures_depth
             self.hidden_size = args.no_substructures_hidden_size
-            self.atom_messages = args.no_substructures_undirected
             self.undirected = args.no_substructures_undirected
         else:
             self.atom_messages = args.substructures_atom_messages
             self.hidden_size = args.substructures_hidden_size
             self.depth = args.substructures_depth
-            self.atom_messages = args.substructures_undirected
             self.undirected = args.substructures_undirected
         self.bias = args.bias
         self.dropout = args.dropout

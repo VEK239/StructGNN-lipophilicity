@@ -1,5 +1,5 @@
 from scripts.baseline_improvements.chemprop.features.molecule import Molecule, create_molecule_for_smiles, \
-    onek_encoding_unk
+    onek_encoding
 from typing import List, Tuple, Union
 
 from rdkit import Chem
@@ -67,7 +67,7 @@ def bond_features_for_substructures(bond: Chem.rdchem.Bond) -> List[Union[bool, 
             (bond.GetIsConjugated() if bt is not None else 0),
             (bond.IsInRing() if bt is not None else 0)
         ]
-        fbond += onek_encoding_unk(int(bond.GetStereo()), 6)
+        fbond += onek_encoding(int(bond.GetStereo()), 6)
     return fbond
 
 
