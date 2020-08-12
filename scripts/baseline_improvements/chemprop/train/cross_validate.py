@@ -69,6 +69,8 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
                 info(f'\t\tSeed {init_seed + fold_num} ==> test {task_name} r2 = {score:.6f}')
 
     # Report scores across models
+    print(all_scores_rmse)
+    all_scores_rmse = [[i] for i in all_scores_rmse]
     avg_scores = np.nanmean(all_scores_rmse, axis=1)  # average score for each model across tasks
     mean_score, std_score = np.nanmean(avg_scores), np.nanstd(avg_scores)
     info(f'Overall test {args.metric} = {mean_score:.6f} +/- {std_score:.6f}')

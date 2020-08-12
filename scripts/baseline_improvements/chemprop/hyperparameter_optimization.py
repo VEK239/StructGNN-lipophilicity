@@ -1,12 +1,11 @@
 """Optimizes hyperparameters using Bayesian optimization."""
 
-from copy import deepcopy
 import json
-from typing import Dict, Union
-import os
-
-from hyperopt import fmin, hp, tpe
 import numpy as np
+import os
+from copy import deepcopy
+from hyperopt import fmin, hp, tpe
+from typing import Dict, Union
 
 from scripts.baseline_improvements.chemprop.args import HyperoptArgs
 from scripts.baseline_improvements.chemprop.constants import HYPEROPT_LOGGER_NAME
@@ -16,13 +15,13 @@ from scripts.baseline_improvements.chemprop.train import cross_validate
 from scripts.baseline_improvements.chemprop.utils import create_logger, makedirs, timeit
 
 SPACE = {
-    'no_substructures_hidden_size': hp.choice('no_substructures_hidden_size', [300, 600]),
-    'substructures_hidden_size': hp.choice('substructures_hidden_size', [300, 600]),
+    'no_substructures_hidden_size': hp.choice('no_substructures_hidden_size', [300, 400, 500, 600]),
+    'substructures_hidden_size': hp.choice('substructures_hidden_size', [300, 400, 500, 600]),
     'no_substructures_depth': hp.quniform('no_substructures_depth', low=2, high=10, q=2),
     'substructures_depth': hp.quniform('substructures_depth', low=2, high=10, q=2),
-    'substructures_use_substructures': hp.choice('substructures_use_substructures', [True, False]),
 }
-INT_KEYS = ['no_substructures_hidden_size', 'substructures_hidden_size', 'no_substructures_depth', 'substructures_depth']
+INT_KEYS = ['no_substructures_hidden_size', 'substructures_hidden_size', 'no_substructures_depth',
+            'substructures_depth']
 
 
 @timeit(logger_name=HYPEROPT_LOGGER_NAME)
