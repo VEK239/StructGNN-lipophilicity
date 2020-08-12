@@ -11,7 +11,7 @@ THREE_D_DISTANCE_MAX = 20
 THREE_D_DISTANCE_STEP = 1
 THREE_D_DISTANCE_BINS = list(range(0, THREE_D_DISTANCE_MAX + 1, THREE_D_DISTANCE_STEP))
 
-BOND_FDIM = 14
+BOND_FDIM = 13
 
 
 def get_atom_fdim_with_substructures(use_substructures=False, merge_cycles=False) -> int:
