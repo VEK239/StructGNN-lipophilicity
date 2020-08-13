@@ -15,6 +15,8 @@ from .scaffold import log_scaffold_stats, scaffold_split
 from chemprop.args import PredictArgs, TrainArgs
 from chemprop.features import load_features
 
+from sklearn.model_selection import KFold
+
 
 def get_task_names(path: str,
                    smiles_column: str = None,
@@ -351,6 +353,21 @@ def split_data(data: MoleculeDataset,
         test = data[train_val_size:]
 
         return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset(test)
+    elif split_type == 'k-fold':
+        kf = KFold(n_splits=args.num_folds, shuffle=False)
+
+        fold_num = 0
+        for train_index, val_index in kf.split(data):
+            if fold_num==args.seed:
+                break
+            else:
+                fold_num+=1
+        train = [data[i] for i in train_index]
+        val = [data[i] for i in val_index]
+
+        
+
+        return MoleculeDataset(train), MoleculeDataset(val), None
 
     else:
         raise ValueError(f'split_type "{split_type}" not supported.')

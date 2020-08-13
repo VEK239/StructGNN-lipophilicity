@@ -71,8 +71,9 @@ class MoleculeDataset(Dataset):
         for option in data_options:
             if option in data_file:
                 broken_smiles  = [x.strip("\r\n ") for x in open(os.path.join(args.raw_path,option+'_errs.txt'))] 
-                
-        self.data = self.data[~self.data[SMILES_COLUMN].isin(broken_smiles)]
+        
+        if 'logp' not in args.vocab_path:
+            self.data = self.data[~self.data[SMILES_COLUMN].isin(broken_smiles)]
         self.SMILES_COLUMN = SMILES_COLUMN
         self.TARGET_COLUMN = TARGET_COLUMN
         

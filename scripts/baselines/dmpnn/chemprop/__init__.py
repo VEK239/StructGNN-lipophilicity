@@ -1,16 +1,21 @@
-import chemprop.data
-import chemprop.features
-import chemprop.models
-import chemprop.train
-import chemprop.web
+import sys
 
-import chemprop.args
-import chemprop.constants
-import chemprop.hyperparameter_optimization
-import chemprop.interpret
-import chemprop.nn_utils
-import chemprop.utils
-import chemprop.sklearn_predict
-import chemprop.sklearn_train
+sys.path.append('./')
 
-from chemprop._version import __version__
+
+import data
+import features
+import models
+import train
+import web
+
+import args
+import constants
+import hyperparameter_optimization
+import interpret
+import nn_utils
+import utils
+import sklearn_predict
+import sklearn_train
+
+from _version import __version__
