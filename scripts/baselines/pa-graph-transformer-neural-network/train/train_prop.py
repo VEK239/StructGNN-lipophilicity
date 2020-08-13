@@ -45,16 +45,18 @@ def main():
     idx = 0
     for max_grad_norm in [10]:
         for batch_size in [50]:
-            for hidden_size in [150, 200, 250, 300]:
-                for max_path_length in [2, 3, 4, 5]:
-                    for n_heads in [2, 3, 4]:
-                        for d_k in [40, 60, 80]:
+            for hidden_size in [200, 250, 300]:
+                for max_path_length in [3, 4, 5]:
+                    for n_heads in [3, 4]:
+                        for d_k in [80]:
                             for dropout in [0.2]:
+                                if idx <= 5:
+                                    idx += 1
+                                    continue
                                 args_lst = ['-data', '../../data/logP_wo_averaging', '-cuda', '-loss_type', 'mse',
                                             '-max_grad_norm', max_grad_norm, '-batch_size', batch_size, '-num_epochs',
                                             35,
-                                            '-output_dir',
-                                            '../../data/logP_wo_averaging/output_test/grid_search/sol_transformer_{0}'.format(idx),
+                                            '-output_dir', '../../data/logP_wo_averaging/output_test/symmetry_params/sol_transformer_{0}'.format(idx),
                                             '-n_rounds', 1, '-model_type', 'transformer', '-ring_embed',
                                             '-dropout', dropout, '-n_heads', n_heads, '-d_k', d_k,
                                             '-hidden_size', hidden_size, '-p_embed', '-max_path_length', max_path_length]
