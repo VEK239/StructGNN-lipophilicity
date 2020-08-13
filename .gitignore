@@ -2,7 +2,6 @@ NCIdb.sdf
 __pycache__/
 *.pyc
 logs/
-models/
 SMILES_TO_MOLTREE.pickle
 *.pickle
  
