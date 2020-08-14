@@ -23,6 +23,10 @@ Running with best parameters:
 
 Results are stored on the server in `~/alisa/mol_properties/data/raw/baselines/neuralfingerprint`
 
+| Number of experiment | Name of dataset | Neural Fingerprint test R2 | Neural Fingerprint test RMSE | Neural Fingerprint val RMSE | Neural Fingerprint val R2 | Neural Fingerprint train RMSE | Neural Fingerprint train R2 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 200 | logp_wo_averaging | **0.87** | **0.65** | 0.62 | 0.89 | 0.60 | 0.90 |
+
 ### Grid Search
 
 Grid search parameters:
