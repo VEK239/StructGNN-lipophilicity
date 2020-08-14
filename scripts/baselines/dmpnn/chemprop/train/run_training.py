@@ -59,8 +59,10 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
     # Split data
     debug(f'Splitting data with seed {args.seed}')
     if args.separate_test_path:
+        
         test_data = get_data(path=args.separate_test_path, args=args, features_path=args.separate_test_features_path, logger=logger)
     if args.separate_val_path:
+        
         val_data = get_data(path=args.separate_val_path, args=args, features_path=args.separate_val_features_path, logger=logger)
 
     if args.separate_val_path and args.separate_test_path:
@@ -68,6 +70,7 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
     elif args.separate_val_path:
         train_data, _, test_data = split_data(data=data, split_type=args.split_type, sizes=(0.8, 0.0, 0.2), seed=args.seed, args=args, logger=logger)
     elif args.separate_test_path:
+        
         train_data, val_data, _ = split_data(data=data, split_type=args.split_type, sizes=(0.8, 0.2, 0.0), seed=args.seed, args=args, logger=logger)
     else:
         train_data, val_data, test_data = split_data(data=data, split_type=args.split_type, sizes=args.split_sizes, seed=args.seed, args=args, logger=logger)

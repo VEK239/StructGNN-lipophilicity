@@ -79,12 +79,15 @@ class MoleculeDataset(Dataset):
         self.SMILES_COLUMN = SMILES_COLUMN
         self.TARGET_COLUMN = TARGET_COLUMN
         
+        self.smiles = self.data[SMILES_COLUMN].values
+        self.targets = self.data[TARGET_COLUMN].values
+        
         for i in tqdm(range(len(self.data))):
-            if self.data.iloc[i][SMILES_COLUMN] in SMILES_TO_MOLTREE:
-                mol_tree = SMILES_TO_MOLTREE[self.data.iloc[i][SMILES_COLUMN]]
+            if self.smiles[i] in SMILES_TO_MOLTREE:
+                mol_tree = SMILES_TO_MOLTREE[self.smiles[i]]
             else:
-                mol_tree = MolTree(self.data.iloc[i][SMILES_COLUMN])
-                SMILES_TO_MOLTREE[self.data.iloc[i][SMILES_COLUMN]] = mol_tree
+                mol_tree = MolTree(self.smiles[i])
+                SMILES_TO_MOLTREE[self.smiles[i]] = mol_tree
                 mol_tree.recover()
                 mol_tree.assemble()
     def __len__(self):
@@ -92,8 +95,8 @@ class MoleculeDataset(Dataset):
     
     def __getitem__(self, idx):
         global SMILES_TO_MOLTREE
-        smiles = self.data.iloc[idx][self.SMILES_COLUMN]
-        target = self.data.iloc[idx][self.TARGET_COLUMN]
+        smiles = self.smiles[idx]
+        target = self.targets[idx]
         if smiles in SMILES_TO_MOLTREE.keys():
             mol_tree = SMILES_TO_MOLTREE[smiles]
         else:
@@ -433,9 +436,9 @@ def main():
         train_dataset, valid_dataset = Subset(train_val_dataset, train_index), Subset(train_val_dataset, val_index)
     
         scaler = StandardScaler()
-        scaled_y = torch.tensor(scaler.fit_transform(train_dataset.dataset.data.iloc[train_index][train_dataset.dataset.TARGET_COLUMN].values.reshape(-1, 1)).reshape(-1))
-        true_y = train_dataset.dataset.data.iloc[train_index][train_dataset.dataset.TARGET_COLUMN].values
-        train_dataset.dataset.data.loc[train_index][train_dataset.dataset.TARGET_COLUMN] = scaled_y
+        scaled_y = torch.tensor(scaler.fit_transform(train_dataset.dataset.targets[train_index].reshape(-1, 1)).reshape(-1))
+        true_y = train_dataset.dataset.targets[train_index]
+        train_dataset.dataset.targets[train_index] = scaled_y
 
 
 
@@ -543,7 +546,7 @@ def main():
                 f.write('Train RMSE is '+str(train_rmse)+'\n')
                 f.write('Train R2 is '+str(train_r2)+'\n')
         cv_scores(test_rmse, test_r2, val_rmse, val_r2, train_rmse, train_r2, model, num_of_fold)
-        train_dataset.dataset.data.loc[train_index][train_dataset.dataset.TARGET_COLUMN] = true_y
+        train_dataset.dataset.targets[train_index] = true_y
             
         num_of_fold+=1
     cv_scores.save_log_info()

@@ -365,9 +365,7 @@ def split_data(data: MoleculeDataset,
         train = [data[i] for i in train_index]
         val = [data[i] for i in val_index]
 
-        
-
-        return MoleculeDataset(train), MoleculeDataset(val), None
+        return MoleculeDataset(train, args = args), MoleculeDataset(val, args = args), MoleculeDataset([])
 
     else:
         raise ValueError(f'split_type "{split_type}" not supported.')
