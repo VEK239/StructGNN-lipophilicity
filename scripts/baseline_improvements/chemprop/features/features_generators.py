@@ -1,8 +1,7 @@
-from typing import Callable, List, Union
-
 import numpy as np
 from rdkit import Chem, DataStructs
 from rdkit.Chem import AllChem
+from typing import Callable, List, Union
 
 Molecule = Union[str, Chem.Mol]
 FeaturesGenerator = Callable[[Molecule], np.ndarray]
@@ -135,13 +134,14 @@ try:
 
         return features
 
+
     @register_features_generator('rdkit_2d_normalized_wo_MolLogP')
-    def rdkit_2d_normalized_features_generator(mol: Molecule) -> np.ndarray:
+    def rdkit_2d_normalized_features_generator_wo_MolLogP(mol: Molecule) -> np.ndarray:
         """
-        Generates RDKit 2D normalized features for a molecule.
+        Generates RDKit 2D normalized features for a molecule without MolLogP feature.
 
         :param mol: A molecule (i.e., either a SMILES or an RDKit molecule).
-        :return: A 1D numpy array containing the RDKit 2D normalized features.
+        :return: A 1D numpy array containing the RDKit 2D normalized features without MolLogP feature.
         """
         feature_names = rdDescriptors.RDKIT_PROPS["1.0.0"].copy()
         feature_names.remove('MolLogP')
@@ -151,9 +151,67 @@ try:
 
         return features
 
+
+    @register_features_generator('rdkit_MolLogP')
+    def rdkit_MolLogP(mol: Molecule) -> np.ndarray:
+        """
+        Generates MolLogP (calculated logP value) feature for a molecule.
+
+        :param mol: A molecule (i.e., either a SMILES or an RDKit molecule).
+        :return: A 1D numpy array containing the RDKit MolLogP feature.
+        """
+        feature_names = ['MolLogP']
+        smiles = Chem.MolToSmiles(mol, isomericSmiles=True) if type(mol) != str else mol
+        generator = rdNormalizedDescriptors.RDKit2DNormalized(feature_names)
+        features = generator.process(smiles)[1:]
+
+        return features
+
+
+    @register_features_generator('rdkit_wo_fragments')
+    def rdkit_wo_fragments(mol: Molecule) -> np.ndarray:
+        """
+        Generates RDKit 2D normalized features for a molecule without features corresponding the count of
+        specific fragments in a molecule.
+
+        :param mol: A molecule (i.e., either a SMILES or an RDKit molecule).
+        :return: A 1D numpy array containing the RDKit features without fragment features.
+        """
+        feature_names = rdDescriptors.RDKIT_PROPS["1.0.0"].copy()
+        feature_names_copy = feature_names.copy()
+        for name in feature_names:
+            if name.startswith("fr"):
+                feature_names_copy.remove(name)
+        smiles = Chem.MolToSmiles(mol, isomericSmiles=True) if type(mol) != str else mol
+        generator = rdNormalizedDescriptors.RDKit2DNormalized(feature_names_copy)
+        features = generator.process(smiles)[1:]
+
+        return features
+
+
+    @register_features_generator('rdkit_wo_fragments_and_counts')
+    def rdkit_wo_fragments_and_counts(mol: Molecule) -> np.ndarray:
+        """
+        Generates RDKit 2D normalized features for a molecule without features corresponding the count of
+        specific fragments in a molecule or count of fragment types (i.e. ring count).
+
+        :param mol: A molecule (i.e., either a SMILES or an RDKit molecule).
+        :return: A 1D numpy array containing the RDKit features without fragment features.
+        """
+        feature_names = rdDescriptors.RDKIT_PROPS["1.0.0"].copy()
+        feature_names_copy = feature_names.copy()
+        for name in feature_names:
+            if name.startswith("fr") or "count" in name.lower() or "num" in name.lower():
+                feature_names_copy.remove(name)
+        smiles = Chem.MolToSmiles(mol, isomericSmiles=True) if type(mol) != str else mol
+        generator = rdNormalizedDescriptors.RDKit2DNormalized(feature_names_copy)
+        features = generator.process(smiles)[1:]
+
+        return features
+
+
 except ImportError:
     pass
-
 
 """
 Custom features generator template.
