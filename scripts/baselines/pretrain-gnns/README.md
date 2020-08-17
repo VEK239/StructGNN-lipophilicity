@@ -1,70 +1,40 @@
-# Strategies for Pre-training Graph Neural Networks
+# Baseline Pretrain gnns
 
-This is a Pytorch implementation of the following paper: 
+## Sources
 
-Weihua Hu*, Bowen Liu*, Joseph Gomes, Marinka Zitnik, Percy Liang, Vijay Pande, Jure Leskovec. Strategies for Pre-training Graph Neural Networks. ICLR 2020.
-[arXiv](https://arxiv.org/abs/1905.12265) [OpenReview](https://openreview.net/forum?id=HJlWWJSFDH) 
+Article - [STRATEGIES FOR PRE-TRAINING GRAPH NEURAL
+NETWORKS](https://arxiv.org/pdf/1905.12265v3.pdf)
 
-If you make use of the code/experiment in your work, please cite our paper (Bibtex below).
+Original Github Repo - https://github.com/snap-stanford/pretrain-gnns/
 
-```
-@inproceedings{
-hu2020pretraining,
-title={Strategies for Pre-training Graph Neural Networks},
-author={Weihua Hu, Bowen Liu, Joseph Gomes, Marinka Zitnik, Percy Liang, Vijay Pande, Jure Leskovec},
-booktitle={International Conference on Learning Representations},
-year={2020},
-url={https://openreview.net/forum?id=HJlWWJSFDH},
-}
-```
+## Short description
 
-## Installation
-We used the following Python packages for core development. We tested on `Python 3.7`.
-```
-pytorch                   1.0.1
-torch-cluster             1.2.4              
-torch-geometric           1.0.3
-torch-scatter             1.1.2 
-torch-sparse              0.2.4
-torch-spline-conv         1.0.6
-rdkit                     2019.03.1.0
-tqdm                      4.31.1
-tensorboardx              1.6
-```
+Training representations in unsupervised(ZINC, node-level)/supervised(CheMBL, graph-level) autoencoder manner and then apply embeddings to prediction tasks.
 
-## Dataset download
-All the necessary data files can be downloaded from the following links.
 
-For the chemistry dataset, download from [chem data](http://snap.stanford.edu/gnn-pretrain/data/chem_dataset.zip) (2.5GB), unzip it, and put it under `chem/`.
-For the biology dataset, download from [bio data](http://snap.stanford.edu/gnn-pretrain/data/bio_dataset.zip) (2GB), unzip it, and put it under `bio/`.
+For node-level pre-training of GNNs, approach is to use easily-accessible unlabeled data to capture domain-specific knowledge/regularities in the graph->self-supervised methods: Context Prediction (r goal is to pre-train a GNN so that it maps nodes appearing in similar structural contexts to nearby embeddings) and Attribute Masking (randomly mask input node/edge attributes, for example atom types in molecular graphs, by replacing them with special masked indicators. We then apply GNNs to obtain the corresponding node/edge embeddings (edge embeddings can be obtained as a sum of node embeddings of the edge’s end nodes). Finally, a linear model is applied on top of embeddings to predict a masked node/edge attribute).
 
-## Pre-training and fine-tuning
-In each directory, we have three kinds of files used to train GNNs.
+## Running instructions 
 
-#### 1. Self-supervised pre-training
-```
-python pretrain_contextpred.py --output_model_file OUTPUT_MODEL_PATH
-python pretrain_masking.py --output_model_file OUTPUT_MODEL_PATH
-python pretrain_edgepred.py --output_model_file OUTPUT_MODEL_PATH
-python pretrain_deepgraphinfomax.py --output_model_file OUTPUT_MODEL_PATH
-```
-This will save the resulting pre-trained model to `OUTPUT_MODEL_PATH`.
+### Training script
 
-#### 2. Supervised pre-training
-```
-python pretrain_supervised.py --output_model_file OUTPUT_MODEL_PATH --input_model_file INPUT_MODEL_PATH
-```
-This will load the pre-trained model in `INPUT_MODEL_PATH`, further pre-train it using supervised pre-training, and then save the resulting pre-trained model to `OUTPUT_MODEL_PATH`.
+Running with best parameters:
 
-#### 3. Fine-tuning
-```
-python finetune.py --model_file INPUT_MODEL_PATH --dataset DOWNSTREAM_DATASET --filename OUTPUT_FILE_PATH
-```
-This will finetune pre-trained model specified in `INPUT_MODEL_PATH` using dataset `DOWNSTREAM_DATASET.` The result of fine-tuning will be saved to `OUTPUT_FILE_PATH.`
+```python finetune.py --filename infomax.pth --input_model_file ./model_gin --gnn_type gin --epochs 2000```
 
-## Saved pre-trained models
-We release pre-trained models in `model_gin/` and `model_architecture/` for both biology (`bio/`) and chemistry (`chem/`) applications. Feel free to take the models and use them in your applications!
+Results are stored on the server in `~/alisa/mol_properties/data/raw/baselines/pretrain_gnn/logs`
 
-## Reproducing results in the paper
-Our results in the paper can be reproduced by running `sh finetune_tune.sh SEED DEVICE`, where `SEED` is a random seed ranging from 0 to 9, and `DEVICE` specifies the GPU ID to run the script. This script will finetune our saved pre-trained models on each downstream dataset.
+| Pretrained model |test RMSE | test R2 | val RMSE | val R2 | train RMSE | train R2 |
+| --- | --- | --- |  --- | --- | --- | --- |
+| gin_infomax.pth |  0.6884 | 0.8593 | 0.6734 | 0.8655 | 0.2903 | 0.9157 |
 
+### Grid Search
+
+Grid search over different kinds of pre-trained and random initialized models
+
+```./finetune.sh```
+
+## Changes in source code
+
+- [x] Added calculating of R2 score
+- [x] Provided bash script for grid search over various kinds of models and pre-trained weights
