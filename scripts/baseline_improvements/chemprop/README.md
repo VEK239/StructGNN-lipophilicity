@@ -1,6 +1,8 @@
 ## D-MPNN model improvement.
+
 Added second encoder into the [D-MPNN model](https://github.com/chemprop/chemprop).
-###The second encoder's algorithm
+
+### The second encoder's algorithm
 
 This encoder first finds all the interesting substructures in a molecule (rings, acids, amins, esters and sulfonamins) and makes a list of such substructures. After that each of the substructure and all the atoms which were not included in any of substructures are encoded into special "substructure atoms". Each "substructure atom" is evcoded into a vector with 165 features. The features are:
 * 55 features for structure, each feature - count of atoms in a substructure with atomic charge `i`,
@@ -11,7 +13,9 @@ This encoder first finds all the interesting substructures in a molecule (rings,
 * substructure_mass \* 0.01 (for normalizing),
 * sum of internal substructure internal edges \* 0.1 (for normalizing),
 * one-hot for structure type (types are - ['ATOM', 'RING', 'ACID', 'AMIN', 'ESTER', 'SULFONAMID'])
- The bonds which connect two **different** "substructure atoms" are present in a new molecule. All the others are skipped. 
+
+The bonds which connect two **different** "substructure atoms" are present in a new molecule. All the others are skipped. 
+
 ### Running
 The configuration file is located in ./datasets/config.json
 The command line arguments different from original D-MPNN:
@@ -23,7 +27,9 @@ The command line arguments different from original D-MPNN:
 - substructures_merge - whether to merge neighboring cycles or not
 
 There is also a new type of cross-validation ("one_out_crossval") which takes one of the four parts of the input dataset and uses it as validation.
+
 ### Feature generators
+
 Some new feature generators were added.
 - RDKit without MolLogP feature
 - Only RDKit calculated MolLogP feature
