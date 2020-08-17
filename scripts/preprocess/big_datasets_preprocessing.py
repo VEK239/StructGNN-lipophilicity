@@ -8,6 +8,9 @@ from standardize_smiles import StandardizeTautomers
 from remove_strange_mols import remove_strange_mols
 
 if __name__ == '__main__':
+    """
+    Runs big datasets preprocessing (standardization and removing strange molecules).
+    """
     INPUT_PATH = Path("../../data/1_filtering/smiles_only")
     OUTPUT_PATH = Path("../../data/2_standardize/smiles_only")
 
