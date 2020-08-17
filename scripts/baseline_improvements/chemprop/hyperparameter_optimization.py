@@ -15,10 +15,10 @@ from scripts.baseline_improvements.chemprop.train import cross_validate
 from scripts.baseline_improvements.chemprop.utils import create_logger, makedirs, timeit
 
 SPACE = {
-    'no_substructures_hidden_size': hp.choice('no_substructures_hidden_size', [300, 400, 500, 600]),
-    'substructures_hidden_size': hp.choice('substructures_hidden_size', [300, 400, 500, 600]),
-    'no_substructures_depth': hp.quniform('no_substructures_depth', low=2, high=10, q=2),
-    'substructures_depth': hp.quniform('substructures_depth', low=2, high=10, q=2),
+    'no_substructures_hidden_size': hp.quniform('no_substructures_hidden_size', low=300, high=800, q=100),
+    'substructures_hidden_size': hp.quniform('substructures_hidden_size', low=300, high=800, q=100),
+    'no_substructures_depth': hp.quniform('no_substructures_depth', low=1, high=6, q=1),
+    'substructures_depth': hp.quniform('substructures_depth', low=1, high=6, q=1),
 }
 INT_KEYS = ['no_substructures_hidden_size', 'substructures_hidden_size', 'no_substructures_depth',
             'substructures_depth']

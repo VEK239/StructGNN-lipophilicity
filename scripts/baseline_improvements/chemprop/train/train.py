@@ -42,7 +42,7 @@ def train(model: MoleculeModel,
     model.train()
     loss_sum, iter_count = 0, 0
 
-    for batch in tqdm(data_loader, total=len(data_loader)):
+    for batch in data_loader:
         # Prepare batch
         batch: MoleculeDataset
         substructure_mol_batch = batch.batch_graph(model_type='substructures', args=args)

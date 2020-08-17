@@ -1,14 +1,14 @@
 from typing import List, Union
 
 import numpy as np
-from rdkit import Chem
 import torch
 import torch.nn as nn
+from rdkit import Chem
 
-from .mpn import MPN
 from scripts.baseline_improvements.chemprop.args import TrainArgs
 from scripts.baseline_improvements.chemprop.features import BatchMolGraph, BatchMolGraphWithSubstructures
 from scripts.baseline_improvements.chemprop.nn_utils import get_activation_function, initialize_weights
+from .mpn import MPN
 
 
 class MoleculeModel(nn.Module):
@@ -63,7 +63,7 @@ class MoleculeModel(nn.Module):
         if args.features_only:
             first_linear_dim = args.features_size
         else:
-            first_linear_dim = args.no_substructures_hidden_size + args.substructures_hidden_size
+            first_linear_dim = args.substructures_hidden_size + args.no_substructures_hidden_size
             if args.use_input_features:
                 first_linear_dim += args.features_size
 
@@ -130,15 +130,18 @@ class MoleculeModel(nn.Module):
         #                    self.substructures_encoder(substructures_batch, features_batch).cpu().data.numpy()], axis=1)
 
         out = torch.cat((self.no_substructures_encoder(no_substructures_batch, features_batch),
-                           self.substructures_encoder(substructures_batch)), dim=1)
+                         self.substructures_encoder(substructures_batch)), dim=1)
+        # out = self.substructures_encoder(substructures_batch)
         output = self.ffn(out)
 
         # Don't apply sigmoid during training b/c using BCEWithLogitsLoss
         if self.classification and not self.training:
             output = self.sigmoid(output)
         if self.multiclass:
-            output = output.reshape((output.size(0), -1, self.num_classes))  # batch size x num targets x num classes per target
+            output = output.reshape(
+                (output.size(0), -1, self.num_classes))  # batch size x num targets x num classes per target
             if not self.training:
-                output = self.multiclass_softmax(output)  # to get probabilities during evaluation, but not during training as we're using CrossEntropyLoss
+                output = self.multiclass_softmax(
+                    output)  # to get probabilities during evaluation, but not during training as we're using CrossEntropyLoss
 
         return output
