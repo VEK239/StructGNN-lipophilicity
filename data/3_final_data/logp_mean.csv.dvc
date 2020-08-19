@@ -1,0 +1,3 @@
+outs:
+- md5: e0e9f6571e585e64340852875d2fdcf4
+  path: logp_mean.csv

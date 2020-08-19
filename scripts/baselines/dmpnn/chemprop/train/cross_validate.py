@@ -25,7 +25,16 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
     """
     logger = create_logger(name=TRAIN_LOGGER_NAME, save_dir=args.save_dir, quiet=args.quiet)
     info = logger.info if logger is not None else print
+    import yaml
 
+    with open("params.yaml", 'r') as fd:
+            params = yaml.safe_load(fd)
+    args.save_dir = params['save_dir']
+    args.epochs = params['epochs']
+    args.depth = params['depth']
+    args.feature_generator = params['features_generator']
+    args.split_type = params['split_type']
+    args.num_folds = params['num_folds']
     # Initialize relevant variables
     init_seed = args.seed
     save_dir = args.save_dir

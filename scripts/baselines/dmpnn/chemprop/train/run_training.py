@@ -34,7 +34,7 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
         debug, info = logger.debug, logger.info
     else:
         debug = info = print
-
+    
     # Print command line
     debug('Command line')
     debug(f'python {" ".join(sys.argv)}')
@@ -111,8 +111,6 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
         scaler = StandardScaler().fit(train_targets)
         scaled_targets = scaler.transform(train_targets).tolist()
         train_data.set_targets(scaled_targets)
-        debug(train_targets)
-        debug(scaled_targets)
     else:
         scaler = None
 
