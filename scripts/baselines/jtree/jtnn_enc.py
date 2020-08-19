@@ -4,7 +4,7 @@ from collections import deque
 from mol_tree import Vocab, MolTree
 from nnutils import create_var, GRU
 
-MAX_NB = 8
+MAX_NB = 27
 
 class JTNNEncoder(nn.Module):
 
