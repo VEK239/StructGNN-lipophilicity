@@ -17,5 +17,6 @@
   "dropout": 0.2,
   "scripts/baseline_improvements/chemprop/substructures_use_substructures": true,
   "substructures_merge": false,
-  "split_type": "one_out_crossval"
+  "split_type": "one_out_crossval",
+  "features_generator": ["rdkit_2d_normalized"]
 }
