@@ -1,0 +1,6 @@
+save_dir: ../../../data/raw/baselines/dmpnn/logs/exp_220
+epochs: 100 
+depth: 6
+features_generator: rdkit_2d_normalized
+split_type: k-fold
+num_folds: 4
