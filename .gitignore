@@ -16,3 +16,4 @@ data/*/pubchem_subset.csv
 data/raw/*logs
 scripts/baseline_improvements/*.txt
 scripts/server_do_not_die_pls.py
+scripts/baseline_improvements/chemprop/out.dvc

@@ -2,7 +2,7 @@
   "data_path": "./datasets/logp_wo_averaging_cross.csv",
   "separate_test_path": "./datasets/logp_wo_averaging_test.csv",
   "dataset_type": "regression",
-  "save_dir": "./datasets/cross_validation/best_with_substructures_rdkit",
+  "save_dir": "./out",
   "num_iters": 12,
   "num_folds": 4,
   
