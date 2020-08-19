@@ -4,4 +4,15 @@ __pycache__/
 logs/
 SMILES_TO_MOLTREE.pickle
 *.pickle
- 
+.idea
+notebooks/.ipynb_checkpoints
+notebooks/*/.ipynb_checkpoints
+notebooks/*/*/.ipynb_checkpoints
+data/*/new
+data/*/smiles_only
+data/*/zinc_dataset.csv
+data/*/biocad_measurements.csv
+data/*/pubchem_subset.csv
+data/raw/*logs
+scripts/baseline_improvements/*.txt
+scripts/server_do_not_die_pls.py
