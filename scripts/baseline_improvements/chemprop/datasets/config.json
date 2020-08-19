@@ -1,22 +1,21 @@
 {
-  "data_path": "./datasets/logp_wo_averaging_cross.csv",
-  "separate_test_path": "./datasets/logp_wo_averaging_test.csv",
+  "data_path": "scripts/baseline_improvements/chemprop/datasets/logp_wo_averaging_cross.csv",
+  "separate_test_path": "scripts/baseline_improvements/chemprop/datasets/logp_wo_averaging_test.csv",
   "dataset_type": "regression",
-  "save_dir": "./out",
+  "save_dir": "scripts/baseline_improvements/chemprop/out",
   "num_iters": 12,
   "num_folds": 4,
   
-  "rings_depth": 2,
-  "no_rings_depth": 10,
+  "no_substructures_depth": 2,
+  "substructures_depth": 1,
   "epochs": 100,
   "init_lr": 1e-4,
   "max_lr": 1e-3,
   "ffn_num_layers": 3,
-  "rings_hidden_size": 500,
-  "no_rings_hidden_size": 500,
+  "no_substructures_hidden_size": 500,
+  "substructures_hidden_size": 500,
   "dropout": 0.2,
-  "no_rings_use_substructures": true,
-  "no_rings_merge": false,
-  "split_type": "one_out_crossval",
-  "features_generator": ["rdkit_2d_normalized"]
+  "scripts/baseline_improvements/chemprop/substructures_use_substructures": true,
+  "substructures_merge": false,
+  "split_type": "one_out_crossval"
 }
