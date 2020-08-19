@@ -20,7 +20,7 @@ STRUCT_TO_NUM = {
     'ACID': 2,
     'AMIN': 3,
     'ESTER': 4,
-    'SULFONEAMID': 5
+    'SULFONAMID': 5
 }
 
 
@@ -69,18 +69,6 @@ def get_acids_for_molecule(mol):
     return [list(acid) for acid in acids]
 
 
-def get_amins_for_molecule(mol):
-    """
-    Finds all amino parts in a given RDKit mol
-    :param mol: The given RDKit molecule
-    :return: A list of amino parts in a mol
-    """
-    amin_pattern = Chem.MolFromSmarts('[NX3;H2,H1;!$(NC=O)]')
-    amins = mol.GetSubstructMatches(amin_pattern)
-    amins = [list(amin) for amin in amins]
-    return [[amin[0] if mol.GetAtomWithIdx(amin[0]).GetSymbol() == 'N' else amin[1]] for amin in amins]
-
-
 def get_esters_for_molecule(mol):
     """
     Finds all ester parts in a given RDKit mol
@@ -103,24 +91,42 @@ def get_esters_for_molecule(mol):
     return ester_atoms
 
 
-def get_sulfoneamids_for_molecule(mol):
+def get_amins_for_molecule(mol):
     """
-    Finds all sulfoneamid parts in a given RDKit mol
+    Finds all amino parts in a given RDKit mol
     :param mol: The given RDKit molecule
-    :return: A list of sulfoneamid parts in a mol
+    :return: A list of amino parts in a mol
+    """
+    sulfonamids = get_sulfonamids_for_molecule(mol)
+    sulfonamid_atoms = []
+    for sulfo in sulfonamids:
+        for atom in sulfo:
+            sulfonamid_atoms.append(atom)
+    amin_pattern = Chem.MolFromSmarts('[NX3;H2,H1;!$(NC=O)]')
+    amins = mol.GetSubstructMatches(amin_pattern)
+    amins = [list(amin) for amin in amins]
+    amins = [[amin[0] if mol.GetAtomWithIdx(amin[0]).GetSymbol() == 'N' else amin[1]] for amin in amins]
+    return [amin for amin in amins if amin[0] not in sulfonamid_atoms]
+
+
+def get_sulfonamids_for_molecule(mol):
+    """
+    Finds all sulfonamid parts in a given RDKit mol
+    :param mol: The given RDKit molecule
+    :return: A list of sulfonamid parts in a mol
     """
     sulphoneamid_pattern = Chem.MolFromSmarts(
         '[$([#16X4]([NX3])(=[OX1])(=[OX1])[#6]),$([#16X4+2]([NX3])([OX1-])([OX1-])[#6])]')
-    sulfoneamids = mol.GetSubstructMatches(sulphoneamid_pattern)
-    sulfoneamid_atoms = []
-    for sulfoneamid in sulfoneamids:
-        sulfoneamid = list(sulfoneamid)
-        atoms = [sulfoneamid[0]]
+    sulfonamids = mol.GetSubstructMatches(sulphoneamid_pattern)
+    sulfonamid_atoms = []
+    for sulfonamid in sulfonamids:
+        sulfonamid = list(sulfonamid)
+        atoms = [sulfonamid[0]]
         for neighbor in mol.GetAtomWithIdx(atoms[0]).GetNeighbors():
             if neighbor.GetSymbol() != 'C':
                 atoms.append(neighbor.GetIdx())
-        sulfoneamid_atoms.append(atoms)
-    return sulfoneamid_atoms
+        sulfonamid_atoms.append(atoms)
+    return sulfonamid_atoms
 
 
 def structure_encoding(atoms):
@@ -135,7 +141,7 @@ def structure_encoding(atoms):
     return enc
 
 
-def onek_encoding_unk(value, choices_len):
+def onek_encoding(value, choices_len):
     """
     Creates a one-hot encoding.
     :param value: The value for which the encoding should be one.
@@ -167,12 +173,12 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
                 implicit_substruct_valence += BT_MAPPING_INT[
                     mol.GetBondBetweenAtoms(substruct[i], substruct[j]).GetBondType()]
     substruct_valence = sum(atom.GetExplicitValence() for atom in atoms) - 2 * implicit_substruct_valence
-    substruct_valence_array = onek_encoding_unk(substruct_valence, 40)
+    substruct_valence_array = onek_encoding(substruct_valence, 40)
 
     substruct_formal_charge = sum(atom.GetFormalCharge() for atom in atoms)
 
     substruct_num_Hs = sum(atom.GetTotalNumHs() for atom in atoms)
-    substruct_Hs_array = onek_encoding_unk(substruct_num_Hs, 65 if args.no_rings_merge else 60)
+    substruct_Hs_array = onek_encoding(substruct_num_Hs, 65 if args.substructures_merge else 60)
 
     substruct_is_aromatic = 1 if sum(atom.GetIsAromatic() for atom in atoms) > 0 else 0
 
@@ -180,8 +186,8 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
 
     substruct_edges_sum = implicit_substruct_valence
 
-    if args.no_rings_use_substructures:
-        substruct_type = onek_encoding_unk(STRUCT_TO_NUM[structure_type], len(STRUCT_TO_NUM))
+    if args.substructures_use_substructures:
+        substruct_type = onek_encoding(STRUCT_TO_NUM[structure_type], len(STRUCT_TO_NUM))
     else:
         substruct_type = [1 if structure_type == 'RING' else 0]
 
@@ -191,10 +197,11 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
 
 
 class Atom:
-    def __init__(self, idx, atom_representation, symbol=''):
+    def __init__(self, idx, atom_representation, atom_type, symbol=''):
         self.symbol = symbol
         self.idx = idx
         self.atom_representation = atom_representation
+        self.atom_type = atom_type
         self.bonds = []
 
     def add_bond(self, bond):
@@ -217,17 +224,24 @@ class Bond:
 
 
 class Molecule:
-    def __init__(self, atoms, bonds, rdkit_mol):
+    def __init__(self, atoms, bonds, rdkit_mol, custom_atom_idx_to_usual_idx):
         self.atoms = atoms
         self.bonds = bonds
         self.rdkit_mol = rdkit_mol
+        self.custom_atom_idx_to_usual_idx = custom_atom_idx_to_usual_idx
 
-    def get_bond(self, atom_1, atom_2):
+    def get_bond(self, atom_1_idx, atom_2_idx):
         # If bond does not exist between atom_1 and atom_2, return None
-        for bond in self.atoms[atom_1].bonds:
-            if atom_2 == bond.out_atom_idx or atom_2 == bond.in_atom_idx:
+        for bond in self.atoms[atom_1_idx].bonds:
+            if atom_2_idx == bond.out_atom_idx or atom_2_idx == bond.in_atom_idx:
                 return bond
         return None
+
+    def get_real_indices_for_atom(self, atom_idx):
+        return self.custom_atom_idx_to_usual_idx[atom_idx]
+
+    def get_rdkit_mol(self):
+        return self.rdkit_mol
 
     def get_atoms(self):
         return self.atoms
@@ -248,54 +262,60 @@ class Molecule:
 def create_molecule_for_smiles(smiles, args):
     mol = Chem.MolFromSmiles(smiles)
 
-    rings = get_cycles_for_molecule(mol, args.no_rings_merge)
-    if args.no_rings_use_substructures:
+    rings = get_cycles_for_molecule(mol, args.substructures_merge)
+    if args.substructures_use_substructures:
         acids = get_acids_for_molecule(mol)
         esters = get_esters_for_molecule(mol)
         amins = get_amins_for_molecule(mol)
-        sulfoneamids = get_sulfoneamids_for_molecule(mol)
+        sulfonamids = get_sulfonamids_for_molecule(mol)
     else:
         acids = []
         esters = []
         amins = []
-        sulfoneamids = []
+        sulfonamids = []
 
     used_atoms = set()
     mol_bonds = []
     mol_atoms = []
     idx_to_atom = defaultdict(set)
+    custom_atom_idx_to_idx = defaultdict(set)
+    min_not_used_idx = 0
 
     for structure_type in [[rings, 'RING'], [acids, 'ACID'], [esters, 'ESTER'], [amins, 'AMIN'],
-                           [sulfoneamids, 'SULFONEAMID']]:
+                           [sulfonamids, 'SULFONAMID']]:
         substructure_type_string = structure_type[1]
         substructures = structure_type[0]
         for substruct in substructures:
             mapping = generate_substructure_sum_vector_mapping(substruct, mol, substructure_type_string, args)
-            substruct_atom = Atom(idx=(min(*substruct) if len(substruct) > 1 else substruct[0]),
-                                  atom_representation=mapping)
+            substruct_atom = Atom(idx=min_not_used_idx,
+                                  atom_representation=mapping, atom_type=substructure_type_string)
+            min_not_used_idx += 1
             mol_atoms.append(substruct_atom)
             for idx in substruct:
                 idx_to_atom[idx].add(substruct_atom)
                 used_atoms.add(idx)
+                custom_atom_idx_to_idx[min_not_used_idx - 1].add(idx)
 
     for atom in mol.GetAtoms():
         atom_idx = atom.GetIdx()
         if atom_idx not in used_atoms:
             atom_repr = generate_substructure_sum_vector_mapping([atom_idx], mol, 'ATOM', args)
-            custom_atom = Atom(idx=atom_idx, atom_representation=atom_repr, symbol=atom.GetSymbol())
+            custom_atom = Atom(idx=min_not_used_idx, atom_representation=atom_repr, symbol=atom.GetSymbol(), atom_type='ATOM')
+            min_not_used_idx += 1
             mol_atoms.append(custom_atom)
             idx_to_atom[atom_idx].add(custom_atom)
+            custom_atom_idx_to_idx[min_not_used_idx - 1].add(atom_idx)
 
     for idx, bond in enumerate(mol.GetBonds()):
         start_atoms = idx_to_atom[bond.GetBeginAtomIdx()]
         end_atoms = idx_to_atom[bond.GetEndAtomIdx()]
         if len(start_atoms & end_atoms) == 0:
-            custom_bond = Bond(bond, idx, start_atoms, end_atoms, bond.GetBondType())
+            custom_bond = Bond(bond, idx, list(start_atoms)[0].idx, list(end_atoms)[0].idx, bond.GetBondType())
             mol_bonds.append(custom_bond)
             for start_atom in start_atoms:
                 start_atom.add_bond(custom_bond)
             for end_atom in end_atoms:
                 end_atom.add_bond(custom_bond)
 
-    custom_mol = Molecule(mol_atoms, mol_bonds, mol)
+    custom_mol = Molecule(mol_atoms, mol_bonds, mol, custom_atom_idx_to_idx)
     return custom_mol

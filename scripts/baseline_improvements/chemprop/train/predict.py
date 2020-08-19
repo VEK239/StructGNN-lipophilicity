@@ -26,16 +26,16 @@ def predict(model: MoleculeModel,
 
     preds = []
 
-    for batch in tqdm(data_loader, disable=disable_progress_bar):
+    for batch in data_loader:
         # Prepare batch
         batch: MoleculeDataset
         # mol_batch, features_batch = batch.batch_graph(), batch.features()
-        no_ring_mol_batch = batch.batch_graph(model_type='no-rings', args=args)
-        ring_mol_batch, features_batch = batch.batch_graph(model_type='rings', args=args), batch.features()
+        substructure_mol_batch = batch.batch_graph(model_type='substructures', args=args)
+        no_substructure_mol_batch, features_batch = batch.batch_graph(model_type='no_substructures', args=args), batch.features()
 
         # Make predictions
         with torch.no_grad():
-            batch_preds = model(ring_mol_batch, no_ring_mol_batch, features_batch)
+            batch_preds = model(no_substructure_mol_batch, substructure_mol_batch, features_batch)
 
         batch_preds = batch_preds.data.cpu().numpy()
 

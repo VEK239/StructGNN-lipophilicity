@@ -42,18 +42,18 @@ def train(model: MoleculeModel,
     model.train()
     loss_sum, iter_count = 0, 0
 
-    for batch in tqdm(data_loader, total=len(data_loader)):
+    for batch in data_loader:
         # Prepare batch
         batch: MoleculeDataset
-        no_ring_mol_batch = batch.batch_graph(model_type='no-rings', args=args)
-        ring_mol_batch, features_batch, target_batch = batch.batch_graph(model_type='rings', args=args), \
+        substructure_mol_batch = batch.batch_graph(model_type='substructures', args=args)
+        no_substructure_mol_batch, features_batch, target_batch = batch.batch_graph(model_type='no_substructures', args=args), \
                                                        batch.features(), batch.targets()
         mask = torch.Tensor([[x is not None for x in tb] for tb in target_batch])
         targets = torch.Tensor([[0 if x is None else x for x in tb] for tb in target_batch])
 
         # Run model
         model.zero_grad()
-        preds = model(ring_mol_batch, no_ring_mol_batch, features_batch)
+        preds = model(no_substructure_mol_batch, substructure_mol_batch, features_batch)
 
         # Move tensors to correct device
         mask = mask.to(preds.device)

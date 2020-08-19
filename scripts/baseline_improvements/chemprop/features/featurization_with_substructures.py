@@ -1,6 +1,5 @@
-# from scripts.baseline_improvements.chemprop.args import TrainArgs
 from scripts.baseline_improvements.chemprop.features.molecule import Molecule, create_molecule_for_smiles, \
-    onek_encoding_unk
+    onek_encoding
 from typing import List, Tuple, Union
 
 from rdkit import Chem
@@ -12,18 +11,21 @@ THREE_D_DISTANCE_MAX = 20
 THREE_D_DISTANCE_STEP = 1
 THREE_D_DISTANCE_BINS = list(range(0, THREE_D_DISTANCE_MAX + 1, THREE_D_DISTANCE_STEP))
 
-BOND_FDIM = 14
+BOND_FDIM = 13
 
 
-def get_atom_fdim_with_substructures(use_substructures=False) -> int:
+def get_atom_fdim_with_substructures(use_substructures=False, merge_cycles=False) -> int:
     """Gets the dimensionality of the atom feature vector."""
-    # atom_fdim = 160
-    # if use_substructures:
-    #     atom_fdim += 5
-    return 165 if use_substructures else 160
+    atom_fdim = 160
+    if use_substructures:
+        atom_fdim += 5
+    if merge_cycles:
+        atom_fdim += 5
+    return atom_fdim
 
 
-def get_bond_fdim_with_substructures(atom_messages: bool = False, use_substructures=False) -> int:
+def get_bond_fdim_with_substructures(atom_messages: bool = False, use_substructures: bool = False,
+                                     merge_cycles: bool = False) -> int:
     """
     Gets the dimensionality of the bond feature vector.
 
@@ -32,7 +34,7 @@ def get_bond_fdim_with_substructures(atom_messages: bool = False, use_substructu
                           Otherwise it contains both atom and bond features.
     :return: The dimensionality of the bond feature vector.
     """
-    return BOND_FDIM + (not atom_messages) * get_atom_fdim_with_substructures(use_substructures)
+    return BOND_FDIM + (not atom_messages) * get_atom_fdim_with_substructures(use_substructures, merge_cycles)
 
 
 def atom_features_for_substructures(atom) -> List[Union[bool, int, float]]:
@@ -65,7 +67,7 @@ def bond_features_for_substructures(bond: Chem.rdchem.Bond) -> List[Union[bool, 
             (bond.GetIsConjugated() if bt is not None else 0),
             (bond.IsInRing() if bt is not None else 0)
         ]
-        fbond += onek_encoding_unk(int(bond.GetStereo()), list(range(6)))
+        fbond += onek_encoding(int(bond.GetStereo()), 6)
     return fbond
 
 
@@ -106,15 +108,20 @@ class MolGraphWithSubstructures:
         for _ in range(self.n_atoms):
             self.a2b.append([])
 
+        bonds_set = set()
         # Get bond features
         for a1 in range(self.n_atoms):
             for a2 in range(a1 + 1, self.n_atoms):
                 bond = mol.get_bond(a1, a2)
+                if bond in bonds_set:
+                    continue
+                else:
+                    bonds_set.add(bond)
 
                 if bond is None:
                     continue
 
-                f_bond = bond_features_for_substructures(bond.get_rdkit_atom())
+                f_bond = bond_features_for_substructures(bond.get_rdkit_bond())
                 self.f_bonds.append(self.f_atoms[a1] + f_bond)
                 self.f_bonds.append(self.f_atoms[a2] + f_bond)
 
@@ -149,8 +156,10 @@ class BatchMolGraphWithSubstructures:
         r"""
         :param mol_graphs: A list of :class:`MolGraph`\ s from which to construct the :class:`BatchMolGraph`.
         """
-        self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.no_rings_use_substructures)
-        self.bond_fdim = get_bond_fdim_with_substructures(use_substructures=args.no_rings_use_substructures)
+        self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
+                                                          merge_cycles=args.substructures_merge)
+        self.bond_fdim = get_bond_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
+                                                          merge_cycles=args.substructures_merge)
 
         # Start n_atoms and n_bonds at 1 b/c zero padding
         self.n_atoms = 1  # number of atoms (start at 1 b/c need index 0 as padding)
@@ -192,8 +201,8 @@ class BatchMolGraphWithSubstructures:
         self.a2a = None  # only needed if using atom messages
 
     def get_components(self, args) -> Tuple[torch.FloatTensor, torch.FloatTensor,
-                                                       torch.LongTensor, torch.LongTensor, torch.LongTensor,
-                                                       List[Tuple[int, int]], List[Tuple[int, int]]]:
+                                            torch.LongTensor, torch.LongTensor, torch.LongTensor,
+                                            List[Tuple[int, int]], List[Tuple[int, int]]]:
         """
         Returns the components of the :class:`BatchMolGraph`.
 
@@ -212,9 +221,9 @@ class BatchMolGraphWithSubstructures:
         :return: A tuple containing PyTorch tensors with the atom features, bond features, graph structure,
                  and scope of the atoms and bonds (i.e., the indices of the molecules they belong to).
         """
-        if args.no_rings_atom_messages:
-            f_bonds = self.f_bonds[:, :get_bond_fdim_with_substructures(atom_messages=args.no_rings_atom_messages,
-                                                                        use_substructures=args.no_rings_use_substructures)]
+        if args.substructures_atom_messages:
+            f_bonds = self.f_bonds[:, :get_bond_fdim_with_substructures(atom_messages=args.substructures_atom_messages,
+                                                                        use_substructures=args.substructures_use_substructures)]
         else:
             f_bonds = self.f_bonds
 

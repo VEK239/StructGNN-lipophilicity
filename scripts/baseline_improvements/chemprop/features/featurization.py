@@ -255,8 +255,8 @@ class BatchMolGraph:
         :return: A tuple containing PyTorch tensors with the atom features, bond features, graph structure,
                  and scope of the atoms and bonds (i.e., the indices of the molecules they belong to).
         """
-        if args.rings_atom_messages:
-            f_bonds = self.f_bonds[:, :get_bond_fdim(atom_messages=args.rings_atom_messages)]
+        if args.no_substructures_atom_messages:
+            f_bonds = self.f_bonds[:, :get_bond_fdim(atom_messages=args.no_substructures_atom_messages)]
         else:
             f_bonds = self.f_bonds
 

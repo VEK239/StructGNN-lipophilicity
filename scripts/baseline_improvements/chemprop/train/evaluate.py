@@ -65,6 +65,7 @@ def evaluate_predictions(preds: List[List[float]],
             results.append(metric_func(valid_targets[i], valid_preds[i], labels=list(range(len(valid_preds[i][0])))))
         else:
             results.append(metric_func(valid_targets[i], valid_preds[i]))
+            results.append(r2_score(valid_targets[i], valid_preds[i]))
             if test:
                 print('Test r2 score:', r2_score(valid_targets[i], valid_preds[i]))
     return results
