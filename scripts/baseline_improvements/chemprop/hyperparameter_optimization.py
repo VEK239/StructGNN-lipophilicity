@@ -7,6 +7,9 @@ import os
 
 from hyperopt import fmin, hp, tpe
 import numpy as np
+import sys
+sys.path.append('/home/mol/liza/mol_properties')
+
 
 from scripts.baseline_improvements.chemprop.args import HyperoptArgs
 from scripts.baseline_improvements.chemprop.constants import HYPEROPT_LOGGER_NAME
@@ -15,18 +18,17 @@ from scripts.baseline_improvements.chemprop.nn_utils import param_count
 from scripts.baseline_improvements.chemprop.train import cross_validate
 from scripts.baseline_improvements.chemprop.utils import create_logger, makedirs, timeit
 
+
 SPACE = {
-    'no_substructures_hidden_size': hp.choice('no_substructures_hidden_size', [300, 600]),
-    'substructures_hidden_size': hp.choice('substructures_hidden_size', [300, 600]),
-    'no_substructures_depth': hp.quniform('no_substructures_depth', low=2, high=10, q=2),
-    'substructures_depth': hp.quniform('substructures_depth', low=2, high=10, q=2),
-    'substructures_use_substructures': hp.choice('substructures_use_substructures', [True, False]),
+    'no_substructures_hidden_size': hp.choice('no_substructures_hidden_size', [300, 800]),
+    'substructures_hidden_size': hp.choice('substructures_hidden_size', [300, 800]),
+    'no_substructures_depth': hp.quniform('no_substructures_depth', low=1, high=10, q=1),
 }
-INT_KEYS = ['no_substructures_hidden_size', 'substructures_hidden_size', 'no_substructures_depth', 'substructures_depth']
+INT_KEYS = ['no_substructures_hidden_size', 'substructures_hidden_size', 'no_substructures_depth']
 
 
 @timeit(logger_name=HYPEROPT_LOGGER_NAME)
-def hyperopt(args: HyperoptArgs) -> None:
+def hyperopt(args) -> None:
     """
     Runs hyperparameter optimization on a Chemprop model.
 
@@ -121,4 +123,8 @@ def chemprop_hyperopt() -> None:
 
 
 if __name__ == "__main__":
-    chemprop_hyperopt()
+    sys.stdout = open('log.txt', 'w')
+    try:
+        chemprop_hyperopt()
+    finally:
+        sys.stdout.close()

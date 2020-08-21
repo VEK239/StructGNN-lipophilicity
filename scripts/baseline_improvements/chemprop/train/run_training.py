@@ -26,7 +26,6 @@ from scripts.baseline_improvements.chemprop.utils import build_optimizer, build_
 def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
     """
     Loads data, trains a Chemprop model, and returns test scores for the model checkpoint with the highest validation score.
-
     :param args: A :class:`~chemprop.args.TrainArgs` object containing arguments for
                  loading data and training the Chemprop model.
     :param logger: A logger to record output.

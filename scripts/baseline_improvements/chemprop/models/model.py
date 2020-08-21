@@ -9,6 +9,7 @@ from .mpn import MPN
 from scripts.baseline_improvements.chemprop.args import TrainArgs
 from scripts.baseline_improvements.chemprop.features import BatchMolGraph, BatchMolGraphWithSubstructures
 from scripts.baseline_improvements.chemprop.nn_utils import get_activation_function, initialize_weights
+from .substructures_feature_model import SubstructureLayer
 
 
 class MoleculeModel(nn.Module):
@@ -49,7 +50,7 @@ class MoleculeModel(nn.Module):
         :param args: A :class:`~chemprop.args.TrainArgs` object containing model arguments.
         """
         self.no_substructures_encoder = MPN(args, 'no_substructures')
-        self.substructures_encoder = MPN(args, 'substructures')
+        self.substructures_encoder = SubstructureLayer(args)
 
     def create_ffn(self, args: TrainArgs) -> None:
         """

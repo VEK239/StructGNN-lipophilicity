@@ -6,9 +6,7 @@ import torch
 import torch.nn as nn
 
 from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.features import BatchMolGraph, get_atom_fdim, get_bond_fdim, mol2graph, \
-    BatchMolGraphWithSubstructures, get_atom_fdim_with_substructures, get_bond_fdim_with_substructures, \
-    mol2graph_with_substructures
+from scripts.baseline_improvements.chemprop.features import BatchMolGraph, get_atom_fdim, get_bond_fdim, mol2graph
 from scripts.baseline_improvements.chemprop.nn_utils import index_select_ND, get_activation_function
 
 
@@ -72,7 +70,7 @@ class MPNEncoder(nn.Module):
         self.W_o = nn.Linear(self.atom_fdim + self.hidden_size, self.hidden_size)
 
     def forward(self,
-                mol_graph: Union[BatchMolGraph, BatchMolGraphWithSubstructures],
+                mol_graph: BatchMolGraph,
                 features_batch: List[np.ndarray] = None) -> torch.FloatTensor:
         """
         Encodes a batch of molecular graphs.
@@ -146,7 +144,7 @@ class MPNEncoder(nn.Module):
 
         mol_vecs = torch.stack(mol_vecs, dim=0)  # (num_molecules, hidden_size)
 
-        if self.use_input_features and self.model_type == 'no_substructures':
+        if self.use_input_features:
             features_batch = features_batch.to(mol_vecs)
             if len(features_batch.shape) == 1:
                 features_batch = features_batch.view([1, features_batch.shape[0]])
@@ -159,7 +157,7 @@ class MPN(nn.Module):
     """An :class:`MPN` is a wrapper around :class:`MPNEncoder` which featurizes input as needed."""
 
     def __init__(self,
-                 args: TrainArgs, model_type,
+                 args: TrainArgs,
                  atom_fdim: int = None,
                  bond_fdim: int = None):
         """
@@ -169,16 +167,9 @@ class MPN(nn.Module):
         """
         self.args = args
         super(MPN, self).__init__()
-        self.model_type = model_type
-        if self.model_type == 'no_substructures':
-            self.atom_fdim = get_atom_fdim()
-            self.bond_fdim = get_bond_fdim(atom_messages=args.no_substructures_atom_messages)
-        else:
-            self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
-                                                              merge_cycles=args.substructures_merge)
-            self.bond_fdim = get_bond_fdim_with_substructures(atom_messages=args.substructures_atom_messages,
-                                                              use_substructures=args.substructures_use_substructures,
-                                                              merge_cycles=args.substructures_merge)
+        self.atom_fdim = get_atom_fdim()
+        self.bond_fdim = get_bond_fdim(atom_messages=args.no_substructures_atom_messages)
+
         self.encoder = MPNEncoder(args, model_type, self.atom_fdim, self.bond_fdim)
 
     def forward(self,

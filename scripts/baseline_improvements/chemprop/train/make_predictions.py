@@ -14,10 +14,8 @@ from scripts.baseline_improvements.chemprop.utils import load_args, load_checkpo
 def make_predictions(args: PredictArgs, smiles: List[str] = None) -> List[List[Optional[float]]]:
     """
     Loads data and a trained model and uses the model to make predictions on the data.
-
     If SMILES are provided, then makes predictions on smiles.
     Otherwise makes predictions on :code:`args.test_data`.
-
     :param args: A :class:`~chemprop.args.PredictArgs` object containing arguments for
                  loading data and a model and making predictions.
     :param smiles: SMILES to make predictions on.
@@ -139,7 +137,6 @@ def make_predictions(args: PredictArgs, smiles: List[str] = None) -> List[List[O
 
 def chemprop_predict() -> None:
     """Parses Chemprop predicting arguments and runs prediction using a trained Chemprop model.
-
     This is the entry point for the command line command :code:`chemprop_predict`.
     """
     make_predictions(args=PredictArgs().parse_args())

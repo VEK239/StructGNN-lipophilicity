@@ -1,9 +1,9 @@
 {
-  "data_path": "./datasets/logp_wo_averaging_cross.csv",
-  "separate_test_path": "./datasets/logp_wo_averaging_test.csv",
+  "data_path": "scripts/baseline_improvements/chemprop/datasets/logp_wo_averaging_cross.csv",
+  "separate_test_path": "scripts/baseline_improvements/chemprop/datasets/logp_wo_averaging_test.csv",
   "dataset_type": "regression",
-  "save_dir": "./datasets/cross_validation/best_with_substructures_rdkit",
-  "num_iters": 12,
+  "save_dir": "scripts/baseline_improvements/chemprop/out",
+  "num_iters": 30,
   "num_folds": 4,
   
   "no_substructures_depth": 2,

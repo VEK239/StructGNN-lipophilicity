@@ -15,7 +15,6 @@ def predict(model: MoleculeModel,
             scaler: StandardScaler = None) -> List[List[float]]:
     """
     Makes predictions on a dataset using an ensemble of models.
-
     :param model: A :class:`~chemprop.models.model.MoleculeModel`.
     :param data_loader: A :class:`~chemprop.data.data.MoleculeDataLoader`.
     :param disable_progress_bar: Whether to disable the progress bar.
@@ -26,7 +25,7 @@ def predict(model: MoleculeModel,
 
     preds = []
 
-    for batch in tqdm(data_loader, disable=disable_progress_bar):
+    for batch in data_loader:
         # Prepare batch
         batch: MoleculeDataset
         # mol_batch, features_batch = batch.batch_graph(), batch.features()

@@ -17,7 +17,6 @@ def evaluate_predictions(preds: List[List[float]],
                          logger: logging.Logger = None, test = False) -> List[float]:
     """
     Evaluates predictions using a metric function after filtering out invalid targets.
-
     :param preds: A list of lists of shape :code:`(data_size, num_tasks)` with model predictions.
     :param targets: A list of lists of shape :code:`(data_size, num_tasks)` with targets.
     :param num_tasks: Number of tasks.
@@ -81,7 +80,6 @@ def evaluate(model: MoleculeModel,
              logger: logging.Logger = None) -> List[float]:
     """
     Evaluates an ensemble of models on a dataset by making predictions and then evaluating the predictions.
-
     :param model: A :class:`~chemprop.models.model.MoleculeModel`.
     :param data_loader: A :class:`~chemprop.data.data.MoleculeDataLoader`.
     :param num_tasks: Number of tasks.
