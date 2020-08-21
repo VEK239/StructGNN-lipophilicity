@@ -1,22 +1,22 @@
 dmpnn_train:
   cmd: /home/mol/anaconda3/envs/chemprop/bin/python train.py --data_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv
-    --dataset_type regression --separate_test_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_test.csv
-    --no_features_scaling --split_type k-fold --num_folds 4 --num_workers 0
+    --dataset_type regression --separate_test_path ../../../data/3_final_data/split_data/logp_wo_averaging_test.csv
+    --no_features_scaling --num_workers 0
   deps:
-  - path: ../../../data/raw/baselines/dmpnn/logp_wo_averaging_test.csv
-    md5: ace8b2e2230258fe2eeb4575e3212549
+  - path: ../../../data/3_final_data/split_data/logp_wo_averaging_test.csv
+    md5: d264256dacc2f2b263c241d746bf9f40
   - path: ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv
     md5: 09fe5babb66f502d092677642c50ed3d
-  - path: train.py
-    md5: 4d3a6fc1400e6741955175c61f2cc0da
+  - path: ./
+    md5: f2069bfad2af21ee057eabbdb8df7124.dir
   params:
     params.yaml:
       depth: 6
       epochs: 100
       features_generator: rdkit_2d_normalized
       num_folds: 4
-      save_dir: ../../../data/raw/baselines/dmpnn/logs/exp_220
+      save_dir: ../../../data/raw/baselines/dmpnn/logs/exp_221
       split_type: k-fold
   outs:
-  - path: ../../../data/raw/baselines/dmpnn/logs/exp_220
-    md5: 48f0e34a980cea1de0ad7955148ee82c.dir
+  - path: ../../../data/raw/baselines/dmpnn/logs/exp_221
+    md5: fb892070b6d5de50c3b8bb18715ebe15.dir
