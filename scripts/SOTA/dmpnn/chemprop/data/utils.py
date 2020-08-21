@@ -104,8 +104,8 @@ def filter_invalid_smiles(data: MoleculeDataset) -> MoleculeDataset:
 
 
 def get_data(path: str,
-             smiles_column: str = None,
-             target_columns: List[str] = None,
+             smiles_column: str = 'smiles',
+             target_columns: List[str] = ['logP'],
              ignore_columns: List[str] = None,
              skip_invalid_smiles: bool = True,
              args: Union[TrainArgs, PredictArgs] = None,

@@ -10,6 +10,8 @@ from chemprop.constants import TEST_SCORES_FILE_NAME, TRAIN_LOGGER_NAME
 from chemprop.data import get_task_names
 from chemprop.utils import create_logger, makedirs, timeit
 
+import json
+
 
 @timeit(logger_name=TRAIN_LOGGER_NAME)
 def cross_validate(args: TrainArgs) -> Tuple[float, float]:
@@ -32,7 +34,8 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
     args.save_dir = params['save_dir']
     args.epochs = params['epochs']
     args.depth = params['depth']
-    args.feature_generator = params['features_generator']
+    args.features_generator = [params['features_generator']]
+    args.no_features_scaling = params['no_features_scaling']
     args.split_type = params['split_type']
     args.num_folds = params['num_folds']
     # Initialize relevant variables
@@ -44,7 +47,6 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
         target_columns=args.target_columns,
         ignore_columns=args.ignore_columns
     )
-
     # Run training on different random seeds for each fold
     all_scores = []
     all_scores_r2 = []
@@ -80,7 +82,15 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
     mean_score_r2, std_score_r2 = np.nanmean(avg_scores_r2), np.nanstd(avg_scores_r2)
     info(f'Overall test {args.metric} = {mean_score:.6f} +/- {std_score:.6f}')
     info(f'Overall test R2 = {mean_score_r2:.6f} +/- {std_score_r2:.6f}')
-
+    all_scores_dict = {}
+    all_scores_dict['test_RMSE_mean'] = mean_score
+    all_scores_dict['test_R2_mean'] = mean_score_r2
+    all_scores_dict['test_RMSE_std'] = std_score
+    all_scores_dict['test_R2_std'] = std_score_r2
+    
+    with open(os.path.join(save_dir, 'final_scores.json'), 'w') as f:
+        json.dump(all_scores_dict, f)
+    
     if args.show_individual_scores:
         for task_num, task_name in enumerate(args.task_names):
             info(f'\tOverall test {task_name} {args.metric} = '
