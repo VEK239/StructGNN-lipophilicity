@@ -4,9 +4,11 @@ train:
     --dataset_type regression
   deps:
   - path: scripts/baseline_improvements/chemprop/datasets
-    md5: 5cf4d0af8a1337373fdf0899b7675947.dir
+    md5: 6c12abdf99805e78d2853a0cdd157bc2.dir
+  - path: scripts/baseline_improvements/chemprop/datasets/config.json
+    md5: 918e7bd0a63e1a7d34728a0fbd5a2413
   - path: scripts/baseline_improvements/chemprop/train.py
     md5: cdeeac5454ea1cf893ab32e581ce9438
   outs:
   - path: scripts/baseline_improvements/chemprop/out
-    md5: 7160264f94c47f78fa0a599602312a7f.dir
+    md5: 322aac43c2bd4432e8e0815c9717c0e6.dir

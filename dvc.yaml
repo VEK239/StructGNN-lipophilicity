@@ -5,6 +5,7 @@ stages:
       --dataset_type regression
     deps:
     - scripts/baseline_improvements/chemprop/datasets
+    - scripts/baseline_improvements/chemprop/datasets/config.json
     - scripts/baseline_improvements/chemprop/train.py
     outs:
     - scripts/baseline_improvements/chemprop/out

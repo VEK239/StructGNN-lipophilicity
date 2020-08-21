@@ -18,6 +18,6 @@
   "scripts/baseline_improvements/chemprop/substructures_use_substructures": true,
   "substructures_merge": false,
   "split_type": "one_out_crossval",
-  "features_generator": ["rdkit_wo_fragments_and_counts"],
+  "features_generator": ["rdkit_MolLogP"],
   "no_features_scaling": true
 }
