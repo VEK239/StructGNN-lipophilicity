@@ -1,18 +1,32 @@
 stages:
+  preparation:
+    cmd: /home/mol/anaconda3/envs/chemprop/bin/python train_val_data_preparation.py
+    deps:
+    - ../../../data/3_final_data/split_data/logp_wo_averaging_train.csv
+    - ../../../data/3_final_data/split_data/logp_wo_averaging_validation.csv
+    - train_val_data_preparation.py
+    outs:
+    - ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv
   dmpnn_train:
     cmd: /home/mol/anaconda3/envs/chemprop/bin/python train.py --data_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv
       --dataset_type regression --separate_test_path ../../../data/3_final_data/split_data/logp_wo_averaging_test.csv
-      --no_features_scaling --num_workers 0
+      --num_workers 0
     deps:
     - ../../../data/3_final_data/split_data/logp_wo_averaging_test.csv
+    - ../../../data/raw/baselines/dmpnn/RDKitBestfeatures.txt
     - ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv
     - ./
     params:
     - depth
     - epochs
     - features_generator
+    - no_features_scaling
     - num_folds
     - save_dir
     - split_type
     outs:
-    - ../../../data/raw/baselines/dmpnn/logs/exp_221
+    - ../../../data/raw/baselines/dmpnn/logs/exp_221/fold_0
+
+    metrics:
+    - ../../../data/raw/baselines/dmpnn/logs/exp_221/final_scores.json:
+        cache: false
