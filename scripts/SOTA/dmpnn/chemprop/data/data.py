@@ -221,6 +221,7 @@ class MoleculeDataset(Dataset):
 
         if scaler is not None:
             self._scaler = scaler
+            
 
         elif self._scaler is None:
             features = np.vstack([d.features for d in self._data])
@@ -228,7 +229,15 @@ class MoleculeDataset(Dataset):
             self._scaler.fit(features)
 
         for d in self._data:
+#             print('before')
+#             print(d.features)
             d.set_features(self._scaler.transform(d.features.reshape(1, -1))[0])
+#             print('after')
+#             print(d.features)
+#             print('means')
+#             print(self._scaler.means)
+#             print('std')
+#             print(self._scaler.stds)
 
         return self._scaler
     
