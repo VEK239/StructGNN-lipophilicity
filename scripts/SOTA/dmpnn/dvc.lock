@@ -10,21 +10,21 @@ dmpnn_train:
   - path: ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv
     md5: d9eccb419ecbf9c40df33ae35251e43f
   - path: ./
-    md5: 42bb1f2b9ebfeb089940935680336314.dir
+    md5: 9a76aeee3171754878d1c16b9dbc9a6d.dir
   params:
     params.yaml:
       depth: 6
       epochs: 100
-      features_generator: rdkit_2d_normalized
-      no_features_scaling: true
+      features_generator: rdkit_2d
+      no_features_scaling: false
       num_folds: 4
       save_dir: ../../../data/raw/baselines/dmpnn/logs/exp_221
       split_type: k-fold
   outs:
   - path: ../../../data/raw/baselines/dmpnn/logs/exp_221/final_scores.json
-    md5: e95f64d47bc1baee2a270a5cb73fdff2
+    md5: 3ee4163ce3ef4be19d37d2229ce1a10f
   - path: ../../../data/raw/baselines/dmpnn/logs/exp_221/fold_0
-    md5: d0eb2f89bcfd60f793191bb88fa3ddb8.dir
+    md5: 2977876506deac28efd4f5a8d27cf024.dir
 preparation:
   cmd: /home/mol/anaconda3/envs/chemprop/bin/python train_val_data_preparation.py
   deps:
