@@ -1,19 +1,20 @@
-from collections import OrderedDict
 import csv
-from logging import Logger
+import os
 import pickle
+from collections import OrderedDict
+from logging import Logger
 from random import Random
 from typing import List, Set, Tuple, Union
-import os
 
-from rdkit import Chem
 import numpy as np
+from rdkit import Chem
+from sklearn.model_selection import KFold
 from tqdm import tqdm
 
-from .data import MoleculeDatapoint, MoleculeDataset
-from .scaffold import log_scaffold_stats, scaffold_split
 from scripts.baseline_improvements.chemprop.args import PredictArgs, TrainArgs
 from scripts.baseline_improvements.chemprop.features import load_features
+from .data import MoleculeDatapoint, MoleculeDataset
+from .scaffold import log_scaffold_stats, scaffold_split
 
 
 def get_task_names(path: str,
@@ -348,6 +349,20 @@ def split_data(data: MoleculeDataset,
         valid = [data[i] for i in range(len(data)) if val_fold * part_size <= i < (val_fold + 1) * part_size]
         train = [data[i] for i in range(len(data)) if i < val_fold * part_size or i >= (val_fold + 1) * part_size]
         return MoleculeDataset(train), MoleculeDataset(valid), MoleculeDataset([])
+
+    elif split_type == 'k-fold':
+        kf = KFold(n_splits=args.num_folds, shuffle=False)
+
+        fold_num = 0
+        for train_index, val_index in kf.split(data):
+            if fold_num == args.seed:
+                break
+            else:
+                fold_num += 1
+        train = [data[i] for i in train_index]
+        val = [data[i] for i in val_index]
+
+        return MoleculeDataset(train, args=args), MoleculeDataset(val, args=args), MoleculeDataset([])
 
     elif split_type == 'random':
         data.shuffle(seed=seed)
