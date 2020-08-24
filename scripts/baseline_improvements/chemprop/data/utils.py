@@ -362,7 +362,7 @@ def split_data(data: MoleculeDataset,
         train = [data[i] for i in train_index]
         val = [data[i] for i in val_index]
 
-        return MoleculeDataset(train, args=args), MoleculeDataset(val, args=args), MoleculeDataset([])
+        return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset([])
 
     elif split_type == 'random':
         data.shuffle(seed=seed)
