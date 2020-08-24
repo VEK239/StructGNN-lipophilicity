@@ -29,4 +29,6 @@ Results are stored on the server in `~/alisa/mol_properties/data/raw/baselines/d
 
 - [x] Added calculating of R2 score
 - [x] Added rdkit_2d_normalized_best features generator (uses only features named in file `mol_properties/data/raw/baselines/dmpnn//RDKitBestfeatures.txt`)
+- [x] Added k-fold cross-validation option
+- [x] Debug of rdkit features without default normalization scaling (coupling with inf values in calculated features)
 
