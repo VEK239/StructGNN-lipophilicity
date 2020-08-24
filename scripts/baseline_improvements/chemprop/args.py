@@ -199,21 +199,18 @@ class TrainArgs(CommonArgs):
     substructures_hidden_size: int = 300
     """Dimensionality of hidden layers in MPN."""
     no_substructures_depth: int = 3
-    substructures_depth: int = 3
     """Number of message passing steps."""
     dropout: float = 0.0
     """Dropout probability."""
     activation: Literal['ReLU', 'LeakyReLU', 'PReLU', 'tanh', 'SELU', 'ELU'] = 'ReLU'
     """Activation function."""
     no_substructures_atom_messages: bool = False
-    substructures_atom_messages: bool = False
     """Centers messages on atoms instead of on bonds."""
     substructures_merge: bool = False
     """Merges neighboring rings."""
     substructures_use_substructures: bool = False
     """Generates chemical substructures."""
     no_substructures_undirected: bool = False
-    substructures_undirected: bool = False
     """Undirected edges (always sum the two relevant bond vectors)."""
     ffn_hidden_size: int = None
     """Hidden dim for higher-capacity FFN (defaults to hidden_size)."""
