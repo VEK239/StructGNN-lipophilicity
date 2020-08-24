@@ -1,10 +1,8 @@
-# from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.features.molecule import Molecule, create_molecule_for_smiles, \
-    onek_encoding_unk
 from typing import List, Tuple, Union
 
-from rdkit import Chem
 import torch
+
+from scripts.baseline_improvements.chemprop.features.molecule import create_molecule_for_smiles
 
 # Distance feature sizes
 PATH_DISTANCE_BINS = list(range(10))
@@ -21,6 +19,7 @@ def get_atom_fdim_with_substructures(use_substructures=False, merge_cycles=False
     if merge_cycles:
         atom_fdim += 5
     return atom_fdim
+
 
 def atom_features_for_substructures(atom) -> List[Union[bool, int, float]]:
     """
@@ -41,10 +40,6 @@ class MolGraphWithSubstructures:
     * :code:`n_atoms`: The number of atoms in the molecule.
     * :code:`n_bonds`: The number of bonds in the molecule.
     * :code:`f_atoms`: A mapping from an atom index to a list of atom features.
-    * :code:`f_bonds`: A mapping from a bond index to a list of bond features.
-    * :code:`a2b`: A mapping from an atom index to a list of incoming bond indices.
-    * :code:`b2a`: A mapping from a bond index to the index of the atom the bond originates from.
-    * :code:`b2revb`: A mapping from a bond index to the index of the reverse bond.
     """
 
     def __init__(self, mol: str, args):
@@ -63,22 +58,19 @@ class MolGraphWithSubstructures:
 
 class BatchMolGraphWithSubstructures:
     """
-    A :class:`BatchMolGraph` represents the graph structure and featurization of a batch of molecules.
+    A :class:`BatchMolGraphWithSubstructures` represents the graph structure and featurization of a batch of molecules.
 
-    A BatchMolGraph contains the attributes of a :class:`MolGraph` plus:
+    A BatchMolGraph contains the attributes of a :class:`MolGraphWithSubstructures` plus:
 
     * :code:`atom_fdim`: The dimensionality of the atom feature vector.
-    * :code:`bond_fdim`: The dimensionality of the bond feature vector (technically the combined atom/bond features).
     * :code:`a_scope`: A list of tuples indicating the start and end atom indices for each molecule.
-    * :code:`b_scope`: A list of tuples indicating the start and end bond indices for each molecule.
-    * :code:`max_num_bonds`: The maximum number of bonds neighboring an atom in this batch.
-    * :code:`b2b`: (Optional) A mapping from a bond index to incoming bond indices.
     * :code:`a2a`: (Optional): A mapping from an atom index to neighboring atom indices.
     """
 
     def __init__(self, mol_graphs: List[MolGraphWithSubstructures], args):
         r"""
-        :param mol_graphs: A list of :class:`MolGraph`\ s from which to construct the :class:`BatchMolGraph`.
+        :param mol_graphs: A list of :class:`MolGraphWithSubstructures`\ s from which to construct the
+        :class:`BatchMolGraphWithSubstructures`.
         """
         self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
                                                           merge_cycles=args.substructures_merge)
@@ -100,7 +92,7 @@ class BatchMolGraphWithSubstructures:
 
     def get_components(self) -> Tuple[torch.FloatTensor, List[Tuple[int, int]]]:
         """
-        Returns the components of the :class:`BatchMolGraph`.
+        Returns the components of the :class:`BatchMolGraphWithSubstructures`.
 
         The returned components are, in order:
 
@@ -121,10 +113,11 @@ class BatchMolGraphWithSubstructures:
 
 def mol2graph_with_substructures(mols: Union[List[str]], args) -> BatchMolGraphWithSubstructures:
     """
-    Converts a list of SMILES or RDKit molecules to a :class:`BatchMolGraph` containing the batch of molecular graphs.
+    Converts a list of SMILES or RDKit molecules to a :class:`BatchMolGraphWithSubstructures` containing the batch of
+    molecular graphs.
 
     :param mols: A list of SMILES or a list of RDKit molecules.
-    :return: A :class:`BatchMolGraph` containing the combined molecular graph for the molecules.
+    :return: A :class:`BatchMolGraphWithSubstructures` containing the combined molecular graph for the molecules.
     """
     return BatchMolGraphWithSubstructures(
         [MolGraphWithSubstructures(mol, args) for mol in mols], args=args)

@@ -142,16 +142,16 @@ class MoleculeDataset(Dataset):
             substructures_mol_graphs = []
             for d in self._data:
                 if d.smiles in SMILES_TO_GRAPH_NO_SUBSTRUCTURES and d.smiles in SMILES_TO_GRAPH_SUBSTRUCTURES:
-                    ring_mol_graph = SMILES_TO_GRAPH_NO_SUBSTRUCTURES[d.smiles]
-                    no_ring_mol_graph = SMILES_TO_GRAPH_SUBSTRUCTURES[d.smiles]
+                    no_substructure_mol_graph = SMILES_TO_GRAPH_NO_SUBSTRUCTURES[d.smiles]
+                    substructure_mol_graph = SMILES_TO_GRAPH_SUBSTRUCTURES[d.smiles]
                 else:
-                    ring_mol_graph = MolGraph(d.mol)
-                    no_ring_mol_graph = MolGraphWithSubstructures(d.smiles, args)
+                    no_substructure_mol_graph = MolGraph(d.mol)
+                    substructure_mol_graph = MolGraphWithSubstructures(d.smiles, args)
                     if cache:
-                        SMILES_TO_GRAPH_NO_SUBSTRUCTURES[d.smiles] = ring_mol_graph
-                        SMILES_TO_GRAPH_SUBSTRUCTURES[d.smiles] = no_ring_mol_graph
-                no_substructures_mol_graphs.append(ring_mol_graph)
-                substructures_mol_graphs.append(no_ring_mol_graph)
+                        SMILES_TO_GRAPH_NO_SUBSTRUCTURES[d.smiles] = no_substructure_mol_graph
+                        SMILES_TO_GRAPH_SUBSTRUCTURES[d.smiles] = substructure_mol_graph
+                no_substructures_mol_graphs.append(no_substructure_mol_graph)
+                substructures_mol_graphs.append(substructure_mol_graph)
 
             self._batch_graph_no_substructures = BatchMolGraph(no_substructures_mol_graphs)
             self._batch_graph_wo_no_substructures = BatchMolGraphWithSubstructures(substructures_mol_graphs, args=args)
