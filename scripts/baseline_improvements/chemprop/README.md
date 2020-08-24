@@ -17,6 +17,9 @@ This encoder first finds all the interesting substructures in a molecule (rings,
 The bonds which connect two **different** "substructure atoms" are present in a new molecule. All the others are skipped. 
 
 ### Running
+To run the training script from /mol_properties directory:
+train.py --config_path ./scripts/baseline_improvements/chemprop/datasets/config.json --data_path ./scripts/baseline_improvements/chemprop/datasets/logp_wo_averaging_train.csv --dataset_type regression
+
 The configuration file is located in ./datasets/config.json
 The command line arguments different from original D-MPNN:
 - substructures/no_substructures depth - count of message passing steps for each encoder
@@ -26,7 +29,10 @@ The command line arguments different from original D-MPNN:
 - substructures_use_substructures - whether to use additional substructures(acids, amins, sulfonamins, esters)
 - substructures_merge - whether to merge neighboring cycles or not
 
-There is also a new type of cross-validation ("one_out_crossval") which takes one of the four parts of the input dataset and uses it as validation.
+There is also a new type of cross-validation ("one_out_crossval"/"k-fold") which takes one of the four parts of the input dataset and uses it as validation.
+
+To run hyperparameter optimization from /mol_properties you need to run:
+--config_path ./scripts/baseline_improvements/chemprop/datasets/config.json --data_path ./scripts/baseline_improvements/chemprop/datasets/logp_wo_averaging_train.csv --dataset_type regression --config_save_path ./scripts/baseline_improvements/chemprop/datasets/hyperparameter_optimization/best_params.json 
 
 ### Feature generators
 
