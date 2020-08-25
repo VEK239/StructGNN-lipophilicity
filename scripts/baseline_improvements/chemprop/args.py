@@ -364,10 +364,6 @@ class TrainArgs(CommonArgs):
             raise ValueError('Undirected is unnecessary when using atom_messages '
                              'since atom_messages are by their nature undirected.')
 
-        if self.substructures_atom_messages and self.substructures_undirected:
-            raise ValueError('Undirected is unnecessary when using atom_messages '
-                             'since atom_messages are by their nature undirected.')
-
         # Validate split type settings
         if not (self.split_type == 'predetermined') == (self.folds_file is not None) == (
                 self.test_fold_index is not None):
