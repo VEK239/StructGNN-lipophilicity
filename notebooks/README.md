@@ -15,7 +15,9 @@ Resulting datasets are stored in `mol_properties/tree/SOTA/data/1_filtering`
 
 Notebook name | Contents | Results
 ------------ | ------------- | -------------
-| LogP Datasets standartization |
-7_standardize_merge.ipynb</br>||
+| LogP Datasets standartization and merge |
+7_standardize_merge.ipynb</br>|1. Standardize SMILES in all datasets</br>2. Remove "strange molecules"</br>3. Merge datasets to logp, logp_pH, logp_T, logp_pH_T datasets|**Standartization**:</br>1. Total amount of molecules in all datasets before standartization -  19459</br>2. After standartization  18811  molecules left</br></br>**Merge**:</br>Initial size = 18811</br>1. 11 rows have been deleted as outliers by **logP** value (out of range [-5; 10])</br>2. 1 row have been deleted as outlier by **Temperature** value (257)</br>3. 2785 duplicated rows have been removed</br>Post-processed size - 16014</br>1. Most common **Temperature** values - 25 and 37</br>2. There are two alike molecules (**Nc1ccc(S(=O)(=O)N=c2\[nH\]ccs2)cc1** and **Nc1ccc(S(=O)(=O)N=c2nccc\[nH\]2)cc1**) with 45 and 51 different measurements and same **logP** for each molecule (0.05 and -0.09), **Temperature** is either 25 or 37 and **pH** is in some range
+|LogD Datasets standartization and merge|
+12_merge_standardize_logD_datasets.ipynb||
 
-</br></br>**physprop**:</br>
+
