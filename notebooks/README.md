@@ -1,0 +1,21 @@
+# Contents
+
+## Data filtering
+
+Notebook name | Contents | Results
+------------ | ------------- | -------------
+| LogP Datasets filtering |
+1_eda_logp_json.ipynb</br>2_eda_physprop.ipynb</br>4_eda_ochem_dataset.ipynb</br>5_eda_DiverseDataset_dataset.ipynb</br>6_eda_NCI_dataset.ipynb| 1. Checking Temperature, logP, pH values distribution in dataset</br>2. Removing  rows with Temperature, logP, pH outliers</br>3. Drop all Nan values |**logp.json**:</br>1. There are 33% NA values for Temperature and PH. There are 2 rows with NA values.</br>2. There are some strange values (they were removed from dataset):</br>3. Extremely high temperatures, like 250000 Celsius</br>4. Extremely high logP value: 611</br>5. There are a lot of completely duplicated rows: 3382. (They were removed)</br>6. Only 1493 rows without 'strange' values are completely filled and different.</br>7. From 1493 rows only 366 molecules are unique. For other molecules we have different conditions.</br>8. The same logP values could be obtained with different temperature and ph value. Conditions have not big std for the same logP value.</br></br>**physprop**:</br>1. Experimental logP are 13553 out of total 41039 rows.</br>2. There are 97% NA values for Temperature. (99% in experimental data)</br>3. There is no pH column.</br>4. Most of the molecules are unique. There is only 22 full duplicates in experimental data and 24 rows with equal molecules.</br>5. There was 1 row with NaN SMILES info</br></br>**ochem**:</br>1. There are 980 definitely experimental items (the method for logP measurement is mentioned).</br>2. There are 67% NA values for Temperature, 56% NA for pH.</br>3. All in all 773 logP records, 255 logP+t records, 167 full records</br></br>**Diverse1KDataset**:</br>1. There are 706 molecules with experimental logP and pH</br>2. There is only 1 duplicated molecule with 2 measurments of logP with different pH (CC(C)CCn1c2c(nc1NCCO)n(c(=O)n(c2=O)C)C)</br>3. There is no Temperature column</br>4. Probably these molecules intersect with ochem database</br></br>**NCI Dataset**:</br>1. There are 98% NA values for experimantal logP</br>2. There are 2534 unique molecules with experimental logP value</br>3. There is no Temperature and pH columns
+| LogD Datasets filtering |
+9_eda_logD_Lipophilicity_dataset.ipynb</br>10_eda_logD_logd74_dataset.ipynb</br>11_eda_logD_ochem_dataset.ipynb</br>| 1. Checking Temperature, logP, pH values distribution in dataset</br>2. Removing  rows with Temperature, logP, pH outliers</br>3. Drop all Nan values</br>4. Drop duplicated rows|**Lipophilicity_dataset**:</br>1. There are 4200 experimental records</br>2. All the SMILES are unique.</br>3. All the experiments were held at pH=7.4</br>4. Temperature is not mentioned. </br></br>**logD74**:</br>1. There are 4200 experimental records</br>2. All the SMILES are unique.</br>3. All the experiments were held at pH=7.4</br>4. Temperature is not mentioned</br></br>**ochem**:</br>1. There are 9549 experimental records</br>2. Almost half of them were duplicates. 5155 unique records. All of them include pH</br>3. Almost all of them are neutral (pH in [6, 8])</br>4. There 4929 unique smiles</br>5. emperature is not mentioned</br>6. There were some smiles with multiple records, but big variance. They were dropped.</br>7. All in all there are 4981 records left.
+
+Resulting datasets are stored in `mol_properties/tree/SOTA/data/1_filtering`
+
+## Data standartization
+
+Notebook name | Contents | Results
+------------ | ------------- | -------------
+| LogP Datasets standartization |
+7_standardize_merge.ipynb</br>||
+
+</br></br>**physprop**:</br>
