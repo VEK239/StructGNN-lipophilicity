@@ -52,11 +52,6 @@ class SubstructureEncoder(nn.Module):
         :param features_batch: A list of numpy arrays containing additional features.
         :return: A PyTorch tensor of shape :code:`(num_molecules, hidden_size)` containing the encoding of each molecule.
         """
-        if self.use_input_features:
-            features_batch = torch.from_numpy(np.stack(features_batch)).float().to(self.device)
-
-            if self.features_only:
-                return features_batch
 
         f_atoms, a_scope = mol_graph.get_components()
         f_atoms = f_atoms.to(self.device)
@@ -78,12 +73,6 @@ class SubstructureEncoder(nn.Module):
                 mol_vecs.append(mol_vec)
 
         mol_vecs = torch.stack(mol_vecs, dim=0)  # (num_molecules, hidden_size)
-
-        if self.use_input_features:
-            features_batch = features_batch.to(mol_vecs)
-            if len(features_batch.shape) == 1:
-                features_batch = features_batch.view([1, features_batch.shape[0]])
-            mol_vecs = torch.cat([mol_vecs, features_batch], dim=1)  # (num_molecules, hidden_size)
 
         return mol_vecs  # num_molecules x hidden
 

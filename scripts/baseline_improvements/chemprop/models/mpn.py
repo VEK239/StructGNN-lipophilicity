@@ -71,7 +71,7 @@ class MPNEncoder(nn.Module):
         :param features_batch: A list of numpy arrays containing additional features.
         :return: A PyTorch tensor of shape :code:`(num_molecules, hidden_size)` containing the encoding of each molecule.
         """
-        if self.use_input_features and self.model_type == 'no_substructures':
+        if self.use_input_features:
             features_batch = torch.from_numpy(np.stack(features_batch)).float().to(self.device)
 
             if self.features_only:

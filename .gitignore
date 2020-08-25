@@ -18,3 +18,5 @@ scripts/baseline_improvements/*.txt
 scripts/server_do_not_die_pls.py
 scripts/baseline_improvements/chemprop/out.dvc
 .dvc
+scripts/baseline_improvements/chemprop/out
+scripts/baseline_improvements/chemprop/scripts/baseline_improvements/chemprop/out
