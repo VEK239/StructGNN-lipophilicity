@@ -8,8 +8,9 @@ import os
 from hyperopt import fmin, hp, tpe
 import numpy as np
 import sys
-sys.path.append('/home/mol/liza/mol_properties')
+sys.path.append('/home/mol2/liza/mol_properties')
 
+print(sys.path)
 
 from scripts.baseline_improvements.chemprop.args import HyperoptArgs
 from scripts.baseline_improvements.chemprop.constants import HYPEROPT_LOGGER_NAME
@@ -23,6 +24,7 @@ SPACE = {
     'no_substructures_hidden_size': hp.choice('no_substructures_hidden_size', [300, 800]),
     'substructures_hidden_size': hp.choice('substructures_hidden_size', [300, 800]),
     'no_substructures_depth': hp.quniform('no_substructures_depth', low=1, high=10, q=1),
+    'no_features_scaling': hp.choice('no_features_scaling', [True, False])
 }
 INT_KEYS = ['no_substructures_hidden_size', 'substructures_hidden_size', 'no_substructures_depth']
 

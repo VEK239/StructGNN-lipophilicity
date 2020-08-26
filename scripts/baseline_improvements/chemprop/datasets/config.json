@@ -5,7 +5,6 @@
   "save_dir": "scripts/baseline_improvements/chemprop/out",
   "num_iters": 30,
   "num_folds": 4,
-
   "no_substructures_depth": 7,
   "epochs": 100,
   "init_lr": 1e-4,
@@ -16,6 +15,9 @@
   "dropout": 0.2,
   "substructures_use_substructures": true,
   "substructures_merge": false,
-  "split_type": "one_out_crossval",
-  "features_generator": ["rdkit_wo_fragments_and_counts"]
+  "split_type": "k-fold",
+  "features_generator": [
+    "rdkit_wo_fragments_and_counts"
+  ],
+  "no_features_scaling": false
 }

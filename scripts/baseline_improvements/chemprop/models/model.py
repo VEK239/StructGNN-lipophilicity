@@ -49,7 +49,7 @@ class MoleculeModel(nn.Module):
 
         :param args: A :class:`~chemprop.args.TrainArgs` object containing model arguments.
         """
-        self.no_substructures_encoder = MPN(args, 'no_substructures')
+        self.no_substructures_encoder = MPN(args)
         self.substructures_encoder = SubstructureLayer(args)
 
     def create_ffn(self, args: TrainArgs) -> None:
