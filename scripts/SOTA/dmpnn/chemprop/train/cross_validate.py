@@ -50,16 +50,22 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
     # Run training on different random seeds for each fold
     all_scores = []
     all_scores_r2 = []
+    val_scores = []
+    val_scores_r2 = []
     for fold_num in range(args.num_folds):
         info(f'Fold {fold_num}')
         args.seed = init_seed + fold_num
         args.save_dir = os.path.join(save_dir, f'fold_{fold_num}')
         makedirs(args.save_dir)
-        model_scores, model_scores_r2 = run_training(args, logger)
+        model_scores, model_scores_r2, val_score, val_score_r2 = run_training(args, logger)
         all_scores.append(model_scores)
         all_scores_r2.append(model_scores_r2)
+        val_scores.append(val_score)
+        val_scores_r2.append(val_score_r2)
     all_scores = np.array(all_scores)
     all_scores_r2 = np.array(all_scores_r2)
+    val_scores = np.array(val_scores)
+    val_scores_r2 = np.array(val_scores_r2)
 
     # Report results
     info(f'{args.num_folds}-fold cross validation')
@@ -78,17 +84,31 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
     avg_scores = np.nanmean(all_scores, axis=1)  # average score for each model across tasks
     mean_score, std_score = np.nanmean(avg_scores), np.nanstd(avg_scores)
     
+#     avg_val_scores = np.nanmean(val_scores)  # average score for each model across tasks
+    mean_val_score, std_val_score = np.nanmean(val_scores), np.nanstd(val_scores)
+    
     avg_scores_r2 = np.nanmean(all_scores_r2, axis=1)  # average score for each model across tasks
     mean_score_r2, std_score_r2 = np.nanmean(avg_scores_r2), np.nanstd(avg_scores_r2)
+    
+#     avg_val_scores_r2 = np.nanmean(val_scores_r2, axis=1)  # average score for each model across tasks
+    mean_val_score_r2, std_val_score_r2 = np.nanmean(val_scores_r2), np.nanstd(val_scores_r2)
+    
+    info(f'Overall val {args.metric} = {mean_val_score:.6f} +/- {std_val_score:.6f}')
+    info(f'Overall val R2 = {mean_val_score_r2:.6f} +/- {std_val_score_r2:.6f}')
     info(f'Overall test {args.metric} = {mean_score:.6f} +/- {std_score:.6f}')
     info(f'Overall test R2 = {mean_score_r2:.6f} +/- {std_score_r2:.6f}')
+    
     all_scores_dict = {}
     all_scores_dict['test_RMSE_mean'] = mean_score
     all_scores_dict['test_R2_mean'] = mean_score_r2
     all_scores_dict['test_RMSE_std'] = std_score
     all_scores_dict['test_R2_std'] = std_score_r2
+    all_scores_dict['val_RMSE_mean'] = mean_val_score
+    all_scores_dict['val_R2_mean'] = mean_val_score_r2
+    all_scores_dict['val_RMSE_std'] = std_val_score
+    all_scores_dict['val_R2_std'] = std_val_score_r2
     
-    with open(os.path.join(save_dir, 'final_scores.json'), 'w') as f:
+    with open(os.path.join(os.path.dirname(save_dir), 'final_scores.json'), 'w') as f:
         json.dump(all_scores_dict, f)
     
     if args.show_individual_scores:

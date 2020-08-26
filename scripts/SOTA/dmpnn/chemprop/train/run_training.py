@@ -194,6 +194,7 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
 
         # Run training
         best_score = float('inf') if args.minimize_score else -float('inf')
+        best_score_R2 = 0
         best_epoch, n_iter = 0, 0
         for epoch in trange(args.epochs):
             debug(f'Epoch {epoch}')
@@ -242,6 +243,7 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
             if args.minimize_score and avg_val_score < best_score or \
                     not args.minimize_score and avg_val_score > best_score:
                 best_score, best_epoch = avg_val_score, epoch
+                best_score_r2 = avg_val_score_r2
                 save_checkpoint(os.path.join(save_dir, MODEL_FILE_NAME), model, scaler, features_scaler, args)
 
         # Evaluate on test set using model with best validation score
@@ -305,4 +307,4 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
         for task_name, ensemble_score in zip(args.task_names, ensemble_scores):
             info(f'Ensemble test {task_name} {args.metric} = {ensemble_score:.6f}')
 
-    return ensemble_scores, ensemble_scores_r2
+    return ensemble_scores, ensemble_scores_r2, best_score, best_score_r2

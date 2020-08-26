@@ -25,7 +25,7 @@ stages:
     - save_dir
     - split_type
     outs:
-    - ../../../data/raw/baselines/dmpnn/logs/exp_221/fold_0
+    - ../../../data/raw/baselines/dmpnn/logs/exp_221/folds
 
     metrics:
     - ../../../data/raw/baselines/dmpnn/logs/exp_221/final_scores.json:

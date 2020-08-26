@@ -124,7 +124,9 @@ try:
         smiles = Chem.MolToSmiles(mol, isomericSmiles=True) if type(mol) != str else mol
         generator = rdDescriptors.RDKit2D()
         features = generator.process(smiles)[1:]
-
+        features = np.array(features).astype(float)
+        features = np.where(np.isnan(features), np.zeros(features.shape), features)
+        features = np.where(np.isinf(features), np.zeros(features.shape), features)
         return features
 
     @register_features_generator('rdkit_2d_normalized')
@@ -155,6 +157,7 @@ try:
         smiles = Chem.MolToSmiles(mol, isomericSmiles=True) if type(mol) != str else mol
         generator = rdNormalizedDescriptors.RDKit2DNormalized()
         features = generator.process(smiles)[1:]
+        
         feature_names = [feature[0] for feature in generator.columns]
 
         feature_dict = dict(zip(feature_names, features))

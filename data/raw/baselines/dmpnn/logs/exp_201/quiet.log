@@ -1,0 +1,100 @@
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Model 0 best validation rmse = 1.102705 on epoch 1
+Model 0 test rmse = 1.082751
+Model 0 test R2 = 0.651871
+Ensemble test rmse = 1.082751
+Ensemble test R2 = 0.651871
+Fold 1
+Model 0 best validation rmse = 1.016787 on epoch 0
+Model 0 test rmse = 1.040931
+Model 0 test R2 = 0.678244
+Ensemble test rmse = 1.040931
+Ensemble test R2 = 0.678244
+Fold 2
+Model 0 best validation rmse = 1.015447 on epoch 4
+Model 0 test rmse = 0.972844
+Model 0 test R2 = 0.718960
+Ensemble test rmse = 0.972844
+Ensemble test R2 = 0.718960
+Fold 3
+Model 0 best validation rmse = 0.977841 on epoch 2
+Model 0 test rmse = 0.959208
+Model 0 test R2 = 0.726783
+Ensemble test rmse = 0.959208
+Ensemble test R2 = 0.726783
+4-fold cross validation
+	Seed 0 ==> test rmse = 1.082751
+	Seed 0 ==> test R2 = 0.651871
+	Seed 1 ==> test rmse = 1.040931
+	Seed 1 ==> test R2 = 0.678244
+	Seed 2 ==> test rmse = 0.972844
+	Seed 2 ==> test R2 = 0.718960
+	Seed 3 ==> test rmse = 0.959208
+	Seed 3 ==> test R2 = 0.726783
+Overall test rmse = 1.013933 +/- 0.050369
+Overall test R2 = 0.693964 +/- 0.030499
+Elapsed time = 8:39:24
+Fold 0
+Model 0 best validation rmse = 0.463813 on epoch 44
+Model 0 test rmse = 0.458375
+Model 0 test R2 = 0.937609
+Ensemble test rmse = 0.458375
+Ensemble test R2 = 0.937609
+Fold 1
+Model 0 best validation rmse = 0.468020 on epoch 28
+Model 0 test rmse = 0.469304
+Model 0 test R2 = 0.934598
+Ensemble test rmse = 0.469304
+Ensemble test R2 = 0.934598
+Fold 2
+Model 0 best validation rmse = 0.453487 on epoch 29
+Model 0 test rmse = 0.467688
+Model 0 test R2 = 0.935047
+Ensemble test rmse = 0.467688
+Ensemble test R2 = 0.935047
+Fold 3
+Model 0 best validation rmse = 0.445324 on epoch 30
+Model 0 test rmse = 0.450212
+Model 0 test R2 = 0.939811
+Ensemble test rmse = 0.450212
+Ensemble test R2 = 0.939811
+4-fold cross validation
+	Seed 0 ==> test rmse = 0.458375
+	Seed 0 ==> test R2 = 0.937609
+	Seed 1 ==> test rmse = 0.469304
+	Seed 1 ==> test R2 = 0.934598
+	Seed 2 ==> test rmse = 0.467688
+	Seed 2 ==> test R2 = 0.935047
+	Seed 3 ==> test rmse = 0.450212
+	Seed 3 ==> test R2 = 0.939811
+Overall test rmse = 0.461395 +/- 0.007687
+Overall test R2 = 0.936766 +/- 0.002100
+Elapsed time = 7:07:21
