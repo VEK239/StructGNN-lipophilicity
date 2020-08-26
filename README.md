@@ -1,15 +1,45 @@
 
 # mol_properties
 
-# Datasets
+## baseline_improvements
+The development of the [D-MPNN model](https://github.com/chemprop/chemprop) with the second encoder is located in this branch.
 
-|Name of dataset|Number of entries|Description|Preprocessing|
-|---|---|---|---|
-|logp_mean.csv|13759|LogP measurements for molecules in all raw data|1. Standartization of molecules in raw data, merging all datasets<br/> 2. Removing molecules with LogP  out of range [-5, 10] <br/> 3. Deleting 1 row with temperature = 257<br/> 4. Removing strange molecules (488 entries) <br/> 5. Deleting 18 SMILES with multiple LogP measurements with variance>1 <br/> 6. Averaging multiple LogP measurements of the same SMILES|
-|logP_wo_parameters.csv|12626|LogP measurements for molecules in all raw data where pH and Temperature were NaN values|1. Standartization of molecules in raw data, merging all datasets<br/> 2. Removing strange molecules (485 entries) <br/> 3. Removing molecules with LogP  out of range [-5, 10] <br/> 4. Deleting 2 SMILES with multiple LogP measurements with std>1 <br/> 5. Averaging multiple LogP measurements of the same SMILES|
-|logp_pH_range_mean.csv|1504|LogP measurements for molecules with known pH parameter categorized as acid (0), neutral (1) or alkali (2))|1. Standartization of molecules in raw logP+pH data  <br />2. No strange molecules <br />3. Removing molecules with LogP out of range [-5, 10]<br />4. Categorazation of pH was made according to the rule: <br />   - pH < 6 => acid (0) <br />   - 6 <= pH < 8 => neutral (1) <br />   - ph >= 8 => alkali (2) <br />5. After dropping duplicates there were no records with unique smiles+pH_range and var(logP)>1<br />6. All the records were averaged. All in all, there 1504 unique records left.<br />7. Environments:  <br />   - 0 - 594 <br />   - 1 - 677 <br />   - 2 - 233|
-|logp_wo_averaging.csv|13777|LogP measurements for molecules in all raw data without averaging when several logP measurements, but  choosing most common|1. Standartization of molecules in raw data, merging all datasets<br/> 2. Removing molecules with LogP  out of range [-5, 10] <br/> 3. Deleting 1 row with temperature = 257<br/> 4. Removing strange molecules (488 entries) <br/> 5. Choosing most common logP value from several measurements (if there is no most common -> random)|
-|zinc_dataset.csv|1,999,870|SMILES data for molecules|1. Standartization of molecules in raw data<br/>2. Server link: */home/mol/mol_properties/data/3_final_data/zinc_dataset.csv*|
+### The second encoder's algorithm
 
+This encoder first finds all the interesting substructures in a molecule (rings, acids, amins, esters and sulfonamins) and makes a list of such substructures. After that each of the substructure and all the atoms which were not included in any of substructures are encoded into special "substructure atoms". Each "substructure atom" is evcoded into a vector with 165 features. The features are:
+* 55 features for structure, each feature - count of atoms in a substructure with atomic charge `i`,
+* 40 features for one-hot encoding of a substructure **external** valence,
+* 60 features for one-hot encoding of a substructure count of hydrogens,
+* substructure formal_charge (often zero, sometimes 1-2),
+* substructure is_aromatic (0/1),
+* substructure_mass \* 0.01 (for normalizing),
+* sum of internal substructure internal edges \* 0.1 (for normalizing),
+* one-hot for structure type (types are - ['ATOM', 'RING', 'ACID', 'AMIN', 'ESTER', 'SULFONAMID'])
 
+The bonds which connect two **different** "substructure atoms" are present in a new molecule. All the others are skipped. 
+
+### Running
+To run the training script from /mol_properties directory:
+```train.py --config_path ./scripts/baseline_improvements/chemprop/datasets/config.json --data_path ./scripts/baseline_improvements/chemprop/datasets/logp_wo_averaging_train.csv --dataset_type regression```
+
+The configuration file is located in ./datasets/config.json
+The command line arguments different from original D-MPNN:
+- substructures/no_substructures depth - count of message passing steps for each encoder
+- substructures/no_substructures hidden size - size of hidden layer size in each encoder
+- substructures/no_substructures atom messages - message passing based on atom messages or not in each encoder
+- substructures/no_substructures undirected - whether to use directed or undirected MPNN in each encoder
+- substructures_use_substructures - whether to use additional substructures(acids, amins, sulfonamins, esters)
+- substructures_merge - whether to merge neighboring cycles or not
+
+There is also a new type of cross-validation ("one_out_crossval"/"k-fold") which takes one of the four parts of the input dataset and uses it as validation.
+
+To run hyperparameter optimization from /mol_properties you need to run:
+```hyperparameter_optimization.py --config_path ./scripts/baseline_improvements/chemprop/datasets/config.json --data_path ./scripts/baseline_improvements/chemprop/datasets/logp_wo_averaging_train.csv --dataset_type regression --config_save_path ./scripts/baseline_improvements/chemprop/datasets/hyperparameter_optimization/best_params.json```
+
+### Feature generators
+
+Some new feature generators were added.
+- RDKit without MolLogP feature
+- Only RDKit calculated MolLogP feature
+- RDKit deatures without any fragment counting features
 
