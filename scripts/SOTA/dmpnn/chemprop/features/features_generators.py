@@ -94,6 +94,12 @@ def rdkit_2d_features_generator(mol: Molecule) -> np.ndarray:
     """Mock implementation raising an ImportError if descriptastorus cannot be imported."""
     raise ImportError('Failed to import descriptastorus. Please install descriptastorus '
                       '(https://github.com/bp-kelley/descriptastorus) to use RDKit 2D features.')
+    
+@register_features_generator('rdkit_2d_best')
+def rdkit_2d_features_generator_best(mol: Molecule) -> np.ndarray:
+    """Mock implementation raising an ImportError if descriptastorus cannot be imported."""
+    raise ImportError('Failed to import descriptastorus. Please install descriptastorus '
+                      '(https://github.com/bp-kelley/descriptastorus) to use RDKit 2D features.')
 
 
 @register_features_generator('rdkit_2d_normalized')
@@ -128,6 +134,38 @@ try:
         features = np.where(np.isnan(features), np.zeros(features.shape), features)
         features = np.where(np.isinf(features), np.zeros(features.shape), features)
         return features
+    
+    @register_features_generator('rdkit_2d_best')
+    def rdkit_2d_features_generator_best(mol: Molecule) -> np.ndarray:
+        """
+        Generates RDKit 2D features for a molecule.
+
+        :param mol: A molecule (i.e., either a SMILES or an RDKit molecule).
+        :return: A 1D numpy array containing the RDKit 2D features.
+        """
+        import os
+        RAW_PATH = '../../../data/raw/baselines/dmpnn'
+        smiles = Chem.MolToSmiles(mol, isomericSmiles=True) if type(mol) != str else mol
+        generator = rdDescriptors.RDKit2D()
+        features = generator.process(smiles)[1:]
+        
+        feature_names = [feature[0] for feature in generator.columns]
+
+        feature_dict = dict(zip(feature_names, features))
+        
+        with open(os.path.join(RAW_PATH,'RDKitBestfeatures.txt'),'r') as f:
+            best_feature_names = f.read().split('\n')
+            
+        best_features = []
+        for best_feature_name in best_feature_names:
+
+            best_features.append(feature_dict[best_feature_name])
+
+        best_features = np.array(best_features).astype(float)
+        best_features = np.where(np.isnan(best_features), np.zeros(best_features.shape), best_features)
+        best_features = np.where(np.isinf(best_features), np.zeros(best_features.shape), best_features)
+        return best_features
+
 
     @register_features_generator('rdkit_2d_normalized')
     def rdkit_2d_normalized_features_generator(mol: Molecule) -> np.ndarray:
