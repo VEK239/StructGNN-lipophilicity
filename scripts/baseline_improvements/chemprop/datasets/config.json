@@ -3,7 +3,7 @@
   "separate_test_path": "scripts/baseline_improvements/chemprop/datasets/logp_wo_averaging_test.csv",
   "dataset_type": "regression",
   "save_dir": "scripts/baseline_improvements/chemprop/out",
-  "num_iters": 30,
+  "num_iters": 10,
   "num_folds": 4,
   "no_substructures_depth": 7,
   "epochs": 100,
