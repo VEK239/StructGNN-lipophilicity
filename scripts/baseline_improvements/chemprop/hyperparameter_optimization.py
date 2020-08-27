@@ -21,10 +21,9 @@ from scripts.baseline_improvements.chemprop.utils import create_logger, makedirs
 
 
 SPACE = {
-    'no_substructures_hidden_size': hp.choice('no_substructures_hidden_size', [300, 800]),
-    'substructures_hidden_size': hp.choice('substructures_hidden_size', [300, 800]),
-    'no_substructures_depth': hp.quniform('no_substructures_depth', low=1, high=10, q=1),
-    'no_features_scaling': hp.choice('no_features_scaling', [True, False])
+    'no_substructures_hidden_size': hp.choice('no_substructures_hidden_size', [400, 600]),
+    'substructures_hidden_size': hp.choice('substructures_hidden_size', [200, 300]),
+    'no_substructures_depth': hp.quniform('no_substructures_depth', low=2, high=7, q=1),
 }
 INT_KEYS = ['no_substructures_hidden_size', 'substructures_hidden_size', 'no_substructures_depth']
 

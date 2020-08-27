@@ -4,10 +4,11 @@ from typing import List, Optional, Union
 import numpy as np
 from tqdm import tqdm
 
-from .predict import predict
 from scripts.baseline_improvements.chemprop.args import PredictArgs, TrainArgs
-from scripts.baseline_improvements.chemprop.data import get_data, get_data_from_smiles, MoleculeDataLoader, MoleculeDataset
+from scripts.baseline_improvements.chemprop.data import get_data, get_data_from_smiles, MoleculeDataLoader, \
+    MoleculeDataset
 from scripts.baseline_improvements.chemprop.utils import load_args, load_checkpoint, load_scalers, makedirs, timeit
+from .predict import predict
 
 
 @timeit()
@@ -97,7 +98,8 @@ def make_predictions(args: PredictArgs, smiles: List[str] = None) -> List[List[O
         model_preds = predict(
             model=model,
             data_loader=test_data_loader,
-            scaler=scaler
+            scaler=scaler,
+            args=args
         )
         sum_preds += np.array(model_preds)
 
@@ -139,4 +141,9 @@ def chemprop_predict() -> None:
     """Parses Chemprop predicting arguments and runs prediction using a trained Chemprop model.
     This is the entry point for the command line command :code:`chemprop_predict`.
     """
-    make_predictions(args=PredictArgs().parse_args())
+    args = PredictArgs()
+    args.features_generator = ['rdkit_wo_fragments_and_counts']
+    args.test_path = 'datasets/logp_wo_averaging_test.csv'
+    args.checkpoint_paths = ['out/fold_0/model_0/model.pt']
+    args.preds_path = '../../../data/4_best_predictions/dmpnn_with_substr_test.csv'
+    make_predictions(args=args)
