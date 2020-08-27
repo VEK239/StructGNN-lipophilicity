@@ -201,7 +201,7 @@ try:
         feature_names = rdDescriptors.RDKIT_PROPS["1.0.0"].copy()
         feature_names_copy = feature_names.copy()
         for name in feature_names:
-            if name.startswith("fr") or "count" in name.lower() or "num" in name.lower():
+            if name.startswith("fr") or "count" in name.lower() or "num" in name.lower() or name == "MolLogP":
                 feature_names_copy.remove(name)
         smiles = Chem.MolToSmiles(mol, isomericSmiles=True) if type(mol) != str else mol
         generator = rdNormalizedDescriptors.RDKit2DNormalized(feature_names_copy)
