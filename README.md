@@ -3,6 +3,7 @@
 
 ## Baselines
 The baselines are located in scripts/baselines and notebooks/baselines
+
 The covered baselines are: 
   - morgan bit fingerprints
     * /notebooks/baselines/bit_morgan_fingerprint
