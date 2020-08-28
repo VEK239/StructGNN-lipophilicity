@@ -1,8 +1,8 @@
 
 # mol_properties
 
-## baseline_improvements
-The development of the [D-MPNN model](https://github.com/chemprop/chemprop) with the second encoder is located in this branch.
+## MPAPC-65
+The development of the [D-MPNN model](https://github.com/chemprop/chemprop) with the second encoder without message passing is located in this branch.
 
 ### The second encoder's algorithm
 
@@ -43,3 +43,6 @@ Some new feature generators were added.
 - Only RDKit calculated MolLogP feature
 - RDKit features without any fragment counting features
 
+### Best and worst molecules analysis and comparing to SOTA DMPNN
+
+The analysis of the best predicted and worst predicted molecules for this model is located in `notebooks/baseline_improvements/chemprop_with_substructures/1_analyzing_chemprop_with_substructures_best_predictions.ipynb`
