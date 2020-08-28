@@ -111,7 +111,7 @@ class CommonArgs(Tap):
 
     def add_arguments(self) -> None:
         self.add_argument('--gpu', choices=list(range(torch.cuda.device_count())))
-        self.add_argument('--features_generator', choices=get_available_features_generators())
+        # self.add_argument('--features_generator', choices=get_available_features_generators())
 
     def process_args(self) -> None:
         # Load checkpoint paths
