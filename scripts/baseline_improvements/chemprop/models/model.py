@@ -10,6 +10,8 @@ from scripts.baseline_improvements.chemprop.features import BatchMolGraph, Batch
 from scripts.baseline_improvements.chemprop.nn_utils import get_activation_function, initialize_weights
 from .mpn import MPN
 
+from scripts.baseline_improvements.chemprop.models.gcn import GCN
+
 
 class MoleculeModel(nn.Module):
     """A :class:`MoleculeModel` is a model which contains a message passing network following by feed-forward layers."""
@@ -49,7 +51,7 @@ class MoleculeModel(nn.Module):
         :param args: A :class:`~chemprop.args.TrainArgs` object containing model arguments.
         """
         self.no_substructures_encoder = MPN(args, 'no_substructures')
-        self.substructures_encoder = MPN(args, 'substructures')
+        self.substructures_encoder = GCN(args) #MPN(args, 'substructures')
 
     def create_ffn(self, args: TrainArgs) -> None:
         """
@@ -129,8 +131,9 @@ class MoleculeModel(nn.Module):
         # out = concatenate([self.no_substructures_encoder(no_substructures_batch, features_batch).cpu().data.numpy(),
         #                    self.substructures_encoder(substructures_batch, features_batch).cpu().data.numpy()], axis=1)
 
+        _, substructures_mol_o = self.substructures_encoder(substructures_batch)
         out = torch.cat((self.no_substructures_encoder(no_substructures_batch, features_batch),
-                         self.substructures_encoder(substructures_batch)), dim=1)
+                         substructures_mol_o), dim=1)
         # out = self.substructures_encoder(substructures_batch)
         output = self.ffn(out)
 
