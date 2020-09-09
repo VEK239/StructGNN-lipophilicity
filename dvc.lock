@@ -9,7 +9,7 @@ dmpnn_train:
   - path: ./data/raw/baselines/dmpnn/RDKitBestfeatures.txt
     md5: 167bbab04dd44d318ed593c2828b40e9
   - path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
-    md5: d9eccb419ecbf9c40df33ae35251e43f
+    md5: ebe1bc4530f692dd4ac3a2dbefa495f0
   - path: ./scripts/SOTA/dmpnn/
     md5: 94a2c26ddccb6bdc53aa79d12ae3731c.dir
   params:
@@ -18,18 +18,18 @@ dmpnn_train:
       depth: 6
       epochs: 100
       features_generator: rdkit_2d_normalized_best
-      file_prefix: logp_wo_averaging
+      file_prefix: logd_wo_averaging
       no_features_scaling: true
       num_folds: 4
       save_dir: ./data/raw/baselines/dmpnn/logs/exp_221/folds
       separate_test_path: ./data/3_final_data/split_data/
       split_type: k-fold
-      target_column: logP
+      target_column: logD
   outs:
   - path: ./data/raw/baselines/dmpnn/logs/exp_221/final_scores.json
-    md5: b42ffed200e3e4c8b4c850171e65fbe2
+    md5: 8cf8180aaadb6a50fe816abd46cf58a3
   - path: ./data/raw/baselines/dmpnn/logs/exp_221/folds
-    md5: e1b2c96944719c453d822f2e557c0c31.dir
+    md5: 2baa5e273590d66335784806d5f4646f.dir
 preparation:
   cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train_val_data_preparation.py
   deps:
@@ -45,7 +45,7 @@ preparation:
     md5: 3cc594ce1c8e16aba6d859c5d8aef60b
   params:
     params.yaml:
-      file_prefix: logp_wo_averaging
+      file_prefix: logd_wo_averaging
   outs:
   - path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
-    md5: d9eccb419ecbf9c40df33ae35251e43f
+    md5: ebe1bc4530f692dd4ac3a2dbefa495f0
