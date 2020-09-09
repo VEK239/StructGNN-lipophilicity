@@ -1,0 +1,40 @@
+stages:
+  preparation:
+    cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train_val_data_preparation.py
+    deps:
+    - ./data/3_final_data/split_data/logd_wo_averaging_train.csv
+    - ./data/3_final_data/split_data/logd_wo_averaging_validation.csv
+    - ./data/3_final_data/split_data/logp_wo_averaging_train.csv
+    - ./data/3_final_data/split_data/logp_wo_averaging_validation.csv
+    - ./scripts/SOTA/dmpnn/train_val_data_preparation.py
+    outs:
+    - ./data/raw/baselines/dmpnn/train_val_dataset.csv
+    params:
+    - file_prefix
+  dmpnn_train:
+    cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train.py
+      --dataset_type regression --num_workers 0
+    deps:
+    - ./data/3_final_data/split_data/logd_wo_averaging_test.csv
+    - ./data/3_final_data/split_data/logp_wo_averaging_test.csv
+    - ./data/raw/baselines/dmpnn/RDKitBestfeatures.txt
+    - ./data/raw/baselines/dmpnn/train_val_dataset.csv
+    - ./scripts/SOTA/dmpnn/
+    params:
+    - data_path
+    - depth
+    - epochs
+    - features_generator
+    - file_prefix
+    - no_features_scaling
+    - num_folds
+    - save_dir
+    - separate_test_path
+    - split_type
+    - target_column
+    outs:
+    - ./data/raw/baselines/dmpnn/logs/exp_221/folds
+
+    metrics:
+    - ./data/raw/baselines/dmpnn/logs/exp_221/final_scores.json:
+        cache: false
