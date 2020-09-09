@@ -2,11 +2,13 @@ stages:
   preparation:
     cmd: /home/mol/anaconda3/envs/chemprop/bin/python train_val_data_preparation.py
     deps:
+    - ../../../data/3_final_data/split_data/logd_wo_averaging_train.csv
+    - ../../../data/3_final_data/split_data/logd_wo_averaging_validation.csv
     - ../../../data/3_final_data/split_data/logp_wo_averaging_train.csv
     - ../../../data/3_final_data/split_data/logp_wo_averaging_validation.csv
     - train_val_data_preparation.py
     outs:
-    - ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv
+    - ../../../data/raw/baselines/dmpnn/train_val_dataset.csv
   dmpnn_train:
     cmd: /home/mol/anaconda3/envs/chemprop/bin/python train.py --data_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv
       --dataset_type regression --separate_test_path ../../../data/3_final_data/split_data/logp_wo_averaging_test.csv

@@ -28,12 +28,16 @@ dmpnn_train:
 preparation:
   cmd: /home/mol/anaconda3/envs/chemprop/bin/python train_val_data_preparation.py
   deps:
+  - path: ../../../data/3_final_data/split_data/logd_wo_averaging_train.csv
+    md5: 873ab81577a1299ac70556253c33dd50
+  - path: ../../../data/3_final_data/split_data/logd_wo_averaging_validation.csv
+    md5: b9671fe5a928815a79e20f578c1771b4
   - path: ../../../data/3_final_data/split_data/logp_wo_averaging_train.csv
     md5: 45e75fcfa52caa39a8d38680a0cf549a
   - path: ../../../data/3_final_data/split_data/logp_wo_averaging_validation.csv
     md5: db99f77e5a34e90007c968f22dbc06db
   - path: train_val_data_preparation.py
-    md5: dd7edfdcfe60a1666d8d411568febe38
+    md5: c6d5e2c39a6e14464ec83b2107f4145d
   outs:
-  - path: ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv
-    md5: d9eccb419ecbf9c40df33ae35251e43f
+  - path: ../../../data/raw/baselines/dmpnn/train_val_dataset.csv
+    md5: ebe1bc4530f692dd4ac3a2dbefa495f0
