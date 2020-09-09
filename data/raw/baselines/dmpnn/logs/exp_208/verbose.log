@@ -1,0 +1,311 @@
+Fold 0
+Command line
+python train.py --data_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv --dataset_type regression --save_dir ../../../data/raw/baselines/dmpnn/logs/exp_208 --separate_test_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_test.csv --epochs 100 --depth 6 --split_type k-fold --num_folds 4 --num_workers 1
+Args
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'cache_cutoff': 10000,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'class_balance': False,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'crossval_index_sets': None,
+ 'cuda': True,
+ 'data_path': '../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv',
+ 'dataset_type': 'regression',
+ 'depth': 6,
+ 'device': device(type='cuda'),
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 100,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'features_size': None,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'grad_clip': None,
+ 'hidden_size': 300,
+ 'ignore_columns': None,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cuda': False,
+ 'no_features_scaling': False,
+ 'num_folds': 4,
+ 'num_lrs': 1,
+ 'num_tasks': 1,
+ 'num_workers': 1,
+ 'pytorch_seed': 0,
+ 'quiet': False,
+ 'save_dir': '../../../data/raw/baselines/dmpnn/logs/exp_208/fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': '../../../data/raw/baselines/dmpnn/logp_wo_averaging_test.csv',
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'smiles_column': None,
+ 'split_sizes': (0.8, 0.1, 0.1),
+ 'split_type': 'k-fold',
+ 'symmetry_feature': False,
+ 'target_columns': None,
+ 'task_names': ['logP'],
+ 'test': False,
+ 'test_fold_index': None,
+ 'train_data_size': None,
+ 'undirected': False,
+ 'use_input_features': False,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11,710 | train size = 8,782 | val size = 2,928 | test size = 2,067
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Moving model to cuda
+Epoch 0
+Train function
+Fold 0
+Command line
+python train.py --data_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv --dataset_type regression --save_dir ../../../data/raw/baselines/dmpnn/logs/exp_208 --separate_test_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_test.csv --epochs 100 --depth 6 --split_type k-fold --num_folds 4 --num_workers 1
+Args
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'cache_cutoff': 10000,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'class_balance': False,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'crossval_index_sets': None,
+ 'cuda': True,
+ 'data_path': '../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv',
+ 'dataset_type': 'regression',
+ 'depth': 6,
+ 'device': device(type='cuda'),
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 100,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'features_size': None,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'grad_clip': None,
+ 'hidden_size': 300,
+ 'ignore_columns': None,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cuda': False,
+ 'no_features_scaling': False,
+ 'num_folds': 4,
+ 'num_lrs': 1,
+ 'num_tasks': 1,
+ 'num_workers': 1,
+ 'pytorch_seed': 0,
+ 'quiet': False,
+ 'save_dir': '../../../data/raw/baselines/dmpnn/logs/exp_208/fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': '../../../data/raw/baselines/dmpnn/logp_wo_averaging_test.csv',
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'smiles_column': None,
+ 'split_sizes': (0.8, 0.1, 0.1),
+ 'split_type': 'k-fold',
+ 'symmetry_feature': False,
+ 'target_columns': None,
+ 'task_names': ['logP'],
+ 'test': False,
+ 'test_fold_index': None,
+ 'train_data_size': None,
+ 'undirected': False,
+ 'use_input_features': False,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11,710 | train size = 8,782 | val size = 2,928 | test size = 2,067
+Fitting scaler
+[<chemprop.data.data.MoleculeDatapoint object at 0x7fe43349cc10>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe43349c580>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe43349c550>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe43349cf70>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe43349ceb0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe43349cee0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe433485f70>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe4334857f0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe433485d90>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe433485d00>]
+[<chemprop.data.data.MoleculeDatapoint object at 0x7fe433153dc0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe433153df0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe433153e20>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe433153e50>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe433153e80>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe433153eb0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe433153ee0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe433153f10>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe433153f40>, <chemprop.data.data.MoleculeDatapoint object at 0x7fe433153f70>]
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Moving model to cuda
+Epoch 0
+Train function
+Fold 0
+Command line
+python train.py --save_dir ../../../data/raw/baselines/dmpnn/logs/exp_208 --separate_val_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_validation.csv --separate_test_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_test.csv --epochs 100 --depth 6 --data_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train.csv --dataset_type regression
+Args
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'cache_cutoff': 10000,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'class_balance': False,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'crossval_index_sets': None,
+ 'cuda': True,
+ 'data_path': '../../../data/raw/baselines/dmpnn/logp_wo_averaging_train.csv',
+ 'dataset_type': 'regression',
+ 'depth': 6,
+ 'device': device(type='cuda'),
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 100,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'features_size': None,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'grad_clip': None,
+ 'hidden_size': 300,
+ 'ignore_columns': None,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cuda': False,
+ 'no_features_scaling': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'num_tasks': 1,
+ 'num_workers': 8,
+ 'pytorch_seed': 0,
+ 'quiet': False,
+ 'save_dir': '../../../data/raw/baselines/dmpnn/logs/exp_208/fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': '../../../data/raw/baselines/dmpnn/logp_wo_averaging_test.csv',
+ 'separate_val_features_path': None,
+ 'separate_val_path': '../../../data/raw/baselines/dmpnn/logp_wo_averaging_validation.csv',
+ 'show_individual_scores': False,
+ 'smiles_column': None,
+ 'split_sizes': (0.8, 0.1, 0.1),
+ 'split_type': 'random',
+ 'symmetry_feature': False,
+ 'target_columns': None,
+ 'task_names': ['logP'],
+ 'test': False,
+ 'test_fold_index': None,
+ 'train_data_size': None,
+ 'undirected': False,
+ 'use_input_features': False,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 9,643 | train size = 9,643 | val size = 2,067 | test size = 2,067
+Fitting scaler
+[<chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52b61f0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52b67f0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52b6640>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52b6f10>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52b6d30>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52b6f40>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52bc2e0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52bc1c0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52bc820>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52bc430>]
+[<chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52b61f0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52b67f0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52b6640>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52b6f10>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52b6d30>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52b6f40>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52bc2e0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52bc1c0>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52bc820>, <chemprop.data.data.MoleculeDatapoint object at 0x7fa7a52bc430>]
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Moving model to cuda
+Epoch 0
+Train function
+Loss = 2.0552e-02, PNorm = 34.0111, GNorm = 1.3903, lr_0 = 1.2578e-04

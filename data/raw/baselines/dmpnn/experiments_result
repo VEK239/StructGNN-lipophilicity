@@ -1,22 +1,22 @@
-|    | Feature name        |     P-value |
-|---:|:--------------------|------------:|
-|  0 | Kappa1              | 8.25365e-14 |
-|  1 | Chi2n               | 1.24678e-13 |
-|  2 | Chi1n               | 1.3659e-13  |
-|  3 | NumValenceElectrons | 1.56867e-13 |
-|  4 | Chi0n               | 2.40821e-13 |
-|  5 | SlogP_VSA2          | 2.89531e-13 |
-|  6 | Chi0                | 4.56501e-13 |
-|  7 | Kappa2              | 4.57266e-13 |
-|  8 | Chi1v               | 8.75585e-13 |
-|  9 | HeavyAtomCount      | 1.12934e-12 |
-| 10 | Chi0v               | 1.47328e-12 |
-| 11 | Chi1                | 1.79236e-12 |
-| 12 | LabuteASA           | 2.34751e-12 |
-| 13 | Chi3n               | 2.55963e-12 |
-| 14 | Chi4n               | 3.64599e-12 |
-| 15 | ExactMolWt          | 8.85466e-12 |
-| 16 | MolWt               | 1.02301e-11 |
-| 17 | MolMR               | 1.1569e-11  |
-| 18 | Chi2v               | 1.6552e-11  |
-| 19 | HeavyAtomMolWt      | 3.46084e-11 |
+|    |   feature importance | feature name     |
+|---:|---------------------:|:-----------------|
+|  0 |           0.340836   | MolLogP          |
+|  1 |           0.0470829  | fr_sulfonamd     |
+|  2 |           0.0296889  | fr_Al_COO        |
+|  3 |           0.0168471  | fr_NH2           |
+|  4 |           0.0151696  | NumHDonors       |
+|  5 |           0.014645   | VSA_EState9      |
+|  6 |           0.0137043  | MinPartialCharge |
+|  7 |           0.0132109  | fr_ester         |
+|  8 |           0.0131371  | fr_phos_acid     |
+|  9 |           0.0120727  | fr_hdrzone       |
+| 10 |           0.0119326  | fr_Ar_OH         |
+| 11 |           0.0116285  | fr_hdrzine       |
+| 12 |           0.0111126  | fr_ether         |
+| 13 |           0.0110822  | NumHeteroatoms   |
+| 14 |           0.0109648  | fr_amidine       |
+| 15 |           0.00968864 | fr_imidazole     |
+| 16 |           0.00928853 | fr_guanido       |
+| 17 |           0.00839196 | PEOE_VSA6        |
+| 18 |           0.00835953 | Chi4v            |
+| 19 |           0.00806703 | NHOHCount        |

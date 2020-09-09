@@ -8,5 +8,3 @@
 |logp_wo_averaging.csv|13777|LogP measurements for molecules in all raw data without averaging when several logP measurements, but  choosing most common|1. Standartization of molecules in raw data, merging all datasets<br/> 2. Removing molecules with LogP  out of range [-5, 10] <br/> 3. Deleting 1 row with temperature = 257<br/> 4. Removing strange molecules (488 entries) <br/> 5. Choosing most common logP value from several measurements (if there is no most common -> random)|
 |zinc_dataset.csv|1,999,870|SMILES data for molecules|1. Standartization of molecules in raw data<br/>2. Server link: */home/mol/mol_properties/data/3_final_data/zinc_dataset.csv*|
 
-
-

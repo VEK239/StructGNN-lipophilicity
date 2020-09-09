@@ -1,6 +1,6 @@
 {
-  "data_path": "scripts/baseline_improvements/chemprop/datasets/logp_wo_averaging_cross.csv",
-  "separate_test_path": "scripts/baseline_improvements/chemprop/datasets/logp_wo_averaging_test.csv",
+  "data_path": "./data/raw/baselines/dmpnn/train_val_dataset.csv",
+  "separate_test_path": "./data/3_final_data/split_data/logd_wo_averaging_test.csv",
   "dataset_type": "regression",
   "save_dir": "scripts/baseline_improvements/chemprop/out",
   "num_iters": 10,
@@ -18,6 +18,9 @@
   "split_type": "k-fold",
   "features_generator": [
     "rdkit_2d_normalized_wo_MolLogP"
+  ],
+  "target_columns": [
+      "logD"
   ],
   "no_features_scaling": true
 }

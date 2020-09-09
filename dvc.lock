@@ -1,8 +1,0 @@
-train:
-  cmd: /home/mol/anaconda3/envs/chemprop/bin/python3.8 ./scripts/baseline_improvements/chemprop/train.py
-    --config_path ./scripts/baseline_improvements/chemprop/datasets/config.json --data_path
-    ./scripts/baseline_improvements/chemprop/datasets/logp_wo_averaging_train.csv
-    --dataset_type regression
-  deps:
-  - path: ./scripts/baseline_improvements/chemprop/datasets
-    md5: 7ace47ca6cd94602442df60fa310b902.dir
