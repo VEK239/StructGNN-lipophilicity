@@ -1,3 +1,4 @@
+file_prefix: logd_wo_averaging
 save_dir: ../../../data/raw/baselines/dmpnn/logs/exp_221/folds
 epochs: 100 
 depth: 6
@@ -5,3 +6,6 @@ features_generator: rdkit_2d_normalized_best
 no_features_scaling: True
 split_type: k-fold
 num_folds: 4
+target_column: logD
+data_path: ../../../data/raw/baselines/dmpnn/train_val_dataset.csv
+separate_test_path: ../../../data/3_final_data/split_data/

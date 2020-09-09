@@ -38,6 +38,10 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
     args.no_features_scaling = params['no_features_scaling']
     args.split_type = params['split_type']
     args.num_folds = params['num_folds']
+    args.data_path = os.path.join(params['data_path'])
+    args.target_columns = [params['target_column']]
+    args.separate_test_path = os.path.join(params['separate_test_path'], params['file_prefix']+'_test.csv')
+    
     # Initialize relevant variables
     init_seed = args.seed
     save_dir = args.save_dir

@@ -12,22 +12,26 @@ stages:
     params:
     - file_prefix
   dmpnn_train:
-    cmd: /home/mol/anaconda3/envs/chemprop/bin/python train.py --data_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv
-      --dataset_type regression --separate_test_path ../../../data/3_final_data/split_data/logp_wo_averaging_test.csv
+    cmd: /home/mol/anaconda3/envs/chemprop/bin/python train.py --dataset_type regression
       --num_workers 0
     deps:
+    - ../../../data/3_final_data/split_data/logd_wo_averaging_test.csv
     - ../../../data/3_final_data/split_data/logp_wo_averaging_test.csv
     - ../../../data/raw/baselines/dmpnn/RDKitBestfeatures.txt
-    - ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train_val.csv
+    - ../../../data/raw/baselines/dmpnn/train_val_dataset.csv
     - ./
     params:
+    - data_path
     - depth
     - epochs
     - features_generator
+    - file_prefix
     - no_features_scaling
     - num_folds
     - save_dir
+    - separate_test_path
     - split_type
+    - target_column
     outs:
     - ../../../data/raw/baselines/dmpnn/logs/exp_221/folds
 
