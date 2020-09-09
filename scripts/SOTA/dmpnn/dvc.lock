@@ -11,7 +11,7 @@ dmpnn_train:
   - path: ../../../data/raw/baselines/dmpnn/train_val_dataset.csv
     md5: ebe1bc4530f692dd4ac3a2dbefa495f0
   - path: ./
-    md5: 50b7be50ec6b9f1b828a5e85da59febf.dir
+    md5: 4ed17003ec899e00b1292cf36e64cc94.dir
   params:
     params.yaml:
       data_path: ../../../data/raw/baselines/dmpnn/train_val_dataset.csv
@@ -29,7 +29,7 @@ dmpnn_train:
   - path: ../../../data/raw/baselines/dmpnn/logs/exp_221/final_scores.json
     md5: 8cf8180aaadb6a50fe816abd46cf58a3
   - path: ../../../data/raw/baselines/dmpnn/logs/exp_221/folds
-    md5: b7f0488b572d8322e73ead4cce905cf6.dir
+    md5: 180758bb2a251d73b5bf6a8af043104b.dir
 preparation:
   cmd: /home/mol/anaconda3/envs/chemprop/bin/python train_val_data_preparation.py
   deps:
