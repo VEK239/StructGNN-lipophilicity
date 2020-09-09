@@ -2,11 +2,13 @@ import pandas as pd
 import os
 import numpy as np
 import yaml
-DATASET_PATH = '../../../data/3_final_data/split_data'
-DATASET_OUTPUT_PATH = '../../../data/raw/baselines/dmpnn'
+
+DATASET_OUTPUT_PATH = './data/raw/baselines/dmpnn'
 
 with open("params.yaml", 'r') as fd:
         params = yaml.safe_load(fd)
+        
+DATASET_PATH = params['separate_test_path']
 
 dataset_train = pd.read_csv(os.path.join(DATASET_PATH, params['file_prefix']+'_train.csv'), index_col=0)
 dataset_val = pd.read_csv(os.path.join(DATASET_PATH, params['file_prefix']+'_validation.csv'), index_col=0)
