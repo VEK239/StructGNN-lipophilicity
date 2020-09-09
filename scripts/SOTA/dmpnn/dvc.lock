@@ -38,6 +38,9 @@ preparation:
     md5: db99f77e5a34e90007c968f22dbc06db
   - path: train_val_data_preparation.py
     md5: c6d5e2c39a6e14464ec83b2107f4145d
+  params:
+    params.yaml:
+      file_prefix: logd_wo_averaging
   outs:
   - path: ../../../data/raw/baselines/dmpnn/train_val_dataset.csv
     md5: ebe1bc4530f692dd4ac3a2dbefa495f0
