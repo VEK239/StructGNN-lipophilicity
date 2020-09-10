@@ -130,7 +130,7 @@ class TrainArgs(CommonArgs):
     """:class:`TrainArgs` includes :class:`CommonArgs` along with additional arguments used for training a Chemprop model."""
 
     # General arguments
-    data_path: str
+    data_path: str = ''
     """Path to data CSV file."""
     target_columns: List[str] = None
     """

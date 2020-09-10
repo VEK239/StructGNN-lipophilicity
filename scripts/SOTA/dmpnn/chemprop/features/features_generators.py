@@ -144,7 +144,7 @@ try:
         :return: A 1D numpy array containing the RDKit 2D features.
         """
         import os
-        RAW_PATH = '../../../data/raw/baselines/dmpnn'
+        RAW_PATH = './data/raw/baselines/dmpnn'
         smiles = Chem.MolToSmiles(mol, isomericSmiles=True) if type(mol) != str else mol
         generator = rdDescriptors.RDKit2D()
         features = generator.process(smiles)[1:]
@@ -191,7 +191,7 @@ try:
         :return: A 1D numpy array containing the RDKit 2D normalized features.
         """
         import os
-        RAW_PATH = '../../../data/raw/baselines/dmpnn'
+        RAW_PATH = './data/raw/baselines/dmpnn'
         smiles = Chem.MolToSmiles(mol, isomericSmiles=True) if type(mol) != str else mol
         generator = rdNormalizedDescriptors.RDKit2DNormalized()
         features = generator.process(smiles)[1:]
