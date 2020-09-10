@@ -22,5 +22,6 @@
   "target_columns": [
       "logD"
   ],
-  "no_features_scaling": true
+  "no_features_scaling": true,
+  "smiles_column": "smiles"
 }

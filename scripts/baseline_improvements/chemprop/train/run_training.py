@@ -274,7 +274,7 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
 
         if len(test_preds) != 0:
             sum_test_preds += np.array(test_preds)
-
+        info(test_scores)
         # Average test score
         info(f'Model {model_idx} test {args.metric} = {test_scores[0]:.6f}')
         info(f'Model {model_idx} test R2 = {test_scores[1]:.6f}')

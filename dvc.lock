@@ -1,0 +1,10 @@
+train:
+  cmd: /home/mol/anaconda3/envs/chemprop/bin/python3.8 ./scripts/baseline_improvements/chemprop/train.py
+    --config_path ./scripts/baseline_improvements/chemprop/datasets/config.json --dataset_type
+    regression --data_path ./data/raw/baselines/dmpnn/train_val_dataset.csv
+  deps:
+  - path: ./scripts/baseline_improvements/chemprop/datasets
+    md5: 0fad5326e330290882cf9b915edb1a98.dir
+  outs:
+  - path: ./scripts/baseline_improvements/chemprop/out
+    md5: 5ccabae88b5d805ba950870638142e1d.dir
