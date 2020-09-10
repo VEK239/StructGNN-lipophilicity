@@ -4,7 +4,26 @@ train:
     regression --data_path ./data/raw/baselines/dmpnn/train_val_dataset.csv
   deps:
   - path: ./scripts/baseline_improvements/chemprop/datasets
-    md5: 0fad5326e330290882cf9b915edb1a98.dir
+    md5: 34454f0fa9349784d332b6d17277eb27.dir
   outs:
   - path: ./scripts/baseline_improvements/chemprop/out
-    md5: 5ccabae88b5d805ba950870638142e1d.dir
+    md5: 71d9f74ed56dd24c8b3394008443eeaf.dir
+preparation:
+  cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/baseline_improvements/chemprop/train_val_data_preparation.py
+  deps:
+  - path: ./data/3_final_data/split_data/logd_wo_averaging_train.csv
+    md5: 531143a9ddf06dbb3725435dc43d67b4
+  - path: ./data/3_final_data/split_data/logd_wo_averaging_validation.csv
+    md5: d62c94b3db91411be3c9fbe75cb39ce0
+  - path: ./data/3_final_data/split_data/logp_wo_averaging_train.csv
+    md5: 45e75fcfa52caa39a8d38680a0cf549a
+  - path: ./data/3_final_data/split_data/logp_wo_averaging_validation.csv
+    md5: db99f77e5a34e90007c968f22dbc06db
+  - path: ./scripts/baseline_improvements/chemprop/train_val_data_preparation.py
+    md5: 3cc594ce1c8e16aba6d859c5d8aef60b
+  params:
+    params.yaml:
+      file_prefix: logd_wo_averaging
+  outs:
+  - path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
+    md5: 20cefa6e0df77f00ca6eb4f826cb643a

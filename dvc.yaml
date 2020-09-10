@@ -7,3 +7,15 @@ stages:
     - ./scripts/baseline_improvements/chemprop/datasets
     outs:
     - ./scripts/baseline_improvements/chemprop/out
+  preparation:
+    cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/baseline_improvements/chemprop/train_val_data_preparation.py
+    deps:
+    - ./data/3_final_data/split_data/logd_wo_averaging_train.csv
+    - ./data/3_final_data/split_data/logd_wo_averaging_validation.csv
+    - ./data/3_final_data/split_data/logp_wo_averaging_train.csv
+    - ./data/3_final_data/split_data/logp_wo_averaging_validation.csv
+    - ./scripts/baseline_improvements/chemprop/train_val_data_preparation.py
+    params:
+    - file_prefix
+    outs:
+    - ./data/raw/baselines/dmpnn/train_val_dataset.csv
