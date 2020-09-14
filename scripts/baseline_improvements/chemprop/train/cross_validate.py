@@ -25,6 +25,10 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
     info = logger.info if logger is not None else print
 
     # Initialize relevant variables
+    #import yaml
+   # with open("params.yaml", 'r') as fd:
+     #       params = yaml.safe_load(fd)
+    #args.target_columns = [params['target_column']]
     init_seed = args.seed
     save_dir = args.save_dir
     args.task_names = get_task_names(

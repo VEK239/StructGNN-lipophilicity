@@ -5,6 +5,7 @@ stages:
       --dataset_type regression --data_path ./data/raw/baselines/dmpnn/train_val_dataset.csv
     deps:
     - ./scripts/baseline_improvements/chemprop/datasets
+    - ./scripts/baseline_improvements/chemprop/models
     outs:
     - ./scripts/baseline_improvements/chemprop/out
   preparation:

@@ -1,6 +1,6 @@
 {
   "data_path": "./data/raw/baselines/dmpnn/train_val_dataset.csv",
-  "separate_test_path": "./data/3_final_data/split_data/logd_wo_averaging_test.csv",
+  "separate_test_path": "./data/3_final_data/split_data/logp_wo_averaging_test.csv",
   "dataset_type": "regression",
   "save_dir": "scripts/baseline_improvements/chemprop/out",
   "num_iters": 10,
@@ -20,7 +20,7 @@
     "rdkit_2d_normalized_wo_MolLogP"
   ],
   "target_columns": [
-      "logD"
+      "logP"
   ],
   "no_features_scaling": true,
   "smiles_column": "smiles"
