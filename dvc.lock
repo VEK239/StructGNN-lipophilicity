@@ -1,17 +1,17 @@
 train:
-  cmd: /home/mol/anaconda3/envs/chemprop/bin/python3.8 ./scripts/baseline_improvements/chemprop/train.py
+  cmd: ~/anaconda3/envs/chemprop/bin/python3.8 ./scripts/baseline_improvements/chemprop/train.py
     --config_path ./scripts/baseline_improvements/chemprop/datasets/config.json --dataset_type
     regression --data_path ./data/raw/baselines/dmpnn/train_val_dataset.csv
   deps:
   - path: ./scripts/baseline_improvements/chemprop/datasets
-    md5: f2bea633cd52334f4944ce71081833ef.dir
+    md5: 857fb82227f434ef72daa212c688fe70.dir
   - path: ./scripts/baseline_improvements/chemprop/models
-    md5: 7a288dd3ae68c2f8e6af3a72012b6f96.dir
+    md5: d9e616755e5313400fb710cdc8a0fc64.dir
   outs:
   - path: ./scripts/baseline_improvements/chemprop/out
-    md5: 5f968af38b677bc6b2a428ceb79a367d.dir
+    md5: 851710adabb77c05a844d5594c828f63.dir
 preparation:
-  cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/baseline_improvements/chemprop/train_val_data_preparation.py
+  cmd: ~/anaconda3/envs/chemprop/bin/python ./scripts/baseline_improvements/chemprop/train_val_data_preparation.py
   deps:
   - path: ./data/3_final_data/split_data/logd_wo_averaging_train.csv
     md5: 531143a9ddf06dbb3725435dc43d67b4
