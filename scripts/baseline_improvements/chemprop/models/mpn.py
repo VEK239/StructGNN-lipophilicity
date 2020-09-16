@@ -5,11 +5,14 @@ from rdkit import Chem
 import torch
 import torch.nn as nn
 
-from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.features import BatchMolGraph, get_atom_fdim, get_bond_fdim, mol2graph, \
-    BatchMolGraphWithSubstructures, get_atom_fdim_with_substructures, get_bond_fdim_with_substructures, \
+import sys
+sys.path.append('../')
+
+from args import TrainArgs
+from features import BatchMolGraph, get_atom_fdim, get_bond_fdim, mol2graph, \
+    BatchMolGraphWithSubstructures, get_atom_fdim_with_substructures, \
     mol2graph_with_substructures
-from scripts.baseline_improvements.chemprop.nn_utils import index_select_ND, get_activation_function
+from nn_utils import index_select_ND, get_activation_function
 
 
 class MPNEncoder(nn.Module):
@@ -190,6 +193,7 @@ class MPN(nn.Module):
         :param features_batch: A list of numpy arrays containing additional features.
         :return: A PyTorch tensor of shape :code:`(num_molecules, hidden_size)` containing the encoding of each molecule.
         """
+
         if type(batch) != BatchMolGraph and type(batch) != BatchMolGraphWithSubstructures:
             if self.model_type == 'no_substructures':
                 batch = mol2graph(batch)

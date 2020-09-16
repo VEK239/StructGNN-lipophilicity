@@ -2,10 +2,12 @@ from typing import List
 
 import torch
 from tqdm import tqdm
+import sys
+sys.path.append('../')
 
-from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.data import MoleculeDataLoader, MoleculeDataset, StandardScaler
-from scripts.baseline_improvements.chemprop.models import MoleculeModel
+from args import TrainArgs
+from data import MoleculeDataLoader, MoleculeDataset, StandardScaler
+from models import MoleculeModel
 
 
 def predict(model: MoleculeModel,

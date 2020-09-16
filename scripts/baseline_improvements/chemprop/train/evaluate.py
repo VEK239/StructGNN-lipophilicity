@@ -3,10 +3,13 @@ from typing import Callable, List
 
 from sklearn.metrics import r2_score
 
-from scripts.baseline_improvements.chemprop.args import TrainArgs
+import sys
+sys.path.append('../')
+
+from args import TrainArgs
 from .predict import predict
-from scripts.baseline_improvements.chemprop.data import MoleculeDataLoader, StandardScaler
-from scripts.baseline_improvements.chemprop.models import MoleculeModel
+from data import MoleculeDataLoader, StandardScaler
+from models import MoleculeModel
 
 
 def evaluate_predictions(preds: List[List[float]],

@@ -23,7 +23,6 @@ __all__ = [
     'MolGraph',
     'BatchMolGraphWithSubstructures',
     'get_atom_fdim_with_substructures',
-    'get_bond_fdim_with_substructures',
     'mol2graph_with_substructures',
     'MolGraphWithSubstructures',
     'load_features',

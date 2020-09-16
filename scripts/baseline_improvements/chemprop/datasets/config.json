@@ -16,11 +16,11 @@
   "substructures_use_substructures": true,
   "substructures_merge": false,
   "split_type": "k-fold",
-  "features_generator": [
-    "rdkit_2d_normalized_wo_MolLogP"
-  ],
   "target_columns": [
       "logP"
+  ],
+  "features_generator": [
+  "rdkit_2d_normalized_wo_MolLogP"
   ],
   "no_features_scaling": true,
   "smiles_column": "smiles"

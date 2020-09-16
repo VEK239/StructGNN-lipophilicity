@@ -9,16 +9,19 @@ import torch
 from tqdm import trange
 from torch.optim.lr_scheduler import ExponentialLR
 
+import sys
+sys.path.append('../')
+
 from .evaluate import evaluate, evaluate_predictions
 from .predict import predict
 from .train import train
-from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.constants import MODEL_FILE_NAME
-from scripts.baseline_improvements.chemprop.data import get_class_sizes, get_data, MoleculeDataLoader, split_data, \
+from args import TrainArgs
+from constants import MODEL_FILE_NAME
+from data import get_class_sizes, get_data, MoleculeDataLoader, split_data, \
     StandardScaler, validate_dataset_type
-from scripts.baseline_improvements.chemprop.models import MoleculeModel
-from scripts.baseline_improvements.chemprop.nn_utils import param_count
-from scripts.baseline_improvements.chemprop.utils import build_optimizer, build_lr_scheduler, get_loss_func, \
+from models import MoleculeModel
+from nn_utils import param_count
+from utils import build_optimizer, build_lr_scheduler, get_loss_func, \
     get_metric_func, load_checkpoint, \
     makedirs, save_checkpoint, save_smiles_splits
 

@@ -1,6 +1,6 @@
 stages:
   train:
-    cmd: /home/mol/anaconda3/envs/chemprop/bin/python3.8 ./scripts/baseline_improvements/chemprop/train.py
+    cmd: ~/anaconda3/envs/chemprop/bin/python3.8 ./scripts/baseline_improvements/chemprop/train.py
       --config_path ./scripts/baseline_improvements/chemprop/datasets/config.json
       --dataset_type regression --data_path ./data/raw/baselines/dmpnn/train_val_dataset.csv
     deps:
@@ -9,7 +9,7 @@ stages:
     outs:
     - ./scripts/baseline_improvements/chemprop/out
   preparation:
-    cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/baseline_improvements/chemprop/train_val_data_preparation.py
+    cmd: ~/anaconda3/envs/chemprop/bin/python ./scripts/baseline_improvements/chemprop/train_val_data_preparation.py
     deps:
     - ./data/3_final_data/split_data/logd_wo_averaging_train.csv
     - ./data/3_final_data/split_data/logd_wo_averaging_validation.csv

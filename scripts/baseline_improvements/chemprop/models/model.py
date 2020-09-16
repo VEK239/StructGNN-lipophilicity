@@ -5,13 +5,17 @@ import torch
 import torch.nn as nn
 from rdkit import Chem
 
-from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.features import BatchMolGraph, BatchMolGraphWithSubstructures
-from scripts.baseline_improvements.chemprop.nn_utils import get_activation_function, initialize_weights
+import sys
+sys.path.append('../')
+
+from args import TrainArgs
+from features import BatchMolGraph, BatchMolGraphWithSubstructures
+from nn_utils import get_activation_function, initialize_weights
 from .mpn import MPN
 
-from scripts.baseline_improvements.chemprop.models.gcn import GCN
-
+# from scripts.baseline_improvements.chemprop.models.gcn import GCN
+from .substructures_feature_model import SubstructureLayer
+ 
 
 class MoleculeModel(nn.Module):
     """A :class:`MoleculeModel` is a model which contains a message passing network following by feed-forward layers."""
@@ -51,7 +55,7 @@ class MoleculeModel(nn.Module):
         :param args: A :class:`~chemprop.args.TrainArgs` object containing model arguments.
         """
         self.no_substructures_encoder = MPN(args, 'no_substructures')
-        self.substructures_encoder = GCN(args) #MPN(args, 'substructures')
+        self.substructures_encoder = SubstructureLayer(args)#GCN(args) #MPN(args, 'substructures')
 
     def create_ffn(self, args: TrainArgs) -> None:
         """
@@ -131,7 +135,8 @@ class MoleculeModel(nn.Module):
         # out = concatenate([self.no_substructures_encoder(no_substructures_batch, features_batch).cpu().data.numpy(),
         #                    self.substructures_encoder(substructures_batch, features_batch).cpu().data.numpy()], axis=1)
 
-        _, substructures_mol_o = self.substructures_encoder(substructures_batch)
+#         _, substructures_mol_o = self.substructures_encoder(substructures_batch)
+        substructures_mol_o = self.substructures_encoder(substructures_batch)
         out = torch.cat((self.no_substructures_encoder(no_substructures_batch, features_batch),
                          substructures_mol_o), dim=1)
         # out = self.substructures_encoder(substructures_batch)

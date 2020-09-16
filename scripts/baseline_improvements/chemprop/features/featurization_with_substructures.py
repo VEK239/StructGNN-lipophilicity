@@ -2,7 +2,8 @@ from typing import List, Tuple, Union
 
 import torch
 
-from scripts.baseline_improvements.chemprop.features.molecule import create_molecule_for_smiles
+
+from .molecule import create_molecule_for_smiles
 
 # Distance feature sizes
 PATH_DISTANCE_BINS = list(range(10))

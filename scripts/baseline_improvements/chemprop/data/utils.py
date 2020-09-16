@@ -11,8 +11,11 @@ from rdkit import Chem
 from sklearn.model_selection import KFold
 from tqdm import tqdm
 
-from scripts.baseline_improvements.chemprop.args import PredictArgs, TrainArgs
-from scripts.baseline_improvements.chemprop.features import load_features
+import sys
+sys.path.append('../')
+
+from args import PredictArgs, TrainArgs
+from features import load_features
 from .data import MoleculeDatapoint, MoleculeDataset
 from .scaffold import log_scaffold_stats, scaffold_split
 

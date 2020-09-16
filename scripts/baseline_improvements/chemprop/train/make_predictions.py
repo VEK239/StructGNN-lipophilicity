@@ -4,10 +4,13 @@ from typing import List, Optional, Union
 import numpy as np
 from tqdm import tqdm
 
-from scripts.baseline_improvements.chemprop.args import PredictArgs, TrainArgs
-from scripts.baseline_improvements.chemprop.data import get_data, get_data_from_smiles, MoleculeDataLoader, \
+import sys
+sys.path.append('../')
+
+from args import PredictArgs, TrainArgs
+from data import get_data, get_data_from_smiles, MoleculeDataLoader, \
     MoleculeDataset
-from scripts.baseline_improvements.chemprop.utils import load_args, load_checkpoint, load_scalers, makedirs, timeit
+from utils import load_args, load_checkpoint, load_scalers, makedirs, timeit
 from .predict import predict
 
 

@@ -1,10 +1,13 @@
 import torch
 import torch.nn as nn
 
+import sys
+sys.path.append('../')
+
 from scripts.baselines.otgnn.graph import mol_features
 import pdb
 
-from scripts.baseline_improvements.chemprop.features import BatchMolGraph, get_atom_fdim, get_bond_fdim, mol2graph, \
+from features import BatchMolGraph, get_atom_fdim, get_bond_fdim, mol2graph, \
     BatchMolGraphWithSubstructures, get_atom_fdim_with_substructures, get_bond_fdim_with_substructures, \
     mol2graph_with_substructures
 

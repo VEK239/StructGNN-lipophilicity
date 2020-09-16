@@ -20,7 +20,25 @@ ATOM_FEATURES = {
         Chem.rdchem.HybridizationType.SP3D,
         Chem.rdchem.HybridizationType.SP3D2
     ],
+    'feature_family': ['Donor',
+                       'Acceptor',
+                       'NegIonizable',
+                       'PosIonizable',
+                       'ZnBinder',
+                       'Aromatic',
+                       'Hydrophobe', 
+                       'LumpedHydrophobe'
+    ]
 }
+
+FEATURE_FAMILY_DICT = {'Donor':0,
+                       'Acceptor':1,
+                       'NegIonizable':2,
+                       'PosIonizable':3,
+                       'ZnBinder':4,
+                       'Aromatic':5,
+                       'Hydrophobe':6, 
+                       'LumpedHydrophobe':7}
 
 # Distance feature sizes
 PATH_DISTANCE_BINS = list(range(10))
@@ -65,8 +83,25 @@ def onek_encoding_unk(value: int, choices: List[int]) -> List[int]:
 
     return encoding
 
+def onek_encoding(value: List[int], choices: List[int]) -> List[int]:
+    """
+    Creates a one-hot encoding with an extra category for uncommon values.
 
-def atom_features(atom: Chem.rdchem.Atom, functional_groups: List[int] = None) -> List[Union[bool, int, float]]:
+    :param value: The value for which the encoding should be one.
+    :param choices: A list of possible values.
+    :return: A one-hot encoding of the :code:`value` in a list of length :code:`len(choices) + 1`.
+             If :code:`value` is not in :code:`choices`, then the final element in the encoding is 1.
+    """
+    encoding = [0] * (len(choices)+1)
+    if len(value)==0:
+        encoding[-1]=1
+        return encoding
+    for val in value:
+        encoding[val] = 1
+    return encoding
+
+
+def atom_features(atom: Chem.rdchem.Atom, atoms_feats = None, functional_groups: List[int] = None) -> List[Union[bool, int, float]]:
     """
     Builds a feature vector for an atom.
 
@@ -84,6 +119,8 @@ def atom_features(atom: Chem.rdchem.Atom, functional_groups: List[int] = None) -
            [atom.GetMass() * 0.01]  # scaled to about the same range as other features
     if functional_groups is not None:
         features += functional_groups
+    if atoms_feats is not None:
+        features+=onek_encoding(atoms_feats[atom.GetIdx()], ATOM_FEATURES['feature_family'])
     return features
 
 
@@ -143,7 +180,24 @@ class MolGraph:
         self.b2revb = []  # mapping from bond index to the index of the reverse bond
 
         # Get atom features
-        self.f_atoms = [atom_features(atom) for atom in mol.GetAtoms()]
+        
+        import os
+        from rdkit import RDConfig
+        from rdkit import Chem
+        from rdkit.Chem import ChemicalFeatures
+        
+        fdefName = os.path.join(RDConfig.RDDataDir,'BaseFeatures.fdef')
+        featFactory = ChemicalFeatures.BuildFeatureFactory(fdefName)
+        
+        feats = featFactory.GetFeaturesForMol(mol)
+        atoms_props = dict([(atom.GetIdx(), []) for atom in mol.GetAtoms()])
+        
+        for feat in feats:
+            atomsIds = feat.GetAtomIds()
+            for atomId in atomsIds:
+                atoms_props[atomId].append(FEATURE_FAMILY_DICT[feat.GetFamily()])
+
+        self.f_atoms = [atom_features(atom, atoms_props) for atom in mol.GetAtoms()]
         self.n_atoms = len(self.f_atoms)
 
         # Initialize atom to bond mapping for each atom
