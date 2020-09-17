@@ -123,7 +123,7 @@ class MoleculeDataset(Dataset):
         """
         return [d.mol for d in self._data]
 
-    def batch_graph(self, model_type = None, cache: bool = False) -> Union[
+    def batch_graph(self, model_type = 'no_substructures', cache: bool = False) -> Union[
         BatchMolGraph, BatchMolGraphWithSubstructures]:
         r"""
         Constructs a :class:`~chemprop.features.BatchMolGraph` with the graph featurization of all the molecules.

@@ -182,8 +182,6 @@ class MPN(nn.Module):
         :param features_batch: A list of numpy arrays containing additional features.
         :return: A PyTorch tensor of shape :code:`(num_molecules, hidden_size)` containing the encoding of each molecule.
         """
-        print(type(batch))
-        print(BatchMolGraph)
         if type(batch) != BatchMolGraph:
 
             batch = mol2graph(batch)

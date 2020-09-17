@@ -197,7 +197,7 @@ def get_data(path: str,
                 row=all_rows[i] if store_row else None,
                 features_generator=features_generator,
                 features=features_data[i] if features_data is not None else None
-            ) for i, (smiles, targets) in tqdm(enumerate(zip(all_smiles[:10], all_targets[:10])),
+            ) for i, (smiles, targets) in tqdm(enumerate(zip(all_smiles, all_targets)),
                                                total=len(all_smiles))
         ], args = args)
 
@@ -362,8 +362,8 @@ def split_data(data: MoleculeDataset,
                 break
             else:
                 fold_num+=1
-        train = [data[i] for i in train_index[:20]]
-        val = [data[i] for i in val_index[:20]]
+        train = [data[i] for i in train_index]
+        val = [data[i] for i in val_index]
 
         return MoleculeDataset(train, args = args), MoleculeDataset(val, args = args), MoleculeDataset([])
 

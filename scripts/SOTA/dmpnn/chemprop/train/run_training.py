@@ -219,7 +219,8 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
                 metric_func=metric_func,
                 dataset_type=args.dataset_type,
                 scaler=scaler,
-                logger=logger
+                logger=logger,
+                args = args
             )
 
             # Average validation score
@@ -258,7 +259,8 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
         test_preds = predict(
             model=model,
             data_loader=test_data_loader,
-            scaler=scaler
+            scaler=scaler,
+            args = args
         )
         test_scores, test_scores_r2 = evaluate_predictions(
             preds=test_preds,
