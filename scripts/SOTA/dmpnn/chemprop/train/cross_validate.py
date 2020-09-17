@@ -41,6 +41,9 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
     args.data_path = os.path.join(params['data_path'])
     args.target_columns = params['target_column']
     args.separate_test_path = os.path.join(params['separate_test_path'], params['file_prefix']+'_test.csv')
+    args.additional_encoder = params['additional_encoder']
+    args.hidden_size = params['hidden_size']
+    args.substructures_hidden_size = params['substructures_hidden_size']
     
     # Initialize relevant variables
     init_seed = args.seed

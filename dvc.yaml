@@ -35,6 +35,9 @@ stages:
     - separate_test_path
     - split_type
     - target_column
+    - additional_encoder
+    - substructures_hidden_size
+    - hidden_size
     outs:
     - ./data/raw/baselines/dmpnn/logs/exp_221/folds
 

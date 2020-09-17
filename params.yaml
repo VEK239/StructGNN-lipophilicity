@@ -9,3 +9,6 @@ num_folds: 4
 target_column: [logD, logP]
 data_path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
 separate_test_path: ./data/3_final_data/split_data
+additional_encoder: True
+substructures_hidden_size: 300
+hidden_size: 800

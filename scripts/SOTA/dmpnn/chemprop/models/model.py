@@ -7,8 +7,9 @@ import torch.nn as nn
 
 from .mpn import MPN
 from chemprop.args import TrainArgs
-from chemprop.features import BatchMolGraph
+from chemprop.features import BatchMolGraph, BatchMolGraphWithSubstructures
 from chemprop.nn_utils import get_activation_function, initialize_weights
+from .substructures_feature_model import SubstructureLayer
 
 
 class MoleculeModel(nn.Module):
@@ -22,6 +23,8 @@ class MoleculeModel(nn.Module):
                            outputting the actual property predictions.
         """
         super(MoleculeModel, self).__init__()
+        
+        self.args = args
 
         self.classification = args.dataset_type == 'classification'
         self.multiclass = args.dataset_type == 'multiclass'
@@ -41,6 +44,7 @@ class MoleculeModel(nn.Module):
         self.create_ffn(args)
 
         initialize_weights(self)
+        
 
     def create_encoder(self, args: TrainArgs) -> None:
         """
@@ -49,6 +53,8 @@ class MoleculeModel(nn.Module):
         :param args: A :class:`~chemprop.args.TrainArgs` object containing model arguments.
         """
         self.encoder = MPN(args)
+        if self.args.additional_encoder:
+            self.substructures_encoder = SubstructureLayer(args)#GCN(args) #MPN(args, 'substructures')
 
     def create_ffn(self, args: TrainArgs) -> None:
         """
@@ -61,6 +67,10 @@ class MoleculeModel(nn.Module):
             self.num_classes = args.multiclass_num_classes
         if args.features_only:
             first_linear_dim = args.features_size
+        elif self.args.additional_encoder:
+            first_linear_dim = args.substructures_hidden_size + args.hidden_size
+            if args.use_input_features:
+                first_linear_dim += args.features_size
         else:
             first_linear_dim = args.hidden_size
             if args.use_input_features:
@@ -110,6 +120,7 @@ class MoleculeModel(nn.Module):
 
     def forward(self,
                 batch: Union[List[str], List[Chem.Mol], BatchMolGraph],
+                substructures_batch: Union[List[str], List[Chem.Mol], BatchMolGraphWithSubstructures] = None,
                 features_batch: List[np.ndarray] = None) -> torch.FloatTensor:
         """
         Runs the :class:`MoleculeModel` on input.
@@ -122,8 +133,13 @@ class MoleculeModel(nn.Module):
         """
         if self.featurizer:
             return self.featurize(batch, features_batch)
-
-        output = self.ffn(self.encoder(batch, features_batch))
+        if self.args.additional_encoder:
+            substructures_mol_o = self.substructures_encoder(substructures_batch)
+            out = torch.cat((self.encoder(batch, features_batch),
+                         substructures_mol_o), dim=1)
+            output = self.ffn(out)
+        else:
+            output = self.ffn(self.encoder(batch, features_batch))
 
         # Don't apply sigmoid during training b/c using BCEWithLogitsLoss
         if self.classification and not self.training:
