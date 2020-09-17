@@ -58,6 +58,8 @@ def evaluate_predictions(preds: List[List[float]],
                 continue
 
         if len(valid_targets[i]) == 0:
+            results.append(float('nan'))
+            results_r2.append(float('nan'))
             continue
 
         if dataset_type == 'multiclass':
@@ -93,6 +95,7 @@ def evaluate(model: MoleculeModel,
         data_loader=data_loader,
         scaler=scaler
     )
+    print(preds[0])
 
     results, results_r2 = evaluate_predictions(
         preds=preds,
@@ -102,5 +105,4 @@ def evaluate(model: MoleculeModel,
         dataset_type=dataset_type,
         logger=logger
     )
-
     return results, results_r2

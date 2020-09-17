@@ -6,6 +6,8 @@ stages:
     - ./data/3_final_data/split_data/logd_wo_averaging_validation.csv
     - ./data/3_final_data/split_data/logp_wo_averaging_train.csv
     - ./data/3_final_data/split_data/logp_wo_averaging_validation.csv
+    - ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_train.csv
+    - ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_validation.csv
     - ./scripts/SOTA/dmpnn/train_val_data_preparation.py
     outs:
     - ./data/raw/baselines/dmpnn/train_val_dataset.csv
@@ -17,6 +19,7 @@ stages:
     deps:
     - ./data/3_final_data/split_data/logd_wo_averaging_test.csv
     - ./data/3_final_data/split_data/logp_wo_averaging_test.csv
+    - ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_test.csv
     - ./data/raw/baselines/dmpnn/RDKitBestfeatures.txt
     - ./data/raw/baselines/dmpnn/train_val_dataset.csv
     - ./scripts/SOTA/dmpnn/

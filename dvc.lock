@@ -4,32 +4,36 @@ dmpnn_train:
   deps:
   - path: ./data/3_final_data/split_data/logd_wo_averaging_test.csv
     md5: a6965e8ec81a0295303b4e067528e526
+  - path: ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_test.csv
+    md5: af529a93cbf2b93bd4725da533cf0ec3
   - path: ./data/3_final_data/split_data/logp_wo_averaging_test.csv
     md5: d264256dacc2f2b263c241d746bf9f40
   - path: ./data/raw/baselines/dmpnn/RDKitBestfeatures.txt
     md5: 167bbab04dd44d318ed593c2828b40e9
   - path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
-    md5: 20cefa6e0df77f00ca6eb4f826cb643a
+    md5: 8ea44ade97dc10c0d85c11a561ddec22
   - path: ./scripts/SOTA/dmpnn/
-    md5: c0b7d342d09466f4511e37c98c82f42a.dir
+    md5: 3c7a6c654810e80bcafad5a1e8c2acfb.dir
   params:
     params.yaml:
       data_path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
       depth: 6
       epochs: 100
       features_generator: rdkit_2d_normalized_best
-      file_prefix: logd_wo_averaging
+      file_prefix: logp_logd_Lip_wo_averaging
       no_features_scaling: true
       num_folds: 4
       save_dir: ./data/raw/baselines/dmpnn/logs/exp_221/folds
-      separate_test_path: ./data/3_final_data/split_data/
+      separate_test_path: ./data/3_final_data/split_data
       split_type: k-fold
-      target_column: logD
+      target_column:
+      - logD
+      - logP
   outs:
   - path: ./data/raw/baselines/dmpnn/logs/exp_221/final_scores.json
-    md5: 8e235a9d5264e9d3e713629de8a2811f
+    md5: 8446765bd010006bf1c7c04203cd515b
   - path: ./data/raw/baselines/dmpnn/logs/exp_221/folds
-    md5: 2f80a6b6a80cb3d733b1a2d627fe917c.dir
+    md5: d2e983a4ae65fda2737b119a72892f2b.dir
 preparation:
   cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train_val_data_preparation.py
   deps:
@@ -37,6 +41,10 @@ preparation:
     md5: 531143a9ddf06dbb3725435dc43d67b4
   - path: ./data/3_final_data/split_data/logd_wo_averaging_validation.csv
     md5: d62c94b3db91411be3c9fbe75cb39ce0
+  - path: ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_train.csv
+    md5: 775d55e7a4c5ac61edf042ef7a3fd285
+  - path: ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_validation.csv
+    md5: 27ea001d726570ddd0c13bd068852119
   - path: ./data/3_final_data/split_data/logp_wo_averaging_train.csv
     md5: 45e75fcfa52caa39a8d38680a0cf549a
   - path: ./data/3_final_data/split_data/logp_wo_averaging_validation.csv
@@ -45,7 +53,7 @@ preparation:
     md5: 3cc594ce1c8e16aba6d859c5d8aef60b
   params:
     params.yaml:
-      file_prefix: logd_wo_averaging
+      file_prefix: logp_logd_Lip_wo_averaging
   outs:
   - path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
-    md5: 20cefa6e0df77f00ca6eb4f826cb643a
+    md5: 8ea44ade97dc10c0d85c11a561ddec22

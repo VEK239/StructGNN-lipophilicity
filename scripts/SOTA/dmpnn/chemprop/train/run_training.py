@@ -223,27 +223,32 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
             )
 
             # Average validation score
-            avg_val_score = np.nanmean(val_scores)
-            avg_val_score_r2 = np.nanmean(val_scores_r2)
+            avg_val_score = val_scores
+            avg_val_score_r2 = val_scores_r2
+            print(avg_val_score)
+            for task in range(args.num_tasks):
+                debug(f'Validation {args.metric} {args.target_columns[task]} = {avg_val_score[task]:.6f}')
+                debug(f'Validation R2 {args.target_columns[task]} = {avg_val_score_r2[task]:.6f}')
 
-
-            debug(f'Validation {args.metric} = {avg_val_score:.6f}')
-            debug(f'Validation R2 = {avg_val_score_r2:.6f}')
-
-            writer.add_scalar(f'validation_{args.metric}', avg_val_score, n_iter)
-            writer.add_scalar(f'validation_R2', avg_val_score_r2, n_iter)
+                writer.add_scalar(f'validation_{args.metric}_{args.target_columns[task]}', avg_val_score[task], n_iter)
+                writer.add_scalar(f'validation_R2_{args.target_columns[task]}', avg_val_score_r2[task], n_iter)
 
             if args.show_individual_scores:
                 # Individual validation scores
                 for task_name, val_score in zip(args.task_names, val_scores):
                     debug(f'Validation {task_name} {args.metric} = {val_score:.6f}')
                     writer.add_scalar(f'validation_{task_name}_{args.metric}', val_score, n_iter)
+                    
+            avg_val_score = np.nanmean(val_scores)
+            avg_val_score_r2 = np.nanmean(val_scores_r2)
 
             # Save model checkpoint if improved validation score
             if args.minimize_score and avg_val_score < best_score or \
                     not args.minimize_score and avg_val_score > best_score:
                 best_score, best_epoch = avg_val_score, epoch
                 best_score_r2 = avg_val_score_r2
+                best_vals = val_scores
+                best_vals_r2 = val_scores_r2
                 save_checkpoint(os.path.join(save_dir, MODEL_FILE_NAME), model, scaler, features_scaler, args)
 
         # Evaluate on test set using model with best validation score
@@ -268,12 +273,15 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
             sum_test_preds += np.array(test_preds)
 
         # Average test score
-        avg_test_score = np.nanmean(test_scores)
-        avg_test_score_r2 = np.nanmean(test_scores_r2)
-        info(f'Model {model_idx} test {args.metric} = {avg_test_score:.6f}')
-        info(f'Model {model_idx} test R2 = {avg_test_score_r2:.6f}')
-        writer.add_scalar(f'test_{args.metric}', avg_test_score, 0)
-        writer.add_scalar(f'test_R2', avg_test_score_r2, 0)
+        
+        avg_test_score = test_scores
+        avg_test_score_r2 = test_scores_r2
+#         print(avg_test_score)
+        for task in range(args.num_tasks):
+            info(f'Model {model_idx} test {args.metric} {args.target_columns[task]} = {avg_test_score[task]:.6f}')
+            info(f'Model {model_idx} test R2 {args.target_columns[task]} = {avg_test_score_r2[task]:.6f}')
+            writer.add_scalar(f'test_{args.metric}_{args.target_columns[task]}', avg_test_score[task], 0)
+            writer.add_scalar(f'test_R2_{args.target_columns[task]}', avg_test_score_r2[task], 0)
 
         if args.show_individual_scores:
             # Individual test scores
@@ -295,16 +303,17 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
     )
 
     # Average ensemble score
-    avg_ensemble_test_score = np.nanmean(ensemble_scores)
-    avg_ensemble_test_score_r2 = np.nanmean(ensemble_scores_r2)
+    
+    avg_ensemble_test_score = ensemble_scores
+    avg_ensemble_test_score_r2 = ensemble_scores_r2
 
-
-    info(f'Ensemble test {args.metric} = {avg_ensemble_test_score:.6f}')
-    info(f'Ensemble test R2 = {avg_ensemble_test_score_r2:.6f}')
+    for task in range(args.num_tasks):
+        info(f'Ensemble test {args.metric}  {args.target_columns[task]}= {avg_ensemble_test_score[task]:.6f}')
+        info(f'Ensemble test R2  {args.target_columns[task]}= {avg_ensemble_test_score_r2[task]:.6f}')
 
     # Individual ensemble scores
     if args.show_individual_scores:
         for task_name, ensemble_score in zip(args.task_names, ensemble_scores):
             info(f'Ensemble test {task_name} {args.metric} = {ensemble_score:.6f}')
 
-    return ensemble_scores, ensemble_scores_r2, best_score, best_score_r2
+    return ensemble_scores, ensemble_scores_r2, best_vals, best_vals_r2
