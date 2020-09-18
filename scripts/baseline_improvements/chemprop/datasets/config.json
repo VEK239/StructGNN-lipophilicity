@@ -1,6 +1,6 @@
 {
   "data_path": "./data/raw/baselines/dmpnn/train_val_dataset.csv",
-  "separate_test_path": "./data/3_final_data/split_data/logp_wo_averaging_test.csv",
+  "separate_test_path": "./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_test.csv",
   "dataset_type": "regression",
   "save_dir": "scripts/baseline_improvements/chemprop/out",
   "num_iters": 10,
@@ -17,7 +17,7 @@
   "substructures_merge": false,
   "split_type": "k-fold",
   "target_columns": [
-      "logP"
+     "logD", "logP"
   ],
   "features_generator": [
   "rdkit_2d_normalized_wo_MolLogP"

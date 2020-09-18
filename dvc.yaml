@@ -1,13 +1,4 @@
 stages:
-  train:
-    cmd: ~/anaconda3/envs/chemprop/bin/python3.8 ./scripts/baseline_improvements/chemprop/train.py
-      --config_path ./scripts/baseline_improvements/chemprop/datasets/config.json
-      --dataset_type regression --data_path ./data/raw/baselines/dmpnn/train_val_dataset.csv
-    deps:
-    - ./scripts/baseline_improvements/chemprop/datasets
-    - ./scripts/baseline_improvements/chemprop/models
-    outs:
-    - ./scripts/baseline_improvements/chemprop/out
   preparation:
     cmd: ~/anaconda3/envs/chemprop/bin/python ./scripts/baseline_improvements/chemprop/train_val_data_preparation.py
     deps:
@@ -15,8 +6,17 @@ stages:
     - ./data/3_final_data/split_data/logd_wo_averaging_validation.csv
     - ./data/3_final_data/split_data/logp_wo_averaging_train.csv
     - ./data/3_final_data/split_data/logp_wo_averaging_validation.csv
+    - ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_validation.csv
+    - ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_train.csv
     - ./scripts/baseline_improvements/chemprop/train_val_data_preparation.py
     params:
     - file_prefix
     outs:
     - ./data/raw/baselines/dmpnn/train_val_dataset.csv
+  train:
+    cmd: ~/anaconda3/envs/chemprop/bin/python3.8 ./scripts/baseline_improvements/chemprop/train.py --config_path ./scripts/baseline_improvements/chemprop/datasets/config.json --dataset_type regression --data_path ./data/raw/baselines/dmpnn/train_val_dataset.csv
+    deps:
+    - ./scripts/baseline_improvements/chemprop/datasets
+    - ./scripts/baseline_improvements/chemprop/models
+    outs:
+    - ./scripts/baseline_improvements/chemprop/out

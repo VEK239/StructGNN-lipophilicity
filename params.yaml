@@ -1,4 +1,4 @@
-file_prefix: logp_wo_averaging
+file_prefix: logp_logd_Lip_wo_averaging
 save_dir: ./data/raw/baselines/dmpnn/logs/exp_221/folds
 epochs: 100 
 depth: 6
