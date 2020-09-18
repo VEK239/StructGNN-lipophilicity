@@ -56,9 +56,9 @@ def train(model: MoleculeModel,
         # Run model
         model.zero_grad()
         if args.additional_encoder:        
-            preds = model(mol_batch, substructure_mol_batch, features_batch)
+            preds = model(batch = mol_batch, substructures_batch = substructure_mol_batch, features_batch = features_batch)
         else:
-            preds = model(mol_batch, features_batch)
+            preds = model(batch = mol_batch, features_batch = features_batch)
 
         # Move tensors to correct device
         mask = mask.to(preds.device)
