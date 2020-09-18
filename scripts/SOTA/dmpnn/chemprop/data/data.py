@@ -6,10 +6,15 @@ from typing import Callable, Dict, Iterator, List, Optional, Union
 import numpy as np
 from torch.utils.data import DataLoader, Dataset, Sampler
 from rdkit import Chem
+import sys
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
 
 from .scaler import StandardScaler
-from chemprop.features import get_features_generator
-from chemprop.features import BatchMolGraph, MolGraph, BatchMolGraphWithSubstructures, \
+from features import get_features_generator
+from features import BatchMolGraph, MolGraph, BatchMolGraphWithSubstructures, \
     MolGraphWithSubstructures
 
 

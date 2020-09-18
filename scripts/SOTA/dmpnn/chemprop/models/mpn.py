@@ -5,11 +5,16 @@ from rdkit import Chem
 import torch
 import torch.nn as nn
 
-from chemprop.args import TrainArgs
-from chemprop.features import BatchMolGraph, get_atom_fdim, get_bond_fdim, mol2graph, \
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+from args import TrainArgs
+
+from features import BatchMolGraph, get_atom_fdim, get_bond_fdim, mol2graph, \
 BatchMolGraphWithSubstructures, get_atom_fdim_with_substructures, \
     mol2graph_with_substructures
-from chemprop.nn_utils import index_select_ND, get_activation_function
+from nn_utils import index_select_ND, get_activation_function
 
 
 class MPNEncoder(nn.Module):

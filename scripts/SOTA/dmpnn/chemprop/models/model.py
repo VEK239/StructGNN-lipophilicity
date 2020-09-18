@@ -4,11 +4,14 @@ import numpy as np
 from rdkit import Chem
 import torch
 import torch.nn as nn
-
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
 from .mpn import MPN
-from chemprop.args import TrainArgs
-from chemprop.features import BatchMolGraph, BatchMolGraphWithSubstructures
-from chemprop.nn_utils import get_activation_function, initialize_weights
+from args import TrainArgs
+from features import BatchMolGraph, BatchMolGraphWithSubstructures
+from nn_utils import get_activation_function, initialize_weights
 from .substructures_feature_model import SubstructureLayer
 
 
