@@ -11,9 +11,9 @@ dmpnn_train:
   - path: ./data/raw/baselines/dmpnn/RDKitBestfeatures.txt
     md5: 167bbab04dd44d318ed593c2828b40e9
   - path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
-    md5: 8ea44ade97dc10c0d85c11a561ddec22
+    md5: 155a294cddd1289284f5ec1d73cbe0ef
   - path: ./scripts/SOTA/dmpnn/
-    md5: 3c59787ba20b393b530a35144eb0c058.dir
+    md5: d61d7069bef9290142838ed16d416560.dir
   params:
     params.yaml:
       additional_encoder: true
@@ -21,7 +21,7 @@ dmpnn_train:
       depth: 6
       epochs: 100
       features_generator: rdkit_wo_fragments_and_counts
-      file_prefix: logp_logd_Lip_wo_averaging
+      file_prefix: esol
       hidden_size: 800
       no_features_scaling: true
       num_folds: 4
@@ -30,16 +30,23 @@ dmpnn_train:
       split_type: k-fold
       substructures_hidden_size: 300
       target_column:
-      - logD
-      - logP
+      - logS
   outs:
   - path: ./data/raw/baselines/dmpnn/logs/exp_221/final_scores.json
-    md5: 07c9bbf954928277fc01ad548b206566
+    md5: 1e342636301190285c768f3e75ac6912
   - path: ./data/raw/baselines/dmpnn/logs/exp_221/folds
-    md5: a4329874e99411cc04e6a561e4a10888.dir
+    md5: c1cd593656c3a93e3e031e1b63681305.dir
 preparation:
   cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train_val_data_preparation.py
   deps:
+  - path: ./data/3_final_data/split_data/esol_train.csv
+    md5: 09793ffd46e4a67ea59773ebb211ec59
+  - path: ./data/3_final_data/split_data/esol_validation.csv
+    md5: 46b7f9232f2fcde5e96fdea431a8a574
+  - path: ./data/3_final_data/split_data/freesolv_train.csv
+    md5: 1c7ed8431a222e2b5d6f1fad80253899
+  - path: ./data/3_final_data/split_data/freesolv_validation.csv
+    md5: da51b3b9074ce8b10d93548e2d1e64d7
   - path: ./data/3_final_data/split_data/logd_wo_averaging_train.csv
     md5: 531143a9ddf06dbb3725435dc43d67b4
   - path: ./data/3_final_data/split_data/logd_wo_averaging_validation.csv
@@ -56,7 +63,7 @@ preparation:
     md5: 3cc594ce1c8e16aba6d859c5d8aef60b
   params:
     params.yaml:
-      file_prefix: logp_logd_Lip_wo_averaging
+      file_prefix: esol
   outs:
   - path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
-    md5: 8ea44ade97dc10c0d85c11a561ddec22
+    md5: 155a294cddd1289284f5ec1d73cbe0ef

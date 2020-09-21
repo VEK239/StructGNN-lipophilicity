@@ -8,6 +8,10 @@ stages:
     - ./data/3_final_data/split_data/logp_wo_averaging_validation.csv
     - ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_train.csv
     - ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_validation.csv
+    - ./data/3_final_data/split_data/esol_train.csv
+    - ./data/3_final_data/split_data/esol_validation.csv
+    - ./data/3_final_data/split_data/freesolv_train.csv
+    - ./data/3_final_data/split_data/freesolv_validation.csv
     - ./scripts/SOTA/dmpnn/train_val_data_preparation.py
     outs:
     - ./data/raw/baselines/dmpnn/train_val_dataset.csv
