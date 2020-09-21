@@ -172,8 +172,8 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
             if bond:
                 implicit_substruct_valence += BT_MAPPING_INT[
                     mol.GetBondBetweenAtoms(substruct[i], substruct[j]).GetBondType()]
-    substruct_valence = sum(atom.GetExplicitValence() for atom in atoms) - 2 * implicit_substruct_valence
-    substruct_valence_array = onek_encoding_unk(substruct_valence, 40)
+#     substruct_valence = sum(atom.GetExplicitValence() for atom in atoms) - 2 * implicit_substruct_valence
+#     substruct_valence_array = onek_encoding_unk(substruct_valence, 40)
 
     substruct_formal_charge = sum(atom.GetFormalCharge() for atom in atoms)
 
@@ -191,8 +191,8 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
     else:
         substruct_type = [1 if structure_type == 'RING' else 0]
 
-    features = substruct_atomic_encoding + substruct_valence_array + substruct_Hs_array + substruct_type + \
-               [substruct_formal_charge, substruct_is_aromatic, substruct_mass * 0.01, substruct_edges_sum * 0.1]
+    features = substruct_atomic_encoding + substruct_Hs_array + substruct_type + \
+               [substruct_formal_charge, substruct_is_aromatic, substruct_mass * 0.01, substruct_edges_sum * 0.1]#+ substruct_valence_array 
     return tuple(features)
 
 

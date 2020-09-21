@@ -226,6 +226,8 @@ class TrainArgs(CommonArgs):
     substructures_use_substructures:bool = True
     substructures_merge: bool = False
     config_path: str = None
+        
+    config_path_yaml: str = None
     """
     Path to a :code:`.json` file containing arguments. Any arguments present in the config file
     will override arguments specified via the command line or by the defaults.
@@ -326,6 +328,18 @@ class TrainArgs(CommonArgs):
                 config = json.load(f)
                 for key, value in config.items():
                     setattr(self, key, value)
+                    
+        if self.config_path_yaml is not None:
+            import yaml
+            with open(self.config_path_yaml) as f:
+                config = yaml.safe_load(f)
+                for key, value in config.items():
+                    if key == 'file_prefix':
+                        continue
+                    if key == 'separate_test_path':
+                        setattr(self, key, os.path.join(value, config['file_prefix']+'_test.csv'))
+                    else:
+                        setattr(self, key, value)
 
         # Create temporary directory as save directory if not provided
         if self.save_dir is None:

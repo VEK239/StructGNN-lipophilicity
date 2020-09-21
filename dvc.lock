@@ -1,6 +1,6 @@
 dmpnn_train:
   cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train.py
-    --dataset_type regression --num_workers 0
+    --dataset_type regression --num_workers 0 --config_path_yaml ./params.yaml
   deps:
   - path: ./data/3_final_data/split_data/logd_wo_averaging_test.csv
     md5: a6965e8ec81a0295303b4e067528e526
@@ -11,17 +11,17 @@ dmpnn_train:
   - path: ./data/raw/baselines/dmpnn/RDKitBestfeatures.txt
     md5: 167bbab04dd44d318ed593c2828b40e9
   - path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
-    md5: 155a294cddd1289284f5ec1d73cbe0ef
+    md5: d9eccb419ecbf9c40df33ae35251e43f
   - path: ./scripts/SOTA/dmpnn/
-    md5: d61d7069bef9290142838ed16d416560.dir
+    md5: 8a456759b1df607b161dc8e3e7feaab7.dir
   params:
     params.yaml:
       additional_encoder: false
       data_path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
       depth: 6
       epochs: 100
-      features_generator: rdkit_wo_fragments_and_counts
-      file_prefix: esol
+      features_generator:
+      file_prefix: logp_wo_averaging
       hidden_size: 800
       no_features_scaling: true
       num_folds: 4
@@ -29,13 +29,13 @@ dmpnn_train:
       separate_test_path: ./data/3_final_data/split_data
       split_type: k-fold
       substructures_hidden_size: 300
-      target_column:
-      - logS
+      target_columns:
+      - logP
   outs:
   - path: ./data/raw/baselines/dmpnn/logs/exp_221/final_scores.json
-    md5: db4746dc585948387ff42fd0919b0d84
+    md5: 20cc03e5fbff39995b86d6de2bbd5bb3
   - path: ./data/raw/baselines/dmpnn/logs/exp_221/folds
-    md5: 6659d34764324a359f57fb520a3bcb19.dir
+    md5: 31aef3d8f7ce26f6e832cfa8f274e84c.dir
 preparation:
   cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train_val_data_preparation.py
   deps:
@@ -63,7 +63,7 @@ preparation:
     md5: 3cc594ce1c8e16aba6d859c5d8aef60b
   params:
     params.yaml:
-      file_prefix: esol
+      file_prefix: logp_wo_averaging
   outs:
   - path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
-    md5: 155a294cddd1289284f5ec1d73cbe0ef
+    md5: d9eccb419ecbf9c40df33ae35251e43f

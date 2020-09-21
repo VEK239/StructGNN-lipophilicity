@@ -50,6 +50,7 @@ class MoleculeDatapoint:
         self._mol = 'None'  # Initialize with 'None' to distinguish between None returned by invalid molecule
 
         # Generate additional features if given a generator
+
         if self.features_generator is not None:
             self.features = []
 

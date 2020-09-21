@@ -14,7 +14,7 @@ THREE_D_DISTANCE_BINS = list(range(0, THREE_D_DISTANCE_MAX + 1, THREE_D_DISTANCE
 
 def get_atom_fdim_with_substructures(use_substructures=False, merge_cycles=False) -> int:
     """Gets the dimensionality of the atom feature vector."""
-    atom_fdim = 160
+    atom_fdim = 140#160
     if use_substructures:
         atom_fdim += 5
     if merge_cycles:

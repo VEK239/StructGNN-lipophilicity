@@ -31,19 +31,20 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
 
     with open("params.yaml", 'r') as fd:
             params = yaml.safe_load(fd)
-    args.save_dir = params['save_dir']
-    args.epochs = params['epochs']
-    args.depth = params['depth']
-    args.features_generator = [params['features_generator']]
-    args.no_features_scaling = params['no_features_scaling']
-    args.split_type = params['split_type']
-    args.num_folds = params['num_folds']
-    args.data_path = os.path.join(params['data_path'])
-    args.target_columns = params['target_column']
-    args.separate_test_path = os.path.join(params['separate_test_path'], params['file_prefix']+'_test.csv')
-    args.additional_encoder = params['additional_encoder']
-    args.hidden_size = params['hidden_size']
-    args.substructures_hidden_size = params['substructures_hidden_size']
+            
+#     args.save_dir = params['save_dir']
+#     args.epochs = params['epochs']
+#     args.depth = params['depth']
+#     args.features_generator = [params['features_generator']]
+#     args.no_features_scaling = params['no_features_scaling']
+#     args.split_type = params['split_type']
+#     args.num_folds = params['num_folds']
+#     args.data_path = os.path.join(params['data_path'])
+#     args.target_columns = params['target_column']
+#     args.separate_test_path = os.path.join(params['separate_test_path'], params['file_prefix']+'_test.csv')
+#     args.additional_encoder = params['additional_encoder']
+#     args.hidden_size = params['hidden_size']
+#     args.substructures_hidden_size = params['substructures_hidden_size']
     
     # Initialize relevant variables
     init_seed = args.seed
