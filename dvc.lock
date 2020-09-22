@@ -1,6 +1,6 @@
 dmpnn_train:
-  cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train.py
-    --dataset_type regression --num_workers 0 --config_path_yaml ./params.yaml
+  cmd: ~/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train.py --dataset_type
+    regression --num_workers 0 --config_path_yaml ./params.yaml
   deps:
   - path: ./data/3_final_data/split_data/logd_wo_averaging_test.csv
     md5: b3574ee392535ba77c3cad0a82240107
@@ -11,17 +11,17 @@ dmpnn_train:
   - path: ./data/raw/baselines/dmpnn/RDKitBestfeatures.txt
     md5: 167bbab04dd44d318ed593c2828b40e9
   - path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
-    md5: 12b3cc89997722d01f7fa98e7bf14987
+    md5: ebb8fba42a3c3dd63ba0a3d6da2fd2bf
   - path: ./scripts/SOTA/dmpnn/
-    md5: 4a4359efc5a0cbc46ac56928655cb5b7.dir
+    md5: 3dc130da4111cccec72650c8c6dc9a03.dir
   params:
     params.yaml:
-      additional_encoder: true
+      additional_encoder: false
       data_path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
       depth: 6
       epochs: 100
       features_generator:
-      file_prefix: logd_Lip_wo_averaging
+      file_prefix: freesolv
       hidden_size: 800
       no_features_scaling: true
       num_folds: 4
@@ -30,14 +30,14 @@ dmpnn_train:
       split_type: k-fold
       substructures_hidden_size: 300
       target_columns:
-      - logD
+      - Energy
   outs:
   - path: ./data/raw/baselines/dmpnn/logs/exp_221/final_scores.json
-    md5: 439c83f05411cf95da65c6288146107b
+    md5: 423b39987e4ef3d70944a194c217f9de
   - path: ./data/raw/baselines/dmpnn/logs/exp_221/folds
-    md5: a153a9c706131912a39933f792c63e61.dir
+    md5: 59b1304bbf0ee52e50e9a77a01b71ec7.dir
 preparation:
-  cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train_val_data_preparation.py
+  cmd: ~/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train_val_data_preparation.py
   deps:
   - path: ./data/3_final_data/split_data/esol_train.csv
     md5: 09793ffd46e4a67ea59773ebb211ec59
@@ -67,7 +67,7 @@ preparation:
     md5: 3cc594ce1c8e16aba6d859c5d8aef60b
   params:
     params.yaml:
-      file_prefix: logd_Lip_wo_averaging
+      file_prefix: freesolv
   outs:
   - path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
-    md5: 12b3cc89997722d01f7fa98e7bf14987
+    md5: ebb8fba42a3c3dd63ba0a3d6da2fd2bf
