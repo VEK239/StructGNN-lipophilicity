@@ -1,4 +1,4 @@
-file_prefix: logd_Lip_wo_averaging
+file_prefix: freesolv
 save_dir: ./data/raw/baselines/dmpnn/logs/exp_221/folds
 epochs: 100 
 depth: 6
@@ -6,7 +6,7 @@ features_generator: null
 no_features_scaling: True
 split_type: k-fold
 num_folds: 4
-target_columns: [logD]
+target_columns: [Energy]
 data_path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
 separate_test_path: ./data/3_final_data/split_data
 additional_encoder: False
