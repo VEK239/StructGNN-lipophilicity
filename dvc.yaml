@@ -6,6 +6,8 @@ stages:
     - ./data/3_final_data/split_data/logd_wo_averaging_validation.csv
     - ./data/3_final_data/split_data/logp_wo_averaging_train.csv
     - ./data/3_final_data/split_data/logp_wo_averaging_validation.csv
+    - ./data/3_final_data/split_data/logp_Lip_wo_averaging_train.csv
+    - ./data/3_final_data/split_data/logp_Lip_wo_averaging_validation.csv
     - ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_train.csv
     - ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_validation.csv
     - ./data/3_final_data/split_data/esol_train.csv
