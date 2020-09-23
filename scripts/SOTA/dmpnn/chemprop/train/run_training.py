@@ -2,6 +2,8 @@ from logging import Logger
 import os
 import sys
 from typing import List
+import pandas as pd
+
 
 import numpy as np
 from tensorboardX import SummaryWriter
@@ -9,15 +11,20 @@ import torch
 from tqdm import trange
 from torch.optim.lr_scheduler import ExponentialLR
 
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+
 from .evaluate import evaluate, evaluate_predictions
 from .predict import predict
 from .train import train
-from chemprop.args import TrainArgs
-from chemprop.constants import MODEL_FILE_NAME
-from chemprop.data import get_class_sizes, get_data, MoleculeDataLoader, split_data, StandardScaler, validate_dataset_type
-from chemprop.models import MoleculeModel
-from chemprop.nn_utils import param_count
-from chemprop.utils import build_optimizer, build_lr_scheduler, get_loss_func, get_metric_func, load_checkpoint,\
+from args import TrainArgs
+from constants import MODEL_FILE_NAME
+from data import get_class_sizes, get_data, MoleculeDataLoader, split_data, StandardScaler, validate_dataset_type
+from models import MoleculeModel
+from nn_utils import param_count
+from utils import build_optimizer, build_lr_scheduler, get_loss_func, get_metric_func, load_checkpoint,\
     makedirs, save_checkpoint, save_smiles_splits
 
 
@@ -262,6 +269,13 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
             scaler=scaler,
             args = args
         )
+        test_predictions = pd.DataFrame(columns = [args.smiles_column])
+        test_predictions[args.smiles_column] = test_smiles
+        for task in range(args.num_tasks):
+            test_predictions[args.target_columns[task]] = np.array(test_targets)[:, task]
+            test_predictions[args.target_columns[task]+'_pred'] = np.array(test_preds)[:, task]
+        test_predictions.to_csv(os.path.join(args.save_dir, 'test_predictions.csv'), index = False)
+        
         test_scores, test_scores_r2 = evaluate_predictions(
             preds=test_preds,
             targets=test_targets,

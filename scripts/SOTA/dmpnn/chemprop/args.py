@@ -57,7 +57,7 @@ def get_checkpoint_paths(checkpoint_path: Optional[str] = None,
 class CommonArgs(Tap):
     """:class:`CommonArgs` contains arguments that are used in both :class:`TrainArgs` and :class:`PredictArgs`."""
 
-    smiles_column: str = None
+    smiles_column: str = 'smiles'
     """Name of the column containing SMILES strings. By default, uses the first column."""
     checkpoint_dir: str = None
     """Directory from which to load model checkpoints (walks directory and ensembles all models that are found)."""
@@ -338,6 +338,8 @@ class TrainArgs(CommonArgs):
                         continue
                     if key == 'separate_test_path':
                         setattr(self, key, os.path.join(value, config['file_prefix']+'_test.csv'))
+                    elif key == 'data_path':
+                        setattr(self, key, os.path.join(value, config['file_prefix']+'_train_val_dataset.csv'))
                     else:
                         setattr(self, key, value)
 

@@ -1,13 +1,13 @@
-file_prefix: logp_wo_averaging
-save_dir: ./data/raw/baselines/dmpnn/logs/exp_303/folds
+file_prefix: logp_logd_Lip_wo_averaging
+save_dir: ./data/raw/baselines/dmpnn/logs/exp_317/folds
 epochs: 100 
 depth: 6
 features_generator: [rdkit_wo_fragments_and_counts]
 no_features_scaling: True
 split_type: k-fold
 num_folds: 4
-target_columns: [logP]
-data_path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
+target_columns: [logD, logP]
+data_path: ./data/raw/baselines/dmpnn
 separate_test_path: ./data/3_final_data/split_data
 additional_encoder: True
 substructures_hidden_size: 300
