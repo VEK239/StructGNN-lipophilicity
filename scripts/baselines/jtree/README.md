@@ -15,6 +15,13 @@ Original article trains autoencoder, so to decrease Reconstruction loss, here we
 
 ## Running instructions 
 
+### Data preparation
+
+1. Get SMILES which produces substructeres which are not presented in pre-made JTree Vocabulary with ```mol_properties/notebooks/baselines/jtree/2_encode_molecules.ipynb```. they should be added to ```mol_properties/data/raw/baselines/jtree/train_errs.txt(val_errs.txt, test_errs.txt)```
+
+
+
+
 ### Training script
 
 Running with best parameters:
