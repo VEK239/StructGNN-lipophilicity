@@ -17,3 +17,22 @@ Model 0 test R2 logD = 0.754748
 Ensemble test rmse  logD= 0.595487
 Ensemble test R2  logD= 0.754748
 Fold 3
+Model 0 best validation rmse = 0.550946 on epoch 31
+Model 0 test rmse logD = 0.579868
+Model 0 test R2 logD = 0.767445
+Ensemble test rmse  logD= 0.579868
+Ensemble test R2  logD= 0.767445
+4-fold cross validation
+	Seed 0 ==> test rmse = 0.564999
+	Seed 0 ==> test R2 = 0.779218
+	Seed 1 ==> test rmse = 0.612661
+	Seed 1 ==> test R2 = 0.740398
+	Seed 2 ==> test rmse = 0.595487
+	Seed 2 ==> test R2 = 0.754748
+	Seed 3 ==> test rmse = 0.579868
+	Seed 3 ==> test R2 = 0.767445
+Overall val rmse logD= 0.570102 +/- 0.013799
+Overall val R2 logD = 0.772385 +/- 0.019004
+Overall test rmse logD = 0.588254 +/- 0.017742
+Overall test R2 logD = 0.760452 +/- 0.014455
+Elapsed time = 2:56:00
