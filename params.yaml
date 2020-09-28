@@ -1,12 +1,12 @@
-file_prefix: logd_258_Logp_wo_averaging
-save_dir: ./data/raw/baselines/dmpnn/logs/exp_321/folds
+file_prefix: logp_logd_Lip_wo_averaging
+save_dir: ./data/raw/baselines/dmpnn/logs/exp_324/folds
 epochs: 100 
 depth: 6
 features_generator: [rdkit_2d_normalized_best]
 no_features_scaling: True
 split_type: k-fold
 num_folds: 4
-target_columns: [logD, logP]
+target_columns: [logD,logP]
 data_path: ./data/raw/baselines/dmpnn
 separate_test_path: ./data/3_final_data/split_data
 additional_encoder: False
