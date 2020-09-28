@@ -1,0 +1,1122 @@
+Fold 0
+Command line
+python ./scripts/SOTA/dmpnn/train.py --dataset_type regression --num_workers 0 --config_path_yaml ./params.yaml
+Args
+{'activation': 'ReLU',
+ 'additional_encoder': False,
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'cache_cutoff': 10000,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'class_balance': False,
+ 'config_path': None,
+ 'config_path_yaml': './params.yaml',
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'crossval_index_sets': None,
+ 'cuda': True,
+ 'data_path': './data/3_final_data/split_data/logd_Lip_wo_averaging_train.csv',
+ 'dataset_type': 'regression',
+ 'depth': 6,
+ 'device': device(type='cuda'),
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 100,
+ 'features_generator': ['rdkit_2d_normalized_best'],
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': False,
+ 'features_size': None,
+ 'ffn_hidden_size': 800,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'grad_clip': None,
+ 'hidden_size': 800,
+ 'ignore_columns': None,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cuda': False,
+ 'no_features_scaling': True,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'num_tasks': 1,
+ 'num_workers': 0,
+ 'pytorch_seed': 0,
+ 'quiet': False,
+ 'save_dir': './data/raw/baselines/dmpnn/logs/exp_327/folds/fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': './data/3_final_data/split_data/logd_Lip_wo_averaging_test.csv',
+ 'separate_val_features_path': None,
+ 'separate_val_path': './data/3_final_data/split_data/logd_Lip_wo_averaging_validation.csv',
+ 'show_individual_scores': False,
+ 'smiles_column': 'smiles',
+ 'split_sizes': (0.8, 0.1, 0.1),
+ 'split_type': 'k-fold',
+ 'substructures_atom_messages': False,
+ 'substructures_depth': False,
+ 'substructures_hidden_size': 300,
+ 'substructures_merge': False,
+ 'substructures_undirected': False,
+ 'substructures_use_substructures': True,
+ 'symmetry_feature': False,
+ 'target_columns': ['logD'],
+ 'task_names': ['logD'],
+ 'test': False,
+ 'test_fold_index': None,
+ 'train_data_size': None,
+ 'undirected': False,
+ 'use_input_features': True,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 2,916 | train size = 2,916 | val size = 625 | test size = 625
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=800, bias=False)
+      (W_h): Linear(in_features=800, out_features=800, bias=False)
+      (W_o): Linear(in_features=933, out_features=800, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=999, out_features=800, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=800, out_features=1, bias=True)
+  )
+)
+Number of parameters = 2,305,601
+Moving model to cuda
+Epoch 0
+Train function
+Loss = 1.8317e-02, PNorm = 52.9149, GNorm = 13.4591, lr_0 = 1.8534e-04
+Loss = 1.8406e-02, PNorm = 52.9215, GNorm = 8.5809, lr_0 = 2.6293e-04
+Loss = 1.5314e-02, PNorm = 52.9329, GNorm = 6.0082, lr_0 = 3.4052e-04
+Loss = 1.6216e-02, PNorm = 52.9499, GNorm = 4.1588, lr_0 = 4.1810e-04
+Loss = 1.3285e-02, PNorm = 52.9735, GNorm = 1.5884, lr_0 = 4.9569e-04
+Validation rmse logD = 1.019084
+Validation R2 logD = 0.267698
+Epoch 1
+Train function
+Loss = 9.3357e-03, PNorm = 53.0013, GNorm = 3.2646, lr_0 = 5.8103e-04
+Loss = 1.1977e-02, PNorm = 53.0411, GNorm = 2.3369, lr_0 = 6.5862e-04
+Loss = 1.0098e-02, PNorm = 53.0893, GNorm = 1.3917, lr_0 = 7.3621e-04
+Loss = 1.1427e-02, PNorm = 53.1444, GNorm = 1.6924, lr_0 = 8.1379e-04
+Loss = 1.1165e-02, PNorm = 53.2028, GNorm = 1.6043, lr_0 = 8.9138e-04
+Loss = 1.1026e-02, PNorm = 53.2564, GNorm = 7.4519, lr_0 = 9.6897e-04
+Validation rmse logD = 0.827751
+Validation R2 logD = 0.516863
+Epoch 2
+Train function
+Loss = 9.5337e-03, PNorm = 53.3239, GNorm = 4.8609, lr_0 = 9.9717e-04
+Loss = 9.6214e-03, PNorm = 53.3978, GNorm = 2.3653, lr_0 = 9.9314e-04
+Loss = 8.9474e-03, PNorm = 53.4888, GNorm = 3.4563, lr_0 = 9.8912e-04
+Loss = 9.0512e-03, PNorm = 53.5816, GNorm = 3.6948, lr_0 = 9.8512e-04
+Loss = 8.6434e-03, PNorm = 53.6747, GNorm = 2.0570, lr_0 = 9.8114e-04
+Loss = 9.4042e-03, PNorm = 53.7575, GNorm = 1.7998, lr_0 = 9.7717e-04
+Validation rmse logD = 0.736574
+Validation R2 logD = 0.617436
+Epoch 3
+Train function
+Loss = 8.7974e-03, PNorm = 53.8480, GNorm = 3.1579, lr_0 = 9.7283e-04
+Loss = 6.5481e-03, PNorm = 53.9302, GNorm = 1.2094, lr_0 = 9.6890e-04
+Loss = 7.6601e-03, PNorm = 54.0195, GNorm = 5.6046, lr_0 = 9.6498e-04
+Loss = 7.7945e-03, PNorm = 54.1128, GNorm = 3.6511, lr_0 = 9.6108e-04
+Loss = 8.6644e-03, PNorm = 54.1846, GNorm = 1.5752, lr_0 = 9.5719e-04
+Loss = 7.8983e-03, PNorm = 54.2603, GNorm = 2.2527, lr_0 = 9.5332e-04
+Validation rmse logD = 0.750784
+Validation R2 logD = 0.602533
+Epoch 4
+Train function
+Loss = 6.9359e-03, PNorm = 54.3296, GNorm = 3.8373, lr_0 = 9.4947e-04
+Loss = 6.8986e-03, PNorm = 54.4109, GNorm = 0.9506, lr_0 = 9.4563e-04
+Loss = 6.8359e-03, PNorm = 54.5059, GNorm = 2.4795, lr_0 = 9.4181e-04
+Loss = 6.2724e-03, PNorm = 54.5913, GNorm = 3.1440, lr_0 = 9.3800e-04
+Loss = 5.6448e-03, PNorm = 54.6641, GNorm = 0.8516, lr_0 = 9.3421e-04
+Loss = 5.5757e-03, PNorm = 54.7306, GNorm = 2.7239, lr_0 = 9.3043e-04
+Validation rmse logD = 0.672549
+Validation R2 logD = 0.681053
+Epoch 5
+Train function
+Loss = 5.9474e-03, PNorm = 54.8132, GNorm = 4.3202, lr_0 = 9.2629e-04
+Loss = 4.9035e-03, PNorm = 54.9020, GNorm = 2.6487, lr_0 = 9.2255e-04
+Loss = 6.1600e-03, PNorm = 54.9854, GNorm = 2.2220, lr_0 = 9.1882e-04
+Loss = 7.1544e-03, PNorm = 55.0614, GNorm = 4.0998, lr_0 = 9.1510e-04
+Loss = 6.2651e-03, PNorm = 55.1640, GNorm = 5.9931, lr_0 = 9.1141e-04
+Validation rmse logD = 0.669637
+Validation R2 logD = 0.683809
+Epoch 6
+Train function
+Loss = 8.6487e-03, PNorm = 55.2523, GNorm = 4.9464, lr_0 = 9.0735e-04
+Loss = 4.5386e-03, PNorm = 55.3326, GNorm = 2.3459, lr_0 = 9.0368e-04
+Loss = 5.0532e-03, PNorm = 55.4104, GNorm = 4.3317, lr_0 = 9.0003e-04
+Loss = 4.7862e-03, PNorm = 55.4933, GNorm = 1.7581, lr_0 = 8.9639e-04
+Loss = 4.7711e-03, PNorm = 55.5818, GNorm = 3.2197, lr_0 = 8.9277e-04
+Loss = 5.1066e-03, PNorm = 55.6414, GNorm = 1.1181, lr_0 = 8.8916e-04
+Validation rmse logD = 0.620965
+Validation R2 logD = 0.728102
+Epoch 7
+Train function
+Loss = 4.0531e-03, PNorm = 55.7211, GNorm = 2.0787, lr_0 = 8.8556e-04
+Loss = 4.5798e-03, PNorm = 55.7956, GNorm = 2.7407, lr_0 = 8.8198e-04
+Loss = 4.1954e-03, PNorm = 55.8645, GNorm = 5.0984, lr_0 = 8.7842e-04
+Loss = 3.8729e-03, PNorm = 55.9305, GNorm = 2.3251, lr_0 = 8.7487e-04
+Loss = 4.0677e-03, PNorm = 55.9879, GNorm = 1.0114, lr_0 = 8.7133e-04
+Loss = 3.7241e-03, PNorm = 56.0655, GNorm = 0.8673, lr_0 = 8.6781e-04
+Validation rmse logD = 0.612140
+Validation R2 logD = 0.735776
+Epoch 8
+Train function
+Loss = 3.2667e-03, PNorm = 56.1367, GNorm = 1.1418, lr_0 = 8.6395e-04
+Loss = 3.0890e-03, PNorm = 56.2248, GNorm = 2.0720, lr_0 = 8.6046e-04
+Loss = 3.8212e-03, PNorm = 56.2829, GNorm = 4.9355, lr_0 = 8.5698e-04
+Loss = 4.0626e-03, PNorm = 56.3556, GNorm = 1.4691, lr_0 = 8.5351e-04
+Loss = 3.9484e-03, PNorm = 56.4245, GNorm = 2.2985, lr_0 = 8.5006e-04
+Loss = 4.3547e-03, PNorm = 56.5021, GNorm = 2.0664, lr_0 = 8.4663e-04
+Validation rmse logD = 0.659031
+Validation R2 logD = 0.693745
+Epoch 9
+Train function
+Loss = 3.2755e-03, PNorm = 56.5999, GNorm = 1.7717, lr_0 = 8.4286e-04
+Loss = 3.1027e-03, PNorm = 56.6652, GNorm = 3.2198, lr_0 = 8.3945e-04
+Loss = 3.6043e-03, PNorm = 56.7313, GNorm = 1.9878, lr_0 = 8.3606e-04
+Loss = 3.3233e-03, PNorm = 56.8039, GNorm = 0.8189, lr_0 = 8.3268e-04
+Loss = 3.3455e-03, PNorm = 56.8665, GNorm = 1.3202, lr_0 = 8.2931e-04
+Loss = 2.8443e-03, PNorm = 56.9365, GNorm = 1.2719, lr_0 = 8.2596e-04
+Validation rmse logD = 0.646026
+Validation R2 logD = 0.705713
+Epoch 10
+Train function
+Loss = 2.9772e-03, PNorm = 56.9990, GNorm = 1.6173, lr_0 = 8.2262e-04
+Loss = 2.2736e-03, PNorm = 57.0717, GNorm = 0.9466, lr_0 = 8.1930e-04
+Loss = 2.8680e-03, PNorm = 57.1267, GNorm = 0.8689, lr_0 = 8.1598e-04
+Loss = 3.3545e-03, PNorm = 57.1895, GNorm = 2.5526, lr_0 = 8.1269e-04
+Loss = 2.6640e-03, PNorm = 57.2634, GNorm = 0.9353, lr_0 = 8.0940e-04
+Loss = 2.5670e-03, PNorm = 57.3447, GNorm = 2.2337, lr_0 = 8.0613e-04
+Validation rmse logD = 0.588337
+Validation R2 logD = 0.755925
+Epoch 11
+Train function
+Loss = 2.5993e-03, PNorm = 57.4329, GNorm = 1.5446, lr_0 = 8.0254e-04
+Loss = 2.4322e-03, PNorm = 57.5022, GNorm = 1.3741, lr_0 = 7.9930e-04
+Loss = 2.3911e-03, PNorm = 57.5690, GNorm = 0.8682, lr_0 = 7.9607e-04
+Loss = 2.4184e-03, PNorm = 57.6186, GNorm = 1.0642, lr_0 = 7.9285e-04
+Loss = 3.3947e-03, PNorm = 57.6988, GNorm = 1.1547, lr_0 = 7.8964e-04
+Validation rmse logD = 0.573332
+Validation R2 logD = 0.768217
+Epoch 12
+Train function
+Loss = 1.3460e-03, PNorm = 57.7638, GNorm = 0.8696, lr_0 = 7.8613e-04
+Loss = 2.0320e-03, PNorm = 57.8230, GNorm = 2.3744, lr_0 = 7.8296e-04
+Loss = 2.1942e-03, PNorm = 57.8832, GNorm = 1.1459, lr_0 = 7.7979e-04
+Loss = 2.5700e-03, PNorm = 57.9503, GNorm = 3.3841, lr_0 = 7.7664e-04
+Loss = 3.1848e-03, PNorm = 58.0162, GNorm = 1.4639, lr_0 = 7.7350e-04
+Loss = 2.3383e-03, PNorm = 58.1185, GNorm = 2.0103, lr_0 = 7.7037e-04
+Validation rmse logD = 0.577397
+Validation R2 logD = 0.764917
+Epoch 13
+Train function
+Loss = 1.7560e-03, PNorm = 58.1904, GNorm = 1.1889, lr_0 = 7.6726e-04
+Loss = 1.9434e-03, PNorm = 58.2668, GNorm = 1.8069, lr_0 = 7.6415e-04
+Loss = 2.6479e-03, PNorm = 58.3262, GNorm = 1.3102, lr_0 = 7.6106e-04
+Loss = 1.9233e-03, PNorm = 58.3956, GNorm = 1.2512, lr_0 = 7.5799e-04
+Loss = 2.3693e-03, PNorm = 58.4581, GNorm = 2.3361, lr_0 = 7.5492e-04
+Loss = 2.1920e-03, PNorm = 58.5178, GNorm = 1.3863, lr_0 = 7.5187e-04
+Validation rmse logD = 0.568871
+Validation R2 logD = 0.771809
+Epoch 14
+Train function
+Loss = 1.4860e-03, PNorm = 58.5738, GNorm = 0.6067, lr_0 = 7.4853e-04
+Loss = 1.3892e-03, PNorm = 58.6252, GNorm = 0.5802, lr_0 = 7.4550e-04
+Loss = 1.7501e-03, PNorm = 58.6727, GNorm = 2.2274, lr_0 = 7.4249e-04
+Loss = 1.7486e-03, PNorm = 58.7230, GNorm = 0.8017, lr_0 = 7.3949e-04
+Loss = 1.9797e-03, PNorm = 58.7716, GNorm = 1.7513, lr_0 = 7.3650e-04
+Loss = 1.9433e-03, PNorm = 58.8279, GNorm = 0.6184, lr_0 = 7.3352e-04
+Validation rmse logD = 0.589341
+Validation R2 logD = 0.755091
+Epoch 15
+Train function
+Loss = 1.3754e-03, PNorm = 58.8799, GNorm = 0.5484, lr_0 = 7.3026e-04
+Loss = 1.7699e-03, PNorm = 58.9276, GNorm = 2.8676, lr_0 = 7.2731e-04
+Loss = 1.8029e-03, PNorm = 58.9909, GNorm = 1.2276, lr_0 = 7.2437e-04
+Loss = 1.5791e-03, PNorm = 59.0533, GNorm = 0.7639, lr_0 = 7.2144e-04
+Loss = 1.8268e-03, PNorm = 59.0970, GNorm = 0.7510, lr_0 = 7.1852e-04
+Loss = 1.6142e-03, PNorm = 59.1421, GNorm = 0.6149, lr_0 = 7.1562e-04
+Validation rmse logD = 0.579626
+Validation R2 logD = 0.763100
+Epoch 16
+Train function
+Loss = 1.4673e-03, PNorm = 59.1876, GNorm = 0.9964, lr_0 = 7.1272e-04
+Loss = 1.1696e-03, PNorm = 59.2319, GNorm = 0.6577, lr_0 = 7.0984e-04
+Loss = 1.6395e-03, PNorm = 59.2820, GNorm = 1.4179, lr_0 = 7.0697e-04
+Loss = 1.2668e-03, PNorm = 59.3351, GNorm = 0.9166, lr_0 = 7.0411e-04
+Loss = 1.1710e-03, PNorm = 59.3823, GNorm = 1.9743, lr_0 = 7.0127e-04
+Loss = 1.3717e-03, PNorm = 59.4165, GNorm = 1.4522, lr_0 = 6.9843e-04
+Validation rmse logD = 0.564067
+Validation R2 logD = 0.775647
+Epoch 17
+Train function
+Loss = 1.2198e-03, PNorm = 59.4704, GNorm = 1.4995, lr_0 = 6.9533e-04
+Loss = 1.4455e-03, PNorm = 59.5163, GNorm = 0.7818, lr_0 = 6.9252e-04
+Loss = 1.3191e-03, PNorm = 59.5574, GNorm = 1.0121, lr_0 = 6.8972e-04
+Loss = 1.1985e-03, PNorm = 59.6001, GNorm = 0.7471, lr_0 = 6.8693e-04
+Loss = 1.1794e-03, PNorm = 59.6436, GNorm = 1.0923, lr_0 = 6.8415e-04
+Validation rmse logD = 0.613368
+Validation R2 logD = 0.734714
+Epoch 18
+Train function
+Loss = 1.4871e-03, PNorm = 59.6933, GNorm = 2.1200, lr_0 = 6.8111e-04
+Loss = 1.5323e-03, PNorm = 59.7436, GNorm = 2.2245, lr_0 = 6.7835e-04
+Loss = 1.2880e-03, PNorm = 59.7905, GNorm = 2.0371, lr_0 = 6.7561e-04
+Loss = 1.2944e-03, PNorm = 59.8385, GNorm = 1.0364, lr_0 = 6.7288e-04
+Loss = 1.1846e-03, PNorm = 59.8789, GNorm = 2.4730, lr_0 = 6.7016e-04
+Loss = 1.5684e-03, PNorm = 59.9253, GNorm = 1.9269, lr_0 = 6.6745e-04
+Validation rmse logD = 0.575523
+Validation R2 logD = 0.766441
+Epoch 19
+Train function
+Loss = 1.0933e-03, PNorm = 59.9689, GNorm = 0.8856, lr_0 = 6.6475e-04
+Loss = 1.4320e-03, PNorm = 60.0185, GNorm = 2.6989, lr_0 = 6.6207e-04
+Loss = 1.1898e-03, PNorm = 60.0678, GNorm = 1.9076, lr_0 = 6.5939e-04
+Loss = 1.0186e-03, PNorm = 60.1098, GNorm = 1.0549, lr_0 = 6.5672e-04
+Loss = 9.1944e-04, PNorm = 60.1499, GNorm = 0.5981, lr_0 = 6.5407e-04
+Loss = 9.4944e-04, PNorm = 60.1911, GNorm = 2.5724, lr_0 = 6.5142e-04
+Validation rmse logD = 0.586031
+Validation R2 logD = 0.757835
+Epoch 20
+Train function
+Loss = 1.2021e-03, PNorm = 60.2289, GNorm = 1.7761, lr_0 = 6.4853e-04
+Loss = 8.9999e-04, PNorm = 60.2722, GNorm = 1.2341, lr_0 = 6.4591e-04
+Loss = 9.5879e-04, PNorm = 60.3078, GNorm = 1.7151, lr_0 = 6.4329e-04
+Loss = 1.0489e-03, PNorm = 60.3444, GNorm = 0.7556, lr_0 = 6.4069e-04
+Loss = 1.0494e-03, PNorm = 60.3797, GNorm = 0.6695, lr_0 = 6.3810e-04
+Loss = 8.8483e-04, PNorm = 60.4201, GNorm = 0.5516, lr_0 = 6.3552e-04
+Validation rmse logD = 0.573605
+Validation R2 logD = 0.767995
+Epoch 21
+Train function
+Loss = 7.7862e-04, PNorm = 60.4367, GNorm = 1.1624, lr_0 = 6.3270e-04
+Loss = 9.7268e-04, PNorm = 60.4757, GNorm = 0.5057, lr_0 = 6.3014e-04
+Loss = 7.9863e-04, PNorm = 60.4994, GNorm = 0.6616, lr_0 = 6.2759e-04
+Loss = 8.1871e-04, PNorm = 60.5219, GNorm = 0.7783, lr_0 = 6.2506e-04
+Loss = 8.3335e-04, PNorm = 60.5507, GNorm = 0.9465, lr_0 = 6.2253e-04
+Loss = 7.8328e-04, PNorm = 60.5842, GNorm = 0.5777, lr_0 = 6.2001e-04
+Validation rmse logD = 0.571478
+Validation R2 logD = 0.769713
+Epoch 22
+Train function
+Loss = 6.3406e-04, PNorm = 60.6132, GNorm = 0.4588, lr_0 = 6.1750e-04
+Loss = 6.7666e-04, PNorm = 60.6354, GNorm = 0.4322, lr_0 = 6.1501e-04
+Loss = 8.5831e-04, PNorm = 60.6695, GNorm = 1.6068, lr_0 = 6.1252e-04
+Loss = 7.1155e-04, PNorm = 60.6973, GNorm = 0.6341, lr_0 = 6.1005e-04
+Loss = 7.2376e-04, PNorm = 60.7216, GNorm = 0.3547, lr_0 = 6.0758e-04
+Loss = 7.3270e-04, PNorm = 60.7482, GNorm = 1.7178, lr_0 = 6.0512e-04
+Validation rmse logD = 0.573772
+Validation R2 logD = 0.767860
+Epoch 23
+Train function
+Loss = 7.1247e-04, PNorm = 60.7835, GNorm = 1.4515, lr_0 = 6.0243e-04
+Loss = 7.1946e-04, PNorm = 60.8095, GNorm = 0.4950, lr_0 = 6.0000e-04
+Loss = 4.8973e-04, PNorm = 60.8401, GNorm = 0.4487, lr_0 = 5.9757e-04
+Loss = 5.3758e-04, PNorm = 60.8624, GNorm = 0.7554, lr_0 = 5.9516e-04
+Loss = 6.0844e-04, PNorm = 60.8782, GNorm = 0.8609, lr_0 = 5.9275e-04
+Validation rmse logD = 0.558652
+Validation R2 logD = 0.779934
+Epoch 24
+Train function
+Loss = 3.7782e-04, PNorm = 60.9105, GNorm = 0.3981, lr_0 = 5.9011e-04
+Loss = 5.7382e-04, PNorm = 60.9322, GNorm = 1.3568, lr_0 = 5.8773e-04
+Loss = 4.9780e-04, PNorm = 60.9566, GNorm = 0.3523, lr_0 = 5.8535e-04
+Loss = 6.3972e-04, PNorm = 60.9795, GNorm = 0.5599, lr_0 = 5.8299e-04
+Loss = 4.6829e-04, PNorm = 61.0042, GNorm = 0.8166, lr_0 = 5.8063e-04
+Loss = 6.6615e-04, PNorm = 61.0270, GNorm = 1.9292, lr_0 = 5.7828e-04
+Validation rmse logD = 0.572801
+Validation R2 logD = 0.768646
+Epoch 25
+Train function
+Loss = 4.2209e-04, PNorm = 61.0608, GNorm = 0.3983, lr_0 = 5.7594e-04
+Loss = 5.4385e-04, PNorm = 61.0963, GNorm = 0.3018, lr_0 = 5.7362e-04
+Loss = 5.1676e-04, PNorm = 61.1192, GNorm = 0.5000, lr_0 = 5.7130e-04
+Loss = 5.2533e-04, PNorm = 61.1430, GNorm = 0.7546, lr_0 = 5.6899e-04
+Loss = 6.2135e-04, PNorm = 61.1646, GNorm = 0.4405, lr_0 = 5.6669e-04
+Loss = 4.7075e-04, PNorm = 61.1883, GNorm = 0.6911, lr_0 = 5.6440e-04
+Validation rmse logD = 0.554592
+Validation R2 logD = 0.783121
+Epoch 26
+Train function
+Loss = 5.2460e-04, PNorm = 61.2136, GNorm = 1.1111, lr_0 = 5.6189e-04
+Loss = 4.3791e-04, PNorm = 61.2340, GNorm = 0.3617, lr_0 = 5.5961e-04
+Loss = 4.8413e-04, PNorm = 61.2540, GNorm = 0.6509, lr_0 = 5.5735e-04
+Loss = 3.9486e-04, PNorm = 61.2731, GNorm = 0.5753, lr_0 = 5.5510e-04
+Loss = 4.1365e-04, PNorm = 61.2928, GNorm = 0.5266, lr_0 = 5.5285e-04
+Loss = 5.3677e-04, PNorm = 61.3099, GNorm = 0.8446, lr_0 = 5.5062e-04
+Validation rmse logD = 0.561282
+Validation R2 logD = 0.777856
+Epoch 27
+Train function
+Loss = 6.2770e-04, PNorm = 61.3356, GNorm = 1.1771, lr_0 = 5.4817e-04
+Loss = 5.6290e-04, PNorm = 61.3632, GNorm = 0.5144, lr_0 = 5.4596e-04
+Loss = 5.3144e-04, PNorm = 61.3941, GNorm = 0.3403, lr_0 = 5.4375e-04
+Loss = 4.1300e-04, PNorm = 61.4155, GNorm = 0.5145, lr_0 = 5.4155e-04
+Loss = 4.6071e-04, PNorm = 61.4358, GNorm = 0.6023, lr_0 = 5.3936e-04
+Loss = 5.5261e-04, PNorm = 61.4548, GNorm = 1.1491, lr_0 = 5.3718e-04
+Validation rmse logD = 0.551654
+Validation R2 logD = 0.785412
+Epoch 28
+Train function
+Loss = 4.4821e-04, PNorm = 61.4847, GNorm = 1.5155, lr_0 = 5.3479e-04
+Loss = 3.3333e-04, PNorm = 61.5064, GNorm = 0.4938, lr_0 = 5.3263e-04
+Loss = 3.7655e-04, PNorm = 61.5190, GNorm = 0.3803, lr_0 = 5.3048e-04
+Loss = 4.6653e-04, PNorm = 61.5449, GNorm = 0.5726, lr_0 = 5.2833e-04
+Loss = 4.4626e-04, PNorm = 61.5634, GNorm = 0.5099, lr_0 = 5.2620e-04
+Loss = 4.1158e-04, PNorm = 61.5850, GNorm = 0.5921, lr_0 = 5.2407e-04
+Validation rmse logD = 0.553606
+Validation R2 logD = 0.783891
+Epoch 29
+Train function
+Loss = 3.5741e-04, PNorm = 61.5989, GNorm = 0.4689, lr_0 = 5.2195e-04
+Loss = 3.1497e-04, PNorm = 61.6157, GNorm = 0.4538, lr_0 = 5.1984e-04
+Loss = 3.4221e-04, PNorm = 61.6332, GNorm = 0.6793, lr_0 = 5.1774e-04
+Loss = 4.2018e-04, PNorm = 61.6527, GNorm = 0.4791, lr_0 = 5.1564e-04
+Loss = 3.2758e-04, PNorm = 61.6676, GNorm = 0.5017, lr_0 = 5.1356e-04
+Validation rmse logD = 0.548626
+Validation R2 logD = 0.787762
+Epoch 30
+Train function
+Loss = 2.9954e-04, PNorm = 61.6893, GNorm = 0.4604, lr_0 = 5.1128e-04
+Loss = 2.0406e-04, PNorm = 61.7023, GNorm = 0.3197, lr_0 = 5.0921e-04
+Loss = 3.3480e-04, PNorm = 61.7158, GNorm = 0.4791, lr_0 = 5.0715e-04
+Loss = 2.6424e-04, PNorm = 61.7324, GNorm = 0.4718, lr_0 = 5.0510e-04
+Loss = 3.1285e-04, PNorm = 61.7474, GNorm = 0.4919, lr_0 = 5.0306e-04
+Loss = 3.4344e-04, PNorm = 61.7670, GNorm = 0.3424, lr_0 = 5.0102e-04
+Validation rmse logD = 0.553799
+Validation R2 logD = 0.783740
+Epoch 31
+Train function
+Loss = 3.4801e-04, PNorm = 61.7833, GNorm = 0.3926, lr_0 = 4.9880e-04
+Loss = 3.3413e-04, PNorm = 61.8052, GNorm = 0.8346, lr_0 = 4.9678e-04
+Loss = 2.9915e-04, PNorm = 61.8161, GNorm = 0.2437, lr_0 = 4.9477e-04
+Loss = 3.0059e-04, PNorm = 61.8340, GNorm = 0.8401, lr_0 = 4.9277e-04
+Loss = 2.9682e-04, PNorm = 61.8517, GNorm = 0.4385, lr_0 = 4.9078e-04
+Loss = 2.7996e-04, PNorm = 61.8664, GNorm = 0.3845, lr_0 = 4.8880e-04
+Validation rmse logD = 0.562931
+Validation R2 logD = 0.776550
+Epoch 32
+Train function
+Loss = 2.3460e-04, PNorm = 61.8756, GNorm = 0.4624, lr_0 = 4.8682e-04
+Loss = 2.3071e-04, PNorm = 61.8928, GNorm = 0.4922, lr_0 = 4.8485e-04
+Loss = 2.1118e-04, PNorm = 61.9046, GNorm = 0.2852, lr_0 = 4.8289e-04
+Loss = 2.7840e-04, PNorm = 61.9142, GNorm = 0.5755, lr_0 = 4.8094e-04
+Loss = 2.3058e-04, PNorm = 61.9285, GNorm = 0.6455, lr_0 = 4.7899e-04
+Loss = 2.7221e-04, PNorm = 61.9440, GNorm = 0.3306, lr_0 = 4.7706e-04
+Validation rmse logD = 0.561163
+Validation R2 logD = 0.777951
+Epoch 33
+Train function
+Loss = 2.2015e-04, PNorm = 61.9627, GNorm = 0.7130, lr_0 = 4.7494e-04
+Loss = 2.0254e-04, PNorm = 61.9753, GNorm = 0.3487, lr_0 = 4.7302e-04
+Loss = 2.2054e-04, PNorm = 61.9898, GNorm = 0.4934, lr_0 = 4.7110e-04
+Loss = 2.4261e-04, PNorm = 62.0021, GNorm = 0.5266, lr_0 = 4.6920e-04
+Loss = 2.2969e-04, PNorm = 62.0164, GNorm = 0.6165, lr_0 = 4.6730e-04
+Loss = 2.9483e-04, PNorm = 62.0326, GNorm = 0.4906, lr_0 = 4.6541e-04
+Validation rmse logD = 0.557979
+Validation R2 logD = 0.780464
+Epoch 34
+Train function
+Loss = 1.8856e-04, PNorm = 62.0513, GNorm = 0.2745, lr_0 = 4.6334e-04
+Loss = 2.4502e-04, PNorm = 62.0637, GNorm = 0.9634, lr_0 = 4.6147e-04
+Loss = 2.3386e-04, PNorm = 62.0788, GNorm = 0.3519, lr_0 = 4.5961e-04
+Loss = 2.2596e-04, PNorm = 62.0905, GNorm = 0.3392, lr_0 = 4.5775e-04
+Loss = 2.5960e-04, PNorm = 62.1096, GNorm = 0.4514, lr_0 = 4.5590e-04
+Loss = 2.1216e-04, PNorm = 62.1233, GNorm = 0.6790, lr_0 = 4.5405e-04
+Validation rmse logD = 0.558052
+Validation R2 logD = 0.780406
+Epoch 35
+Train function
+Loss = 2.0651e-04, PNorm = 62.1348, GNorm = 0.3356, lr_0 = 4.5222e-04
+Loss = 1.9524e-04, PNorm = 62.1465, GNorm = 0.5495, lr_0 = 4.5039e-04
+Loss = 1.6375e-04, PNorm = 62.1602, GNorm = 0.1880, lr_0 = 4.4857e-04
+Loss = 1.8529e-04, PNorm = 62.1730, GNorm = 0.4392, lr_0 = 4.4676e-04
+Loss = 1.7867e-04, PNorm = 62.1852, GNorm = 0.3253, lr_0 = 4.4495e-04
+Validation rmse logD = 0.553466
+Validation R2 logD = 0.784000
+Epoch 36
+Train function
+Loss = 2.0681e-04, PNorm = 62.1961, GNorm = 0.2815, lr_0 = 4.4297e-04
+Loss = 1.5029e-04, PNorm = 62.2039, GNorm = 0.2742, lr_0 = 4.4118e-04
+Loss = 1.9408e-04, PNorm = 62.2102, GNorm = 0.5622, lr_0 = 4.3940e-04
+Loss = 1.7124e-04, PNorm = 62.2212, GNorm = 0.2999, lr_0 = 4.3762e-04
+Loss = 2.2169e-04, PNorm = 62.2323, GNorm = 0.3287, lr_0 = 4.3585e-04
+Loss = 1.5742e-04, PNorm = 62.2440, GNorm = 0.4378, lr_0 = 4.3409e-04
+Validation rmse logD = 0.556494
+Validation R2 logD = 0.781630
+Epoch 37
+Train function
+Loss = 1.4513e-04, PNorm = 62.2602, GNorm = 0.3302, lr_0 = 4.3216e-04
+Loss = 1.2888e-04, PNorm = 62.2752, GNorm = 0.3182, lr_0 = 4.3041e-04
+Loss = 1.5568e-04, PNorm = 62.2802, GNorm = 0.3035, lr_0 = 4.2867e-04
+Loss = 1.6449e-04, PNorm = 62.2926, GNorm = 0.8108, lr_0 = 4.2694e-04
+Loss = 2.2927e-04, PNorm = 62.3013, GNorm = 0.3105, lr_0 = 4.2521e-04
+Loss = 2.7548e-04, PNorm = 62.3164, GNorm = 1.1091, lr_0 = 4.2349e-04
+Validation rmse logD = 0.553605
+Validation R2 logD = 0.783892
+Epoch 38
+Train function
+Loss = 1.6392e-04, PNorm = 62.3308, GNorm = 0.4837, lr_0 = 4.2178e-04
+Loss = 1.6528e-04, PNorm = 62.3359, GNorm = 0.2283, lr_0 = 4.2008e-04
+Loss = 1.5220e-04, PNorm = 62.3451, GNorm = 0.5197, lr_0 = 4.1838e-04
+Loss = 1.9129e-04, PNorm = 62.3615, GNorm = 0.6435, lr_0 = 4.1669e-04
+Loss = 1.5645e-04, PNorm = 62.3724, GNorm = 0.4421, lr_0 = 4.1500e-04
+Loss = 1.7586e-04, PNorm = 62.3851, GNorm = 0.2639, lr_0 = 4.1332e-04
+Validation rmse logD = 0.562346
+Validation R2 logD = 0.777014
+Epoch 39
+Train function
+Loss = 1.4358e-04, PNorm = 62.4028, GNorm = 0.3698, lr_0 = 4.1149e-04
+Loss = 1.5810e-04, PNorm = 62.4151, GNorm = 0.5071, lr_0 = 4.0982e-04
+Loss = 1.6145e-04, PNorm = 62.4218, GNorm = 0.3887, lr_0 = 4.0817e-04
+Loss = 1.6369e-04, PNorm = 62.4311, GNorm = 0.1568, lr_0 = 4.0652e-04
+Loss = 1.5481e-04, PNorm = 62.4451, GNorm = 0.5569, lr_0 = 4.0487e-04
+Loss = 1.5724e-04, PNorm = 62.4548, GNorm = 0.2588, lr_0 = 4.0324e-04
+Validation rmse logD = 0.554347
+Validation R2 logD = 0.783312
+Epoch 40
+Train function
+Loss = 1.4548e-04, PNorm = 62.4690, GNorm = 0.2309, lr_0 = 4.0144e-04
+Loss = 1.2100e-04, PNorm = 62.4751, GNorm = 0.1983, lr_0 = 3.9982e-04
+Loss = 1.3338e-04, PNorm = 62.4859, GNorm = 0.2015, lr_0 = 3.9820e-04
+Loss = 1.3842e-04, PNorm = 62.4960, GNorm = 0.5239, lr_0 = 3.9659e-04
+Loss = 1.8036e-04, PNorm = 62.5090, GNorm = 0.8524, lr_0 = 3.9499e-04
+Loss = 1.5992e-04, PNorm = 62.5197, GNorm = 0.5627, lr_0 = 3.9339e-04
+Validation rmse logD = 0.555300
+Validation R2 logD = 0.782567
+Epoch 41
+Train function
+Loss = 1.3692e-04, PNorm = 62.5277, GNorm = 0.6341, lr_0 = 3.9180e-04
+Loss = 1.4186e-04, PNorm = 62.5391, GNorm = 0.3375, lr_0 = 3.9022e-04
+Loss = 1.3499e-04, PNorm = 62.5483, GNorm = 0.4305, lr_0 = 3.8864e-04
+Loss = 1.3892e-04, PNorm = 62.5566, GNorm = 0.2344, lr_0 = 3.8707e-04
+Loss = 1.3198e-04, PNorm = 62.5669, GNorm = 0.2737, lr_0 = 3.8551e-04
+Validation rmse logD = 0.558462
+Validation R2 logD = 0.780083
+Epoch 42
+Train function
+Loss = 1.4508e-04, PNorm = 62.5740, GNorm = 0.6832, lr_0 = 3.8379e-04
+Loss = 1.3883e-04, PNorm = 62.5818, GNorm = 0.3830, lr_0 = 3.8224e-04
+Loss = 1.3956e-04, PNorm = 62.5891, GNorm = 0.1683, lr_0 = 3.8069e-04
+Loss = 1.0997e-04, PNorm = 62.5962, GNorm = 0.2795, lr_0 = 3.7916e-04
+Loss = 1.1458e-04, PNorm = 62.6062, GNorm = 0.2188, lr_0 = 3.7762e-04
+Loss = 1.4120e-04, PNorm = 62.6139, GNorm = 0.2772, lr_0 = 3.7610e-04
+Validation rmse logD = 0.556107
+Validation R2 logD = 0.781935
+Epoch 43
+Train function
+Loss = 1.1513e-04, PNorm = 62.6259, GNorm = 0.2310, lr_0 = 3.7442e-04
+Loss = 9.4375e-05, PNorm = 62.6334, GNorm = 0.3273, lr_0 = 3.7291e-04
+Loss = 1.2023e-04, PNorm = 62.6410, GNorm = 0.2857, lr_0 = 3.7140e-04
+Loss = 9.0514e-05, PNorm = 62.6486, GNorm = 0.2472, lr_0 = 3.6990e-04
+Loss = 9.5156e-05, PNorm = 62.6546, GNorm = 0.2774, lr_0 = 3.6841e-04
+Loss = 1.1298e-04, PNorm = 62.6644, GNorm = 0.3991, lr_0 = 3.6692e-04
+Validation rmse logD = 0.557164
+Validation R2 logD = 0.781105
+Epoch 44
+Train function
+Loss = 1.0974e-04, PNorm = 62.6731, GNorm = 0.6420, lr_0 = 3.6543e-04
+Loss = 1.1089e-04, PNorm = 62.6814, GNorm = 0.3544, lr_0 = 3.6396e-04
+Loss = 1.1594e-04, PNorm = 62.6885, GNorm = 0.2869, lr_0 = 3.6248e-04
+Loss = 9.0706e-05, PNorm = 62.6955, GNorm = 0.5439, lr_0 = 3.6102e-04
+Loss = 1.1178e-04, PNorm = 62.7023, GNorm = 0.1727, lr_0 = 3.5956e-04
+Loss = 1.0148e-04, PNorm = 62.7117, GNorm = 0.3407, lr_0 = 3.5811e-04
+Validation rmse logD = 0.557412
+Validation R2 logD = 0.780910
+Epoch 45
+Train function
+Loss = 8.8402e-05, PNorm = 62.7201, GNorm = 0.2221, lr_0 = 3.5651e-04
+Loss = 1.0827e-04, PNorm = 62.7303, GNorm = 0.2888, lr_0 = 3.5507e-04
+Loss = 8.1180e-05, PNorm = 62.7378, GNorm = 0.4329, lr_0 = 3.5364e-04
+Loss = 8.5286e-05, PNorm = 62.7425, GNorm = 0.5386, lr_0 = 3.5221e-04
+Loss = 8.2458e-05, PNorm = 62.7480, GNorm = 0.1770, lr_0 = 3.5078e-04
+Loss = 9.4737e-05, PNorm = 62.7551, GNorm = 0.6598, lr_0 = 3.4936e-04
+Validation rmse logD = 0.559399
+Validation R2 logD = 0.779345
+Epoch 46
+Train function
+Loss = 1.3559e-04, PNorm = 62.7633, GNorm = 0.7341, lr_0 = 3.4781e-04
+Loss = 1.0556e-04, PNorm = 62.7698, GNorm = 0.2039, lr_0 = 3.4641e-04
+Loss = 9.5395e-05, PNorm = 62.7782, GNorm = 0.2113, lr_0 = 3.4501e-04
+Loss = 9.5639e-05, PNorm = 62.7871, GNorm = 0.2420, lr_0 = 3.4361e-04
+Loss = 8.0470e-05, PNorm = 62.7938, GNorm = 0.1261, lr_0 = 3.4222e-04
+Loss = 9.3447e-05, PNorm = 62.7995, GNorm = 0.5936, lr_0 = 3.4084e-04
+Validation rmse logD = 0.554245
+Validation R2 logD = 0.783392
+Epoch 47
+Train function
+Loss = 6.0874e-05, PNorm = 62.8053, GNorm = 0.1481, lr_0 = 3.3946e-04
+Loss = 8.6167e-05, PNorm = 62.8105, GNorm = 0.5897, lr_0 = 3.3809e-04
+Loss = 7.9517e-05, PNorm = 62.8165, GNorm = 0.4701, lr_0 = 3.3672e-04
+Loss = 9.1987e-05, PNorm = 62.8256, GNorm = 0.2596, lr_0 = 3.3536e-04
+Loss = 7.7372e-05, PNorm = 62.8332, GNorm = 0.2935, lr_0 = 3.3400e-04
+Validation rmse logD = 0.563727
+Validation R2 logD = 0.775917
+Epoch 48
+Train function
+Loss = 1.2685e-04, PNorm = 62.8380, GNorm = 0.8377, lr_0 = 3.3252e-04
+Loss = 9.1382e-05, PNorm = 62.8422, GNorm = 0.3139, lr_0 = 3.3117e-04
+Loss = 7.4133e-05, PNorm = 62.8525, GNorm = 0.4081, lr_0 = 3.2984e-04
+Loss = 8.3630e-05, PNorm = 62.8569, GNorm = 0.1784, lr_0 = 3.2850e-04
+Loss = 8.2720e-05, PNorm = 62.8611, GNorm = 0.2104, lr_0 = 3.2717e-04
+Loss = 8.3401e-05, PNorm = 62.8701, GNorm = 0.2062, lr_0 = 3.2585e-04
+Validation rmse logD = 0.556158
+Validation R2 logD = 0.781894
+Epoch 49
+Train function
+Loss = 4.8225e-05, PNorm = 62.8770, GNorm = 0.1088, lr_0 = 3.2440e-04
+Loss = 5.0467e-05, PNorm = 62.8805, GNorm = 0.1921, lr_0 = 3.2309e-04
+Loss = 9.2266e-05, PNorm = 62.8832, GNorm = 0.5848, lr_0 = 3.2178e-04
+Loss = 8.3191e-05, PNorm = 62.8881, GNorm = 0.1725, lr_0 = 3.2048e-04
+Loss = 6.5328e-05, PNorm = 62.8950, GNorm = 0.1601, lr_0 = 3.1919e-04
+Loss = 7.3377e-05, PNorm = 62.9025, GNorm = 0.3825, lr_0 = 3.1790e-04
+Validation rmse logD = 0.555325
+Validation R2 logD = 0.782547
+Epoch 50
+Train function
+Loss = 8.2961e-05, PNorm = 62.9067, GNorm = 0.6255, lr_0 = 3.1661e-04
+Loss = 6.7478e-05, PNorm = 62.9135, GNorm = 0.3400, lr_0 = 3.1533e-04
+Loss = 6.1673e-05, PNorm = 62.9208, GNorm = 0.1970, lr_0 = 3.1406e-04
+Loss = 6.8804e-05, PNorm = 62.9269, GNorm = 0.4493, lr_0 = 3.1279e-04
+Loss = 1.0448e-04, PNorm = 62.9320, GNorm = 0.6807, lr_0 = 3.1152e-04
+Loss = 9.1010e-05, PNorm = 62.9369, GNorm = 0.1751, lr_0 = 3.1026e-04
+Validation rmse logD = 0.555937
+Validation R2 logD = 0.782068
+Epoch 51
+Train function
+Loss = 6.8974e-05, PNorm = 62.9418, GNorm = 0.4235, lr_0 = 3.0888e-04
+Loss = 7.2832e-05, PNorm = 62.9473, GNorm = 0.3602, lr_0 = 3.0764e-04
+Loss = 8.6049e-05, PNorm = 62.9532, GNorm = 0.6150, lr_0 = 3.0639e-04
+Loss = 8.3028e-05, PNorm = 62.9577, GNorm = 0.2340, lr_0 = 3.0515e-04
+Loss = 7.9969e-05, PNorm = 62.9654, GNorm = 0.5125, lr_0 = 3.0392e-04
+Loss = 7.8086e-05, PNorm = 62.9715, GNorm = 0.4627, lr_0 = 3.0269e-04
+Validation rmse logD = 0.557045
+Validation R2 logD = 0.781198
+Epoch 52
+Train function
+Loss = 8.1392e-05, PNorm = 62.9787, GNorm = 0.2123, lr_0 = 3.0135e-04
+Loss = 7.3937e-05, PNorm = 62.9848, GNorm = 0.3609, lr_0 = 3.0013e-04
+Loss = 7.4848e-05, PNorm = 62.9883, GNorm = 0.1817, lr_0 = 2.9891e-04
+Loss = 7.8243e-05, PNorm = 62.9942, GNorm = 0.2618, lr_0 = 2.9770e-04
+Loss = 6.8936e-05, PNorm = 62.9988, GNorm = 0.5767, lr_0 = 2.9650e-04
+Loss = 7.2598e-05, PNorm = 63.0060, GNorm = 0.4926, lr_0 = 2.9530e-04
+Loss = 2.3588e-04, PNorm = 63.0063, GNorm = 0.2613, lr_0 = 2.9518e-04
+Validation rmse logD = 0.555709
+Validation R2 logD = 0.782246
+Epoch 53
+Train function
+Loss = 5.7640e-05, PNorm = 63.0108, GNorm = 0.1945, lr_0 = 2.9399e-04
+Loss = 6.4407e-05, PNorm = 63.0176, GNorm = 0.1923, lr_0 = 2.9280e-04
+Loss = 5.1769e-05, PNorm = 63.0207, GNorm = 0.1541, lr_0 = 2.9162e-04
+Loss = 5.3041e-05, PNorm = 63.0241, GNorm = 0.2688, lr_0 = 2.9044e-04
+Loss = 6.3217e-05, PNorm = 63.0262, GNorm = 0.3003, lr_0 = 2.8926e-04
+Validation rmse logD = 0.558608
+Validation R2 logD = 0.779968
+Epoch 54
+Train function
+Loss = 7.1142e-05, PNorm = 63.0314, GNorm = 0.2107, lr_0 = 2.8809e-04
+Loss = 5.8811e-05, PNorm = 63.0344, GNorm = 0.1479, lr_0 = 2.8693e-04
+Loss = 5.3327e-05, PNorm = 63.0376, GNorm = 0.2054, lr_0 = 2.8577e-04
+Loss = 4.9384e-05, PNorm = 63.0431, GNorm = 0.2617, lr_0 = 2.8461e-04
+Loss = 4.8095e-05, PNorm = 63.0447, GNorm = 0.1947, lr_0 = 2.8346e-04
+Loss = 4.4686e-05, PNorm = 63.0483, GNorm = 0.3034, lr_0 = 2.8232e-04
+Validation rmse logD = 0.555146
+Validation R2 logD = 0.782687
+Epoch 55
+Train function
+Loss = 3.3711e-05, PNorm = 63.0537, GNorm = 0.1993, lr_0 = 2.8106e-04
+Loss = 5.0414e-05, PNorm = 63.0574, GNorm = 0.1823, lr_0 = 2.7993e-04
+Loss = 4.7969e-05, PNorm = 63.0598, GNorm = 0.1393, lr_0 = 2.7880e-04
+Loss = 3.9504e-05, PNorm = 63.0646, GNorm = 0.1093, lr_0 = 2.7767e-04
+Loss = 3.6707e-05, PNorm = 63.0665, GNorm = 0.0972, lr_0 = 2.7655e-04
+Loss = 4.6382e-05, PNorm = 63.0712, GNorm = 0.1512, lr_0 = 2.7543e-04
+Validation rmse logD = 0.557798
+Validation R2 logD = 0.780606
+Epoch 56
+Train function
+Loss = 6.7385e-05, PNorm = 63.0774, GNorm = 0.8404, lr_0 = 2.7420e-04
+Loss = 6.2477e-05, PNorm = 63.0831, GNorm = 0.1862, lr_0 = 2.7309e-04
+Loss = 4.1119e-05, PNorm = 63.0853, GNorm = 0.1369, lr_0 = 2.7199e-04
+Loss = 4.0078e-05, PNorm = 63.0904, GNorm = 0.2075, lr_0 = 2.7089e-04
+Loss = 5.1483e-05, PNorm = 63.0939, GNorm = 0.1260, lr_0 = 2.6980e-04
+Loss = 5.5331e-05, PNorm = 63.0971, GNorm = 0.1842, lr_0 = 2.6870e-04
+Validation rmse logD = 0.558609
+Validation R2 logD = 0.779967
+Epoch 57
+Train function
+Loss = 6.0457e-05, PNorm = 63.0999, GNorm = 0.6451, lr_0 = 2.6762e-04
+Loss = 4.1767e-05, PNorm = 63.1058, GNorm = 0.2526, lr_0 = 2.6654e-04
+Loss = 4.7671e-05, PNorm = 63.1125, GNorm = 0.1658, lr_0 = 2.6546e-04
+Loss = 5.5395e-05, PNorm = 63.1147, GNorm = 0.4208, lr_0 = 2.6439e-04
+Loss = 5.7250e-05, PNorm = 63.1186, GNorm = 0.3243, lr_0 = 2.6332e-04
+Loss = 5.1675e-05, PNorm = 63.1228, GNorm = 0.3707, lr_0 = 2.6225e-04
+Validation rmse logD = 0.555385
+Validation R2 logD = 0.782500
+Epoch 58
+Train function
+Loss = 6.7185e-05, PNorm = 63.1263, GNorm = 0.4061, lr_0 = 2.6109e-04
+Loss = 5.0985e-05, PNorm = 63.1315, GNorm = 0.3354, lr_0 = 2.6003e-04
+Loss = 4.7363e-05, PNorm = 63.1364, GNorm = 0.1294, lr_0 = 2.5898e-04
+Loss = 4.5570e-05, PNorm = 63.1397, GNorm = 0.2335, lr_0 = 2.5793e-04
+Loss = 4.7865e-05, PNorm = 63.1414, GNorm = 0.1687, lr_0 = 2.5689e-04
+Loss = 4.3806e-05, PNorm = 63.1462, GNorm = 0.2500, lr_0 = 2.5585e-04
+Loss = 4.9247e-05, PNorm = 63.1467, GNorm = 0.1506, lr_0 = 2.5575e-04
+Validation rmse logD = 0.554639
+Validation R2 logD = 0.783084
+Epoch 59
+Train function
+Loss = 3.8807e-05, PNorm = 63.1486, GNorm = 0.1117, lr_0 = 2.5471e-04
+Loss = 4.2191e-05, PNorm = 63.1512, GNorm = 0.1715, lr_0 = 2.5368e-04
+Loss = 4.0611e-05, PNorm = 63.1552, GNorm = 0.3798, lr_0 = 2.5266e-04
+Loss = 4.1488e-05, PNorm = 63.1568, GNorm = 0.1248, lr_0 = 2.5164e-04
+Loss = 4.4954e-05, PNorm = 63.1580, GNorm = 0.4459, lr_0 = 2.5062e-04
+Validation rmse logD = 0.556556
+Validation R2 logD = 0.781582
+Epoch 60
+Train function
+Loss = 2.9602e-05, PNorm = 63.1612, GNorm = 0.1005, lr_0 = 2.4961e-04
+Loss = 3.4058e-05, PNorm = 63.1654, GNorm = 0.1957, lr_0 = 2.4860e-04
+Loss = 3.6644e-05, PNorm = 63.1690, GNorm = 0.1057, lr_0 = 2.4759e-04
+Loss = 3.5179e-05, PNorm = 63.1723, GNorm = 0.0679, lr_0 = 2.4659e-04
+Loss = 3.3894e-05, PNorm = 63.1757, GNorm = 0.1113, lr_0 = 2.4559e-04
+Loss = 3.0760e-05, PNorm = 63.1786, GNorm = 0.1213, lr_0 = 2.4460e-04
+Validation rmse logD = 0.554284
+Validation R2 logD = 0.783362
+Epoch 61
+Train function
+Loss = 2.4544e-05, PNorm = 63.1799, GNorm = 0.2099, lr_0 = 2.4351e-04
+Loss = 2.3807e-05, PNorm = 63.1809, GNorm = 0.1156, lr_0 = 2.4253e-04
+Loss = 2.7899e-05, PNorm = 63.1828, GNorm = 0.1699, lr_0 = 2.4155e-04
+Loss = 2.4797e-05, PNorm = 63.1858, GNorm = 0.2416, lr_0 = 2.4057e-04
+Loss = 2.5249e-05, PNorm = 63.1883, GNorm = 0.0936, lr_0 = 2.3960e-04
+Loss = 3.2258e-05, PNorm = 63.1909, GNorm = 0.1521, lr_0 = 2.3863e-04
+Validation rmse logD = 0.553686
+Validation R2 logD = 0.783828
+Epoch 62
+Train function
+Loss = 2.5100e-05, PNorm = 63.1943, GNorm = 0.1258, lr_0 = 2.3757e-04
+Loss = 1.9041e-05, PNorm = 63.1969, GNorm = 0.0980, lr_0 = 2.3661e-04
+Loss = 2.9290e-05, PNorm = 63.1995, GNorm = 0.2209, lr_0 = 2.3565e-04
+Loss = 3.3643e-05, PNorm = 63.2018, GNorm = 0.4783, lr_0 = 2.3470e-04
+Loss = 3.8298e-05, PNorm = 63.2045, GNorm = 0.2424, lr_0 = 2.3375e-04
+Loss = 3.9387e-05, PNorm = 63.2056, GNorm = 0.3701, lr_0 = 2.3281e-04
+Validation rmse logD = 0.553478
+Validation R2 logD = 0.783991
+Epoch 63
+Train function
+Loss = 3.8799e-05, PNorm = 63.2094, GNorm = 0.1126, lr_0 = 2.3187e-04
+Loss = 3.4539e-05, PNorm = 63.2133, GNorm = 0.3169, lr_0 = 2.3093e-04
+Loss = 4.2894e-05, PNorm = 63.2166, GNorm = 0.1463, lr_0 = 2.2999e-04
+Loss = 4.4946e-05, PNorm = 63.2191, GNorm = 0.1426, lr_0 = 2.2906e-04
+Loss = 3.4440e-05, PNorm = 63.2224, GNorm = 0.1376, lr_0 = 2.2814e-04
+Loss = 3.0025e-05, PNorm = 63.2261, GNorm = 0.3117, lr_0 = 2.2722e-04
+Validation rmse logD = 0.554559
+Validation R2 logD = 0.783146
+Epoch 64
+Train function
+Loss = 3.0274e-05, PNorm = 63.2293, GNorm = 0.0944, lr_0 = 2.2621e-04
+Loss = 2.4352e-05, PNorm = 63.2313, GNorm = 0.1192, lr_0 = 2.2529e-04
+Loss = 2.6724e-05, PNorm = 63.2338, GNorm = 0.1636, lr_0 = 2.2438e-04
+Loss = 2.9524e-05, PNorm = 63.2356, GNorm = 0.0923, lr_0 = 2.2347e-04
+Loss = 2.8197e-05, PNorm = 63.2388, GNorm = 0.1791, lr_0 = 2.2257e-04
+Loss = 2.6623e-05, PNorm = 63.2397, GNorm = 0.0858, lr_0 = 2.2167e-04
+Loss = 1.0526e-04, PNorm = 63.2400, GNorm = 0.2284, lr_0 = 2.2158e-04
+Validation rmse logD = 0.555503
+Validation R2 logD = 0.782407
+Epoch 65
+Train function
+Loss = 2.4401e-05, PNorm = 63.2422, GNorm = 0.3404, lr_0 = 2.2068e-04
+Loss = 3.0429e-05, PNorm = 63.2447, GNorm = 0.2369, lr_0 = 2.1979e-04
+Loss = 3.4083e-05, PNorm = 63.2487, GNorm = 0.2134, lr_0 = 2.1890e-04
+Loss = 3.5465e-05, PNorm = 63.2526, GNorm = 0.0821, lr_0 = 2.1802e-04
+Loss = 3.2214e-05, PNorm = 63.2549, GNorm = 0.2201, lr_0 = 2.1714e-04
+Validation rmse logD = 0.556665
+Validation R2 logD = 0.781496
+Epoch 66
+Train function
+Loss = 1.2253e-05, PNorm = 63.2563, GNorm = 0.1117, lr_0 = 2.1626e-04
+Loss = 3.7535e-05, PNorm = 63.2600, GNorm = 0.2888, lr_0 = 2.1539e-04
+Loss = 4.7635e-05, PNorm = 63.2645, GNorm = 0.6272, lr_0 = 2.1451e-04
+Loss = 5.3780e-05, PNorm = 63.2665, GNorm = 0.1978, lr_0 = 2.1365e-04
+Loss = 8.7834e-05, PNorm = 63.2713, GNorm = 0.4042, lr_0 = 2.1278e-04
+Loss = 4.3787e-05, PNorm = 63.2774, GNorm = 0.1650, lr_0 = 2.1192e-04
+Validation rmse logD = 0.557287
+Validation R2 logD = 0.781008
+Epoch 67
+Train function
+Loss = 4.0637e-05, PNorm = 63.2830, GNorm = 0.1221, lr_0 = 2.1098e-04
+Loss = 4.5031e-05, PNorm = 63.2865, GNorm = 0.1614, lr_0 = 2.1013e-04
+Loss = 4.0332e-05, PNorm = 63.2893, GNorm = 0.1419, lr_0 = 2.0928e-04
+Loss = 4.5954e-05, PNorm = 63.2930, GNorm = 0.3946, lr_0 = 2.0843e-04
+Loss = 3.0353e-05, PNorm = 63.2962, GNorm = 0.1800, lr_0 = 2.0759e-04
+Loss = 3.0884e-05, PNorm = 63.2984, GNorm = 0.1222, lr_0 = 2.0675e-04
+Validation rmse logD = 0.557413
+Validation R2 logD = 0.780908
+Epoch 68
+Train function
+Loss = 3.9615e-05, PNorm = 63.3006, GNorm = 0.1440, lr_0 = 2.0583e-04
+Loss = 3.1662e-05, PNorm = 63.3037, GNorm = 0.0821, lr_0 = 2.0500e-04
+Loss = 2.9246e-05, PNorm = 63.3039, GNorm = 0.0907, lr_0 = 2.0417e-04
+Loss = 3.7945e-05, PNorm = 63.3073, GNorm = 0.1378, lr_0 = 2.0335e-04
+Loss = 2.3117e-05, PNorm = 63.3096, GNorm = 0.0739, lr_0 = 2.0252e-04
+Loss = 2.5480e-05, PNorm = 63.3098, GNorm = 0.1938, lr_0 = 2.0170e-04
+Validation rmse logD = 0.554131
+Validation R2 logD = 0.783481
+Epoch 69
+Train function
+Loss = 2.3992e-05, PNorm = 63.3109, GNorm = 0.1928, lr_0 = 2.0089e-04
+Loss = 3.4936e-05, PNorm = 63.3125, GNorm = 0.2368, lr_0 = 2.0008e-04
+Loss = 2.7903e-05, PNorm = 63.3128, GNorm = 0.2166, lr_0 = 1.9927e-04
+Loss = 2.5837e-05, PNorm = 63.3154, GNorm = 0.2949, lr_0 = 1.9846e-04
+Loss = 3.6121e-05, PNorm = 63.3193, GNorm = 0.2736, lr_0 = 1.9766e-04
+Loss = 3.6503e-05, PNorm = 63.3217, GNorm = 0.4065, lr_0 = 1.9686e-04
+Validation rmse logD = 0.554455
+Validation R2 logD = 0.783228
+Epoch 70
+Train function
+Loss = 3.4568e-05, PNorm = 63.3241, GNorm = 0.1181, lr_0 = 1.9599e-04
+Loss = 2.3670e-05, PNorm = 63.3272, GNorm = 0.0969, lr_0 = 1.9519e-04
+Loss = 2.1807e-05, PNorm = 63.3289, GNorm = 0.1189, lr_0 = 1.9440e-04
+Loss = 2.3857e-05, PNorm = 63.3319, GNorm = 0.0777, lr_0 = 1.9362e-04
+Loss = 2.1000e-05, PNorm = 63.3335, GNorm = 0.1994, lr_0 = 1.9284e-04
+Loss = 1.9296e-05, PNorm = 63.3355, GNorm = 0.1191, lr_0 = 1.9206e-04
+Loss = 5.1734e-05, PNorm = 63.3356, GNorm = 0.1452, lr_0 = 1.9198e-04
+Validation rmse logD = 0.553897
+Validation R2 logD = 0.783664
+Epoch 71
+Train function
+Loss = 2.0303e-05, PNorm = 63.3370, GNorm = 0.0804, lr_0 = 1.9120e-04
+Loss = 1.9646e-05, PNorm = 63.3373, GNorm = 0.1133, lr_0 = 1.9043e-04
+Loss = 1.8221e-05, PNorm = 63.3393, GNorm = 0.1575, lr_0 = 1.8966e-04
+Loss = 1.6491e-05, PNorm = 63.3413, GNorm = 0.0694, lr_0 = 1.8889e-04
+Loss = 1.6275e-05, PNorm = 63.3437, GNorm = 0.1553, lr_0 = 1.8813e-04
+Validation rmse logD = 0.554862
+Validation R2 logD = 0.782910
+Epoch 72
+Train function
+Loss = 3.0897e-05, PNorm = 63.3455, GNorm = 0.3851, lr_0 = 1.8737e-04
+Loss = 2.4473e-05, PNorm = 63.3473, GNorm = 0.2442, lr_0 = 1.8661e-04
+Loss = 3.3651e-05, PNorm = 63.3482, GNorm = 0.5461, lr_0 = 1.8586e-04
+Loss = 4.0486e-05, PNorm = 63.3518, GNorm = 0.1975, lr_0 = 1.8510e-04
+Loss = 4.6391e-05, PNorm = 63.3537, GNorm = 0.2671, lr_0 = 1.8436e-04
+Loss = 2.3457e-05, PNorm = 63.3564, GNorm = 0.1001, lr_0 = 1.8361e-04
+Validation rmse logD = 0.555306
+Validation R2 logD = 0.782562
+Epoch 73
+Train function
+Loss = 2.1021e-05, PNorm = 63.3591, GNorm = 0.0940, lr_0 = 1.8279e-04
+Loss = 2.1678e-05, PNorm = 63.3607, GNorm = 0.1005, lr_0 = 1.8206e-04
+Loss = 1.9654e-05, PNorm = 63.3627, GNorm = 0.1511, lr_0 = 1.8132e-04
+Loss = 2.3925e-05, PNorm = 63.3654, GNorm = 0.1682, lr_0 = 1.8059e-04
+Loss = 2.2185e-05, PNorm = 63.3670, GNorm = 0.1566, lr_0 = 1.7986e-04
+Loss = 3.7097e-05, PNorm = 63.3695, GNorm = 0.6369, lr_0 = 1.7913e-04
+Validation rmse logD = 0.552772
+Validation R2 logD = 0.784542
+Epoch 74
+Train function
+Loss = 1.6151e-05, PNorm = 63.3712, GNorm = 0.1237, lr_0 = 1.7833e-04
+Loss = 1.9587e-05, PNorm = 63.3732, GNorm = 0.2386, lr_0 = 1.7761e-04
+Loss = 2.3108e-05, PNorm = 63.3750, GNorm = 0.3070, lr_0 = 1.7689e-04
+Loss = 2.0102e-05, PNorm = 63.3768, GNorm = 0.0833, lr_0 = 1.7618e-04
+Loss = 1.7496e-05, PNorm = 63.3782, GNorm = 0.0923, lr_0 = 1.7547e-04
+Loss = 2.0524e-05, PNorm = 63.3795, GNorm = 0.1537, lr_0 = 1.7476e-04
+Validation rmse logD = 0.555532
+Validation R2 logD = 0.782385
+Epoch 75
+Train function
+Loss = 1.9497e-05, PNorm = 63.3793, GNorm = 0.1015, lr_0 = 1.7405e-04
+Loss = 1.5165e-05, PNorm = 63.3816, GNorm = 0.1630, lr_0 = 1.7335e-04
+Loss = 1.5085e-05, PNorm = 63.3834, GNorm = 0.1212, lr_0 = 1.7265e-04
+Loss = 1.9661e-05, PNorm = 63.3850, GNorm = 0.1294, lr_0 = 1.7195e-04
+Loss = 1.6026e-05, PNorm = 63.3875, GNorm = 0.0701, lr_0 = 1.7125e-04
+Loss = 1.2537e-05, PNorm = 63.3884, GNorm = 0.0959, lr_0 = 1.7056e-04
+Validation rmse logD = 0.553783
+Validation R2 logD = 0.783753
+Epoch 76
+Train function
+Loss = 1.3937e-05, PNorm = 63.3885, GNorm = 0.1948, lr_0 = 1.6980e-04
+Loss = 1.5724e-05, PNorm = 63.3896, GNorm = 0.0746, lr_0 = 1.6912e-04
+Loss = 1.2380e-05, PNorm = 63.3910, GNorm = 0.0955, lr_0 = 1.6843e-04
+Loss = 1.5310e-05, PNorm = 63.3923, GNorm = 0.1291, lr_0 = 1.6775e-04
+Loss = 1.5839e-05, PNorm = 63.3932, GNorm = 0.0762, lr_0 = 1.6707e-04
+Loss = 1.3985e-05, PNorm = 63.3941, GNorm = 0.1443, lr_0 = 1.6640e-04
+Loss = 1.5723e-05, PNorm = 63.3943, GNorm = 0.1113, lr_0 = 1.6633e-04
+Validation rmse logD = 0.554373
+Validation R2 logD = 0.783292
+Epoch 77
+Train function
+Loss = 1.1109e-05, PNorm = 63.3949, GNorm = 0.0835, lr_0 = 1.6566e-04
+Loss = 1.1774e-05, PNorm = 63.3966, GNorm = 0.3017, lr_0 = 1.6499e-04
+Loss = 1.3270e-05, PNorm = 63.3977, GNorm = 0.1326, lr_0 = 1.6432e-04
+Loss = 1.3719e-05, PNorm = 63.3994, GNorm = 0.0825, lr_0 = 1.6366e-04
+Loss = 1.6142e-05, PNorm = 63.3998, GNorm = 0.1689, lr_0 = 1.6300e-04
+Validation rmse logD = 0.552643
+Validation R2 logD = 0.784642
+Epoch 78
+Train function
+Loss = 1.6068e-05, PNorm = 63.4015, GNorm = 0.1779, lr_0 = 1.6227e-04
+Loss = 1.6556e-05, PNorm = 63.4036, GNorm = 0.1109, lr_0 = 1.6161e-04
+Loss = 1.4322e-05, PNorm = 63.4059, GNorm = 0.2211, lr_0 = 1.6096e-04
+Loss = 1.5242e-05, PNorm = 63.4069, GNorm = 0.1615, lr_0 = 1.6031e-04
+Loss = 1.4601e-05, PNorm = 63.4082, GNorm = 0.0899, lr_0 = 1.5966e-04
+Loss = 1.3726e-05, PNorm = 63.4098, GNorm = 0.2708, lr_0 = 1.5902e-04
+Validation rmse logD = 0.552818
+Validation R2 logD = 0.784506
+Epoch 79
+Train function
+Loss = 1.8579e-05, PNorm = 63.4105, GNorm = 0.3087, lr_0 = 1.5837e-04
+Loss = 1.4942e-05, PNorm = 63.4122, GNorm = 0.0785, lr_0 = 1.5773e-04
+Loss = 1.2778e-05, PNorm = 63.4131, GNorm = 0.2236, lr_0 = 1.5710e-04
+Loss = 1.9533e-05, PNorm = 63.4148, GNorm = 0.3265, lr_0 = 1.5646e-04
+Loss = 1.7179e-05, PNorm = 63.4168, GNorm = 0.1165, lr_0 = 1.5583e-04
+Loss = 2.0684e-05, PNorm = 63.4181, GNorm = 0.1786, lr_0 = 1.5520e-04
+Validation rmse logD = 0.555333
+Validation R2 logD = 0.782541
+Epoch 80
+Train function
+Loss = 1.1863e-05, PNorm = 63.4204, GNorm = 0.0908, lr_0 = 1.5451e-04
+Loss = 1.3604e-05, PNorm = 63.4215, GNorm = 0.1600, lr_0 = 1.5388e-04
+Loss = 1.5718e-05, PNorm = 63.4222, GNorm = 0.0854, lr_0 = 1.5326e-04
+Loss = 1.4778e-05, PNorm = 63.4236, GNorm = 0.1018, lr_0 = 1.5264e-04
+Loss = 1.2997e-05, PNorm = 63.4250, GNorm = 0.0856, lr_0 = 1.5202e-04
+Loss = 1.2396e-05, PNorm = 63.4269, GNorm = 0.0842, lr_0 = 1.5141e-04
+Validation rmse logD = 0.554554
+Validation R2 logD = 0.783150
+Epoch 81
+Train function
+Loss = 1.0087e-05, PNorm = 63.4281, GNorm = 0.0742, lr_0 = 1.5074e-04
+Loss = 1.0580e-05, PNorm = 63.4282, GNorm = 0.0870, lr_0 = 1.5013e-04
+Loss = 8.1130e-06, PNorm = 63.4287, GNorm = 0.1194, lr_0 = 1.4952e-04
+Loss = 1.7136e-05, PNorm = 63.4290, GNorm = 0.1696, lr_0 = 1.4892e-04
+Loss = 1.2804e-05, PNorm = 63.4309, GNorm = 0.2308, lr_0 = 1.4831e-04
+Loss = 1.3887e-05, PNorm = 63.4316, GNorm = 0.0461, lr_0 = 1.4771e-04
+Validation rmse logD = 0.554248
+Validation R2 logD = 0.783390
+Epoch 82
+Train function
+Loss = 1.5757e-05, PNorm = 63.4340, GNorm = 0.1765, lr_0 = 1.4712e-04
+Loss = 1.4284e-05, PNorm = 63.4357, GNorm = 0.1225, lr_0 = 1.4652e-04
+Loss = 1.1323e-05, PNorm = 63.4363, GNorm = 0.0804, lr_0 = 1.4593e-04
+Loss = 9.8340e-06, PNorm = 63.4376, GNorm = 0.0636, lr_0 = 1.4534e-04
+Loss = 1.0246e-05, PNorm = 63.4384, GNorm = 0.1955, lr_0 = 1.4475e-04
+Loss = 1.0283e-05, PNorm = 63.4385, GNorm = 0.0521, lr_0 = 1.4417e-04
+Loss = 3.4734e-05, PNorm = 63.4384, GNorm = 0.1218, lr_0 = 1.4411e-04
+Validation rmse logD = 0.552937
+Validation R2 logD = 0.784413
+Epoch 83
+Train function
+Loss = 7.9288e-06, PNorm = 63.4386, GNorm = 0.1664, lr_0 = 1.4353e-04
+Loss = 8.5810e-06, PNorm = 63.4403, GNorm = 0.1219, lr_0 = 1.4295e-04
+Loss = 1.1493e-05, PNorm = 63.4416, GNorm = 0.2336, lr_0 = 1.4237e-04
+Loss = 1.4551e-05, PNorm = 63.4429, GNorm = 0.2316, lr_0 = 1.4179e-04
+Loss = 1.2337e-05, PNorm = 63.4435, GNorm = 0.2715, lr_0 = 1.4122e-04
+Validation rmse logD = 0.553777
+Validation R2 logD = 0.783758
+Epoch 84
+Train function
+Loss = 1.3060e-05, PNorm = 63.4446, GNorm = 0.2018, lr_0 = 1.4059e-04
+Loss = 1.0760e-05, PNorm = 63.4455, GNorm = 0.0796, lr_0 = 1.4002e-04
+Loss = 1.2185e-05, PNorm = 63.4465, GNorm = 0.0838, lr_0 = 1.3946e-04
+Loss = 1.2739e-05, PNorm = 63.4478, GNorm = 0.2052, lr_0 = 1.3889e-04
+Loss = 1.6298e-05, PNorm = 63.4482, GNorm = 0.0888, lr_0 = 1.3833e-04
+Loss = 1.2612e-05, PNorm = 63.4493, GNorm = 0.0535, lr_0 = 1.3777e-04
+Validation rmse logD = 0.554156
+Validation R2 logD = 0.783462
+Epoch 85
+Train function
+Loss = 1.1969e-05, PNorm = 63.4504, GNorm = 0.1262, lr_0 = 1.3722e-04
+Loss = 1.4109e-05, PNorm = 63.4520, GNorm = 0.1934, lr_0 = 1.3666e-04
+Loss = 1.6908e-05, PNorm = 63.4539, GNorm = 0.1088, lr_0 = 1.3611e-04
+Loss = 1.8773e-05, PNorm = 63.4554, GNorm = 0.1593, lr_0 = 1.3556e-04
+Loss = 1.3957e-05, PNorm = 63.4571, GNorm = 0.1456, lr_0 = 1.3501e-04
+Loss = 1.2013e-05, PNorm = 63.4589, GNorm = 0.2889, lr_0 = 1.3446e-04
+Validation rmse logD = 0.556218
+Validation R2 logD = 0.781847
+Epoch 86
+Train function
+Loss = 1.5678e-05, PNorm = 63.4602, GNorm = 0.1517, lr_0 = 1.3387e-04
+Loss = 1.2734e-05, PNorm = 63.4603, GNorm = 0.1189, lr_0 = 1.3333e-04
+Loss = 9.7440e-06, PNorm = 63.4610, GNorm = 0.1128, lr_0 = 1.3279e-04
+Loss = 1.1085e-05, PNorm = 63.4632, GNorm = 0.0519, lr_0 = 1.3225e-04
+Loss = 1.5367e-05, PNorm = 63.4638, GNorm = 0.1090, lr_0 = 1.3171e-04
+Loss = 1.5240e-05, PNorm = 63.4664, GNorm = 0.0514, lr_0 = 1.3118e-04
+Validation rmse logD = 0.553568
+Validation R2 logD = 0.783921
+Epoch 87
+Train function
+Loss = 8.9696e-06, PNorm = 63.4671, GNorm = 0.0598, lr_0 = 1.3060e-04
+Loss = 9.7945e-06, PNorm = 63.4679, GNorm = 0.0756, lr_0 = 1.3007e-04
+Loss = 8.9787e-06, PNorm = 63.4687, GNorm = 0.1102, lr_0 = 1.2955e-04
+Loss = 9.7084e-06, PNorm = 63.4694, GNorm = 0.0518, lr_0 = 1.2902e-04
+Loss = 9.5686e-06, PNorm = 63.4698, GNorm = 0.2055, lr_0 = 1.2850e-04
+Loss = 8.9627e-06, PNorm = 63.4695, GNorm = 0.2028, lr_0 = 1.2798e-04
+Validation rmse logD = 0.553353
+Validation R2 logD = 0.784089
+Epoch 88
+Train function
+Loss = 1.0344e-05, PNorm = 63.4716, GNorm = 0.1129, lr_0 = 1.2746e-04
+Loss = 1.6184e-05, PNorm = 63.4726, GNorm = 0.1958, lr_0 = 1.2695e-04
+Loss = 1.0039e-05, PNorm = 63.4739, GNorm = 0.0991, lr_0 = 1.2643e-04
+Loss = 1.0226e-05, PNorm = 63.4744, GNorm = 0.1518, lr_0 = 1.2592e-04
+Loss = 1.5806e-05, PNorm = 63.4756, GNorm = 0.1189, lr_0 = 1.2541e-04
+Loss = 1.7812e-05, PNorm = 63.4768, GNorm = 0.1946, lr_0 = 1.2491e-04
+Loss = 4.2467e-05, PNorm = 63.4770, GNorm = 0.2832, lr_0 = 1.2486e-04
+Validation rmse logD = 0.555171
+Validation R2 logD = 0.782668
+Epoch 89
+Train function
+Loss = 1.1791e-05, PNorm = 63.4783, GNorm = 0.2796, lr_0 = 1.2435e-04
+Loss = 1.3870e-05, PNorm = 63.4795, GNorm = 0.1665, lr_0 = 1.2385e-04
+Loss = 1.6762e-05, PNorm = 63.4806, GNorm = 0.1801, lr_0 = 1.2335e-04
+Loss = 1.5931e-05, PNorm = 63.4813, GNorm = 0.1627, lr_0 = 1.2285e-04
+Loss = 9.9254e-06, PNorm = 63.4837, GNorm = 0.0776, lr_0 = 1.2235e-04
+Validation rmse logD = 0.553633
+Validation R2 logD = 0.783870
+Epoch 90
+Train function
+Loss = 9.1204e-06, PNorm = 63.4846, GNorm = 0.0774, lr_0 = 1.2181e-04
+Loss = 1.2579e-05, PNorm = 63.4852, GNorm = 0.1715, lr_0 = 1.2132e-04
+Loss = 8.3671e-06, PNorm = 63.4863, GNorm = 0.0500, lr_0 = 1.2083e-04
+Loss = 1.2231e-05, PNorm = 63.4872, GNorm = 0.2805, lr_0 = 1.2034e-04
+Loss = 9.8478e-06, PNorm = 63.4883, GNorm = 0.1844, lr_0 = 1.1985e-04
+Loss = 1.2739e-05, PNorm = 63.4889, GNorm = 0.1907, lr_0 = 1.1937e-04
+Validation rmse logD = 0.554369
+Validation R2 logD = 0.783295
+Epoch 91
+Train function
+Loss = 7.7120e-06, PNorm = 63.4891, GNorm = 0.0556, lr_0 = 1.1888e-04
+Loss = 1.0118e-05, PNorm = 63.4897, GNorm = 0.0905, lr_0 = 1.1840e-04
+Loss = 9.2267e-06, PNorm = 63.4905, GNorm = 0.0697, lr_0 = 1.1792e-04
+Loss = 7.2289e-06, PNorm = 63.4907, GNorm = 0.0551, lr_0 = 1.1745e-04
+Loss = 9.9226e-06, PNorm = 63.4915, GNorm = 0.0915, lr_0 = 1.1697e-04
+Loss = 6.9907e-06, PNorm = 63.4928, GNorm = 0.0756, lr_0 = 1.1650e-04
+Validation rmse logD = 0.552863
+Validation R2 logD = 0.784471
+Epoch 92
+Train function
+Loss = 6.6449e-06, PNorm = 63.4935, GNorm = 0.0909, lr_0 = 1.1598e-04
+Loss = 7.8776e-06, PNorm = 63.4946, GNorm = 0.1230, lr_0 = 1.1551e-04
+Loss = 8.5159e-06, PNorm = 63.4946, GNorm = 0.1621, lr_0 = 1.1505e-04
+Loss = 7.4347e-06, PNorm = 63.4953, GNorm = 0.0465, lr_0 = 1.1458e-04
+Loss = 8.4216e-06, PNorm = 63.4955, GNorm = 0.0461, lr_0 = 1.1412e-04
+Loss = 6.8581e-06, PNorm = 63.4963, GNorm = 0.0952, lr_0 = 1.1366e-04
+Validation rmse logD = 0.553058
+Validation R2 logD = 0.784319
+Epoch 93
+Train function
+Loss = 7.4012e-06, PNorm = 63.4974, GNorm = 0.0643, lr_0 = 1.1315e-04
+Loss = 5.4440e-06, PNorm = 63.4981, GNorm = 0.0801, lr_0 = 1.1269e-04
+Loss = 7.4027e-06, PNorm = 63.4985, GNorm = 0.1569, lr_0 = 1.1224e-04
+Loss = 7.9782e-06, PNorm = 63.4999, GNorm = 0.1291, lr_0 = 1.1178e-04
+Loss = 5.8927e-06, PNorm = 63.5003, GNorm = 0.0702, lr_0 = 1.1133e-04
+Loss = 7.6675e-06, PNorm = 63.5010, GNorm = 0.0653, lr_0 = 1.1088e-04
+Validation rmse logD = 0.552600
+Validation R2 logD = 0.784676
+Epoch 94
+Train function
+Loss = 4.5049e-06, PNorm = 63.5020, GNorm = 0.0361, lr_0 = 1.1043e-04
+Loss = 4.5963e-06, PNorm = 63.5026, GNorm = 0.0913, lr_0 = 1.0999e-04
+Loss = 6.8384e-06, PNorm = 63.5043, GNorm = 0.0431, lr_0 = 1.0954e-04
+Loss = 5.6099e-06, PNorm = 63.5045, GNorm = 0.0886, lr_0 = 1.0910e-04
+Loss = 9.0195e-06, PNorm = 63.5050, GNorm = 0.1155, lr_0 = 1.0866e-04
+Loss = 7.2179e-06, PNorm = 63.5051, GNorm = 0.0900, lr_0 = 1.0822e-04
+Loss = 3.2267e-05, PNorm = 63.5051, GNorm = 0.1905, lr_0 = 1.0818e-04
+Validation rmse logD = 0.551570
+Validation R2 logD = 0.785478
+Epoch 95
+Train function
+Loss = 6.4504e-06, PNorm = 63.5058, GNorm = 0.2059, lr_0 = 1.0774e-04
+Loss = 6.5788e-06, PNorm = 63.5059, GNorm = 0.0382, lr_0 = 1.0730e-04
+Loss = 5.9468e-06, PNorm = 63.5067, GNorm = 0.0455, lr_0 = 1.0687e-04
+Loss = 7.8915e-06, PNorm = 63.5071, GNorm = 0.1160, lr_0 = 1.0644e-04
+Loss = 8.4742e-06, PNorm = 63.5080, GNorm = 0.0411, lr_0 = 1.0601e-04
+Validation rmse logD = 0.553230
+Validation R2 logD = 0.784185
+Epoch 96
+Train function
+Loss = 7.2343e-06, PNorm = 63.5086, GNorm = 0.0645, lr_0 = 1.0554e-04
+Loss = 6.4486e-06, PNorm = 63.5093, GNorm = 0.0683, lr_0 = 1.0511e-04
+Loss = 5.8653e-06, PNorm = 63.5104, GNorm = 0.0369, lr_0 = 1.0468e-04
+Loss = 5.5532e-06, PNorm = 63.5121, GNorm = 0.1548, lr_0 = 1.0426e-04
+Loss = 7.7784e-06, PNorm = 63.5128, GNorm = 0.1497, lr_0 = 1.0384e-04
+Loss = 8.6533e-06, PNorm = 63.5132, GNorm = 0.0532, lr_0 = 1.0342e-04
+Validation rmse logD = 0.553703
+Validation R2 logD = 0.783815
+Epoch 97
+Train function
+Loss = 1.0663e-05, PNorm = 63.5140, GNorm = 0.0621, lr_0 = 1.0300e-04
+Loss = 7.1668e-06, PNorm = 63.5147, GNorm = 0.1720, lr_0 = 1.0258e-04
+Loss = 7.1164e-06, PNorm = 63.5158, GNorm = 0.0356, lr_0 = 1.0217e-04
+Loss = 7.7318e-06, PNorm = 63.5164, GNorm = 0.1517, lr_0 = 1.0176e-04
+Loss = 7.5817e-06, PNorm = 63.5169, GNorm = 0.0446, lr_0 = 1.0135e-04
+Loss = 7.2691e-06, PNorm = 63.5178, GNorm = 0.0500, lr_0 = 1.0094e-04
+Validation rmse logD = 0.555612
+Validation R2 logD = 0.782322
+Epoch 98
+Train function
+Loss = 5.7670e-06, PNorm = 63.5181, GNorm = 0.0935, lr_0 = 1.0049e-04
+Loss = 8.2787e-06, PNorm = 63.5189, GNorm = 0.1165, lr_0 = 1.0008e-04
+Loss = 1.0412e-05, PNorm = 63.5200, GNorm = 0.1133, lr_0 = 1.0000e-04
+Loss = 5.8516e-06, PNorm = 63.5213, GNorm = 0.1477, lr_0 = 1.0000e-04
+Loss = 6.3488e-06, PNorm = 63.5214, GNorm = 0.0853, lr_0 = 1.0000e-04
+Loss = 6.2226e-06, PNorm = 63.5222, GNorm = 0.0472, lr_0 = 1.0000e-04
+Validation rmse logD = 0.554052
+Validation R2 logD = 0.783543
+Epoch 99
+Train function
+Loss = 3.5197e-06, PNorm = 63.5229, GNorm = 0.0512, lr_0 = 1.0000e-04
+Loss = 6.2900e-06, PNorm = 63.5232, GNorm = 0.1210, lr_0 = 1.0000e-04
+Loss = 8.0667e-06, PNorm = 63.5237, GNorm = 0.1496, lr_0 = 1.0000e-04
+Loss = 5.4929e-06, PNorm = 63.5247, GNorm = 0.0661, lr_0 = 1.0000e-04
+Loss = 5.1159e-06, PNorm = 63.5253, GNorm = 0.0509, lr_0 = 1.0000e-04
+Loss = 7.4540e-06, PNorm = 63.5256, GNorm = 0.1158, lr_0 = 1.0000e-04
+Validation rmse logD = 0.552574
+Validation R2 logD = 0.784696
+Model 0 best validation rmse = 0.548626 on epoch 29
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Moving model to cuda
+Model 0 test rmse logD = 0.583201
+Model 0 test R2 logD = 0.764764
+Ensemble test rmse  logD= 0.583201
+Ensemble test R2  logD= 0.764764
+1-fold cross validation
+	Seed 0 ==> test rmse = 0.583201
+	Seed 0 ==> test R2 = 0.764764
+Overall val rmse logD= 0.548626 +/- 0.000000
+Overall val R2 logD = 0.787762 +/- 0.000000
+Overall test rmse logD = 0.583201 +/- 0.000000
+Overall test R2 logD = 0.764764 +/- 0.000000
+Elapsed time = 0:31:32
