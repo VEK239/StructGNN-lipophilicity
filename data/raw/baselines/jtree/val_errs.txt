@@ -1,3 +1,8 @@
+CC[C@H](NC(=O)c1c([S+](C)[O-])c(-c2ccccc2)nc2cc(F)ccc12)c1ccccc1
+CC1C(=O)NC(Cc2ccc(F)cc2)C(=O)NCCCc2ccccc2O[C@H](C)CNC(C2CC2)C(=O)N1C
+[O-][S+](c1ccccc1)c1ccc2nnnn2n1
+CC[C@H](NC(=O)c1c([S+](C)[O-])c(-c2ccsc2)nc2ccccc12)c1ccccc1
+O=c1c(CC[S+]([O-])c2ccccc2)c(O)n(-c2ccccc2)n1-c1ccccc1
 N=c1[nH][n+]([O-])c2ccc(Cl)cc2[n+]1[O-]
 COc1ccc2c(c1)C13CCN4CC5=CCOC6CC(=O)N2C1C6C5CC43
 ClC1(Cl)C2(Cl)C3(Cl)C4(Cl)C(Cl)(Cl)C5(Cl)C3(Cl)C1(Cl)C5(Cl)C24Cl

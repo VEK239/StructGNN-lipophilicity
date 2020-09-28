@@ -64,7 +64,7 @@ SMILES_TO_MOLTREE = {}
 
 class MoleculeDataset(Dataset):
 
-    def __init__(self, data_file, args, SMILES_COLUMN = 'smiles', TARGET_COLUMN = 'logP'):
+    def __init__(self, data_file, args, SMILES_COLUMN = 'smiles'):
         global SMILES_TO_MOLTREE
         
         self.data = pd.read_csv(data_file)
@@ -78,10 +78,10 @@ class MoleculeDataset(Dataset):
         if 'logp' not in args.vocab_path:
             self.data = self.data[~self.data[SMILES_COLUMN].isin(broken_smiles)]
         self.SMILES_COLUMN = SMILES_COLUMN
-        self.TARGET_COLUMN = TARGET_COLUMN
+        self.TARGET_COLUMN = args.target_column
         
         self.smiles = self.data[SMILES_COLUMN].values
-        self.targets = self.data[TARGET_COLUMN].values
+        self.targets = self.data[self.TARGET_COLUMN].values
         
         for i in tqdm(range(len(self.data))):
             if self.smiles[i] in SMILES_TO_MOLTREE:
@@ -325,10 +325,11 @@ def train(args, model, device, loader, optimizer):
         optimizer.step()
 
 
-def eval(args, model, device, loader, scaler, train = False):
+def eval(args, model, device, loader, scaler, train = False, test = False):
     model.eval()
     y_true = []
     y_scores = []
+    X_smiles = []
 
     for step, batch in enumerate(tqdm(loader, desc="Iteration")):
         X = []
@@ -342,6 +343,7 @@ def eval(args, model, device, loader, scaler, train = False):
             pred = model(X)
 
         y_true.append(y.view(pred.shape))
+        X_smiles = X_smiles+[x.smiles for x in X]
         if train:
             y_scores.append(pred)
         else:
@@ -349,11 +351,21 @@ def eval(args, model, device, loader, scaler, train = False):
 
     y_true = torch.cat(y_true, dim = 0).cpu().numpy()
     y_scores = torch.cat(y_scores, dim = 0).cpu().numpy()
+    
+    if test:
+        test_predictions = pd.DataFrame(columns = ['smiles', 'logP', 'logP_pred'])
+        test_predictions['smiles'] = X_smiles
+        test_predictions['logP'] =y_true
+        test_predictions['logP_pred'] = y_scores
+        test_predictions.to_csv(os.path.join(args.fname, 'test_predictions.csv'))
+    else:
+        pass
+        
 
     r2 = r2_score(y_true, y_scores)
     rmse = mean_squared_error(y_true, y_scores)**0.5
 
-    return r2, rmse 
+    return r2, rmse
 
 
 
@@ -383,7 +395,8 @@ def main():
                         help='Patience of early stopping (default: 50)')
     parser.add_argument('--raw_path', type=str, default='../../../data/raw/baselines/jtree/',
                         help='path to broken smiles')
-    parser.add_argument('--dataset', type=str, default = '../../../data/3_final_data/split_data', help='root directory of dataset. For now, only classification.')
+    parser.add_argument('--dataset', type=str, default = '../../../data/3_final_data/split_data', help='root directory of dataset.')
+    parser.add_argument('--file_prefix', type=str, default = 'logp_wo_averaging', help='File prefix of data_file')
     parser.add_argument('--dataset_cv', type=str, default = '../../../data/raw/baselines/jtree/', help='root directory of dataset for cross_validation')
     parser.add_argument('--vocab_path', type=str, default = '../../../../icml18-jtnn/data/zinc/vocab.txt', help='root directory of dataset. For now, only classification.')
     parser.add_argument('--input_model_file', type=str, default = '', help='filename to read the model (if there is any)')
@@ -394,6 +407,7 @@ def main():
     parser.add_argument('--num_workers', type=int, default = 4, help='number of workers for dataset loading')
     parser.add_argument('--log_path', type=str, default='../../../data/raw/baselines/jtree/logs', help='root directory for logs')
     parser.add_argument('--model_name', type=str, default= 'MPNVAE-h450-L56-d3-beta0.005/model.iter-4', help='root directory for logs')
+    parser.add_argument('--target_column', type=str, default= 'logP', help='name of target column')
     args = parser.parse_args()
 
 
@@ -421,12 +435,18 @@ def main():
     
     
     #set up dataset
-    train_val_dataset = MoleculeDataset(os.path.join(args.dataset_cv, 'logp_wo_averaging_train_val.csv'), args)
-    test_dataset = MoleculeDataset(os.path.join(args.dataset, 'logp_wo_averaging_test.csv'), args)
+    dataset_train = pd.read_csv(os.path.join(args.dataset, args.file_prefix+'_train.csv'), index_col=0)
+    dataset_val = pd.read_csv(os.path.join(args.dataset, args.file_prefix+'_validation.csv'), index_col=0)
+    dataset_train_val = pd.concat([dataset_train, dataset_val], axis = 0).reset_index(drop = True)
+    dataset_train_val.to_csv(os.path.join(args.dataset_cv,args.file_prefix+ '_train_val.csv'),index = False)
     
-    if not os.path.exists(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle')):
-        with open(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle'), 'wb') as handle:
-              pickle.dump(SMILES_TO_MOLTREE, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    
+    train_val_dataset = MoleculeDataset(os.path.join(args.dataset_cv, args.file_prefix+'_train_val.csv'), args)
+    test_dataset = MoleculeDataset(os.path.join(args.dataset, args.file_prefix+'_test.csv'), args)
+    
+    
+    with open(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle'), 'wb') as handle:
+          pickle.dump(SMILES_TO_MOLTREE, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     print(train_val_dataset)
     print(len(test_dataset))
@@ -493,6 +513,7 @@ def main():
             writer = SummaryWriter(fname)
             with open(os.path.join(fname, 'parameters.json'), 'w') as f:
                 json.dump(vars(args), f)
+            args.fname = fname
 
         early_stopping = EarlyStopping(patience=args.patience, verbose=True, path=os.path.join(fname, args.filename + '.pth'))
 
@@ -508,7 +529,8 @@ def main():
                 print("omit the training accuracy computation")
                 train_r2, train_rmse = 0, 0
             val_r2, val_rmse = eval(args, model, device, val_loader, scaler)
-            test_r2, test_rmse = eval(args, model, device, test_loader, scaler)
+#             test_r2, test_rmse = eval(args, model, device, test_loader, scaler)
+            test_r2, test_rmse = 0, 0
 
             print("train r2: %f\ntrain rmse: %f\n val r2: %f\n val rmse: %f\ntest r2: %f\ntest rmse: %f"\
                   %(train_r2, train_rmse, val_r2, val_rmse, test_r2, test_rmse))
@@ -541,7 +563,7 @@ def main():
             model.load_state_dict(torch.load(os.path.join(fname, args.filename + '.pth')))
             train_r2, train_rmse = eval(args, model, device, train_loader, scaler, train = True)
             val_r2, val_rmse = eval(args, model, device, val_loader, scaler)
-            test_r2, test_rmse = eval(args, model, device, test_loader, scaler)
+            test_r2, test_rmse = eval(args, model, device, test_loader, scaler, test = True)
             with open(os.path.join(fname, 'logs.txt'), 'a') as f:
                 f.write('Test RMSE is '+str(test_rmse)+'\n')
                 f.write('Test R2 is '+str(test_r2)+'\n')

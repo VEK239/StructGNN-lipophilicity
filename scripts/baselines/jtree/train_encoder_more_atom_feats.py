@@ -272,10 +272,11 @@ def train(args, model, device, loader, optimizer):
         optimizer.step()
 
 
-def eval(args, model, device, loader, scaler, train = False):
+def eval(args, model, device, loader, scaler, train = False, test = False):
     model.eval()
     y_true = []
     y_scores = []
+    X_smiles = []
 
     for step, batch in enumerate(tqdm(loader, desc="Iteration")):
         X = []
@@ -289,6 +290,7 @@ def eval(args, model, device, loader, scaler, train = False):
             pred = model(X)
 
         y_true.append(y.view(pred.shape))
+        X_smiles = X_smiles+[x.smiles for x in X]
         if train:
             y_scores.append(pred)
         else:
@@ -296,11 +298,21 @@ def eval(args, model, device, loader, scaler, train = False):
 
     y_true = torch.cat(y_true, dim = 0).cpu().numpy()
     y_scores = torch.cat(y_scores, dim = 0).cpu().numpy()
+    
+    if test:
+        test_predictions = pd.DataFrame(columns = ['smiles', 'logP', 'logP_pred'])
+        test_predictions['smiles'] = X_smiles
+        test_predictions['logP'] =y_true
+        test_predictions['logP_pred'] = y_scores
+        test_predictions.to_csv(os.path.join(args.fname, 'test_predictions.csv'))
+    else:
+        pass
+        
 
     r2 = r2_score(y_true, y_scores)
     rmse = mean_squared_error(y_true, y_scores)**0.5
 
-    return r2, rmse 
+    return r2, rmse
 
 
 
@@ -434,6 +446,7 @@ def main():
         writer = SummaryWriter(fname)
         with open(os.path.join(fname, 'parameters.json'), 'w') as f:
             json.dump(vars(args), f)
+        args.fname = fname
 
     early_stopping = EarlyStopping(patience=args.patience, verbose=True, path=os.path.join(fname, args.filename + '.pth'))
 
@@ -482,7 +495,7 @@ def main():
         model.load_state_dict(torch.load(os.path.join(fname, args.filename + '.pth')))
         train_r2, train_rmse = eval(args, model, device, train_loader, scaler, train = True)
         val_r2, val_rmse = eval(args, model, device, val_loader, scaler)
-        test_r2, test_rmse = eval(args, model, device, test_loader, scaler)
+        test_r2, test_rmse = eval(args, model, device, test_loader, scaler, test = True)
         with open(os.path.join(fname, 'logs.txt'), 'a') as f:
             f.write('Test RMSE is '+str(test_rmse)+'\n')
             f.write('Test R2 is '+str(test_r2)+'\n')
