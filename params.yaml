@@ -2,7 +2,7 @@ file_prefix: logd_Lip_wo_averaging
 save_dir: ./data/raw/baselines/dmpnn/logs/exp_341/folds 
 epochs: 100     
 depth: 6        
-features_generator: null 
+features_generator: [rdkit_2d_normalized_wo_MolLogP]
 no_features_scaling: True       
 split_type: k-fold      
 num_folds: 4     

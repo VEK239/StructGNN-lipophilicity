@@ -21,7 +21,7 @@ stages:
     - file_prefix
   dmpnn_train:
     cmd: ~/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train.py
-      --dataset_type regression --num_workers 0 --config_path_yaml ./params.yaml
+      --dataset_type regression --num_workers 4 --config_path_yaml ./params.yaml
     deps:
     - ./data/3_final_data/split_data/logd_wo_averaging_test.csv
     - ./data/3_final_data/split_data/logp_wo_averaging_test.csv
