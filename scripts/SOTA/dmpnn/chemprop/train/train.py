@@ -8,10 +8,15 @@ from torch.optim import Optimizer
 from torch.optim.lr_scheduler import _LRScheduler
 from tqdm import tqdm
 
-from chemprop.args import TrainArgs
-from chemprop.data import MoleculeDataLoader, MoleculeDataset
-from chemprop.models import MoleculeModel
-from chemprop.nn_utils import compute_gnorm, compute_pnorm, NoamLR
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+
+from args import TrainArgs
+from data import MoleculeDataLoader, MoleculeDataset
+from models import MoleculeModel
+from nn_utils import compute_gnorm, compute_pnorm, NoamLR
 
 
 def train(model: MoleculeModel,

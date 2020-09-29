@@ -1,45 +1,14 @@
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-file_prefix: logd_wo_averaging
-save_dir: ./data/raw/baselines/dmpnn/logs/exp_221/folds
-epochs: 100 
-depth: 6
-features_generator: rdkit_2d_normalized_best
-no_features_scaling: True
-split_type: k-fold
-num_folds: 4
-target_column: logD
-data_path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
-separate_test_path: ./data/3_final_data/split_data/
-=======
-file_prefix: logp_wo_averaging 
-save_dir: ./data/raw/baselines/dmpnn/logs/exp_340/folds 
-=======
-file_prefix: logp_logd_Lip_wo_averaging 
-save_dir: ./data/raw/baselines/dmpnn/logs/exp_330/folds 
->>>>>>> 532b31c06f63c350b4fc12956f6b0814aa71ea96
+file_prefix: logd_Lip_wo_averaging 
+save_dir: ./data/raw/baselines/dmpnn/logs/exp_341/folds 
 epochs: 100     
 depth: 6        
-features_generator: [rdkit_2d_normalized_best]  
+features_generator: null 
 no_features_scaling: True       
 split_type: k-fold      
-<<<<<<< HEAD
 num_folds: 4     
-target_columns: [logP]     
+target_columns: [logD]     
 data_path: ./data/raw/baselines/dmpnn/  
 separate_test_path: ./data/3_final_data/split_data      
 additional_encoder: False    
 substructures_hidden_size: 300  
 hidden_size: 300        
-
->>>>>>> Stashed changes
-=======
-num_folds: 1     
-target_columns: [logD, logP]     
-data_path: ./data/3_final_data/split_data  
-separate_val_path: ./data/3_final_data/split_data
-separate_test_path: ./data/3_final_data/split_data      
-additional_encoder: False    
-substructures_hidden_size: 300  
-hidden_size: 800        
->>>>>>> 532b31c06f63c350b4fc12956f6b0814aa71ea96

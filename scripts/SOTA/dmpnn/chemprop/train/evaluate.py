@@ -1,11 +1,16 @@
 import logging
 from typing import Callable, List
 
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+
 from .predict import predict
-from chemprop.data import MoleculeDataLoader, StandardScaler
-from chemprop.models import MoleculeModel
+from data import MoleculeDataLoader, StandardScaler
+from models import MoleculeModel
 from sklearn.metrics import r2_score
-from chemprop.args import TrainArgs
+from args import TrainArgs
 
 
 def evaluate_predictions(preds: List[List[float]],

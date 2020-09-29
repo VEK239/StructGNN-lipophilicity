@@ -3,10 +3,15 @@ from typing import List
 import torch
 from tqdm import tqdm
 
-from chemprop.data import MoleculeDataLoader, MoleculeDataset, StandardScaler
-from chemprop.models import MoleculeModel
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
 
-from chemprop.args import TrainArgs
+from data import MoleculeDataLoader, MoleculeDataset, StandardScaler
+from models import MoleculeModel
+
+from args import TrainArgs
 
 
 def predict(model: MoleculeModel,

@@ -1,0 +1,61 @@
+Fold 0
+Model 0 best validation rmse = 0.527675 on epoch 44
+Model 0 test rmse logD = 0.569817
+Model 0 test R2 logD = 0.794068
+Model 0 test rmse logP = 0.441359
+Model 0 test R2 logP = 0.944049
+Ensemble test rmse  logD= 0.569817
+Ensemble test R2  logD= 0.794068
+Ensemble test rmse  logP= 0.441359
+Ensemble test R2  logP= 0.944049
+Fold 1
+Model 0 best validation rmse = 0.500201 on epoch 52
+Model 0 test rmse logD = 0.557129
+Model 0 test R2 logD = 0.803136
+Model 0 test rmse logP = 0.436604
+Model 0 test R2 logP = 0.945248
+Ensemble test rmse  logD= 0.557129
+Ensemble test R2  logD= 0.803136
+Ensemble test rmse  logP= 0.436604
+Ensemble test R2  logP= 0.945248
+Fold 2
+Model 0 best validation rmse = 0.497194 on epoch 54
+Model 0 test rmse logD = 0.553774
+Model 0 test R2 logD = 0.805500
+Model 0 test rmse logP = 0.444645
+Model 0 test R2 logP = 0.943213
+Ensemble test rmse  logD= 0.553774
+Ensemble test R2  logD= 0.805500
+Ensemble test rmse  logP= 0.444645
+Ensemble test R2  logP= 0.943213
+Fold 3
+Model 0 best validation rmse = 0.522600 on epoch 36
+Model 0 test rmse logD = 0.534958
+Model 0 test R2 logD = 0.818493
+Model 0 test rmse logP = 0.448863
+Model 0 test R2 logP = 0.942131
+Ensemble test rmse  logD= 0.534958
+Ensemble test R2  logD= 0.818493
+Ensemble test rmse  logP= 0.448863
+Ensemble test R2  logP= 0.942131
+4-fold cross validation
+	Seed 0 ==> test rmse = 0.505588
+	Seed 0 ==> test R2 = 0.869058
+	Seed 1 ==> test rmse = 0.496867
+	Seed 1 ==> test R2 = 0.874192
+	Seed 2 ==> test rmse = 0.499210
+	Seed 2 ==> test R2 = 0.874357
+	Seed 3 ==> test rmse = 0.491910
+	Seed 3 ==> test R2 = 0.880312
+Overall val rmse logD= 0.567204 +/- 0.026378
+Overall val R2 logD = 0.772124 +/- 0.019013
+Overall test rmse logD = 0.553920 +/- 0.012476
+Overall test R2 logD = 0.805299 +/- 0.008731
+Overall val rmse logP= 0.456631 +/- 0.007101
+Overall val R2 logP = 0.940107 +/- 0.002774
+Overall test rmse logP = 0.442868 +/- 0.004489
+Overall test R2 logP = 0.943660 +/- 0.001142
+Elapsed time = 4:14:02
+Fold 0
+Fold 0
+Fold 0

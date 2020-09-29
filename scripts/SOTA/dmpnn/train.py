@@ -1,9 +1,14 @@
 """Trains a chemprop model on a dataset."""
 
 import sys
-sys.path.append('./chemprop/')
-sys.path.append('./')
-from chemprop.train import chemprop_train
+
+
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+chemprop_dir = os.path.join(currentdir, 'chemprop')
+sys.path.insert(0,chemprop_dir) 
+
+from train import chemprop_train
 import pandas as pd
 import os
 import numpy as np
