@@ -192,7 +192,7 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
         substruct_type = [1 if structure_type == 'RING' else 0]
 
     features = substruct_atomic_encoding + substruct_valence_array + substruct_Hs_array + substruct_type + \
-               [substruct_formal_charge, substruct_is_aromatic, substruct_mass * 0.01, substruct_edges_sum * 0.1]
+               [substruct_formal_charge, substruct_is_aromatic, substruct_mass * 0.01, substruct_edges_sum * 0.1] 
     return tuple(features)
 
 

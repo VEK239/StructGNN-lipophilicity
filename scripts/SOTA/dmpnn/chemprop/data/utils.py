@@ -354,7 +354,7 @@ def split_data(data: MoleculeDataset,
 
         return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset(test)
     elif split_type == 'k-fold':
-        kf = KFold(n_splits=args.num_folds, shuffle=False)
+        kf = KFold(n_splits=args.num_folds, shuffle=True, random_state = 42)
 
         fold_num = 0
         for train_index, val_index in kf.split(data):

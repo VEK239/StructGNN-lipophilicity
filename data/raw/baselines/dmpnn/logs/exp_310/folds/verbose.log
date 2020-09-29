@@ -1,0 +1,2426 @@
+Fold 0
+Command line
+python ./scripts/SOTA/dmpnn/train.py --dataset_type regression --num_workers 0 --config_path_yaml ./params.yaml
+Args
+{'activation': 'ReLU',
+ 'additional_encoder': False,
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'cache_cutoff': 10000,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'class_balance': False,
+ 'config_path': None,
+ 'config_path_yaml': './params.yaml',
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'crossval_index_sets': None,
+ 'cuda': True,
+ 'data_path': './data/raw/baselines/dmpnn/train_val_dataset.csv',
+ 'dataset_type': 'regression',
+ 'depth': 6,
+ 'device': device(type='cuda'),
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 100,
+ 'features_generator': ['rdkit_wo_fragments_and_counts'],
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': False,
+ 'features_size': None,
+ 'ffn_hidden_size': 800,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'grad_clip': None,
+ 'hidden_size': 800,
+ 'ignore_columns': None,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cuda': False,
+ 'no_features_scaling': True,
+ 'num_folds': 4,
+ 'num_lrs': 1,
+ 'num_tasks': 1,
+ 'num_workers': 0,
+ 'pytorch_seed': 0,
+ 'quiet': False,
+ 'save_dir': './data/raw/baselines/dmpnn/logs/exp_310/folds/fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': './data/3_final_data/split_data/freesolv_test.csv',
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'smiles_column': None,
+ 'split_sizes': (0.8, 0.1, 0.1),
+ 'split_type': 'k-fold',
+ 'substructures_atom_messages': False,
+ 'substructures_depth': False,
+ 'substructures_hidden_size': 300,
+ 'substructures_merge': False,
+ 'substructures_undirected': False,
+ 'substructures_use_substructures': True,
+ 'symmetry_feature': False,
+ 'target_columns': ['Energy'],
+ 'task_names': ['Energy'],
+ 'test': False,
+ 'test_fold_index': None,
+ 'train_data_size': None,
+ 'undirected': False,
+ 'use_input_features': True,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 480 | train size = 360 | val size = 120 | test size = 85
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=800, bias=False)
+      (W_h): Linear(in_features=800, out_features=800, bias=False)
+      (W_o): Linear(in_features=933, out_features=800, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=895, out_features=800, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=800, out_features=1, bias=True)
+  )
+)
+Number of parameters = 2,222,401
+Moving model to cuda
+Epoch 0
+Train function
+Validation rmse Energy = 3.497870
+Validation R2 Energy = 0.374920
+Epoch 1
+Train function
+Loss = 1.3679e-02, PNorm = 52.5329, GNorm = 4.4038, lr_0 = 8.7143e-04
+Validation rmse Energy = 2.814355
+Validation R2 Energy = 0.595344
+Epoch 2
+Train function
+Loss = 7.1112e-03, PNorm = 52.6666, GNorm = 1.7077, lr_0 = 9.7024e-04
+Validation rmse Energy = 2.376561
+Validation R2 Energy = 0.711447
+Epoch 3
+Train function
+Validation rmse Energy = 2.357190
+Validation R2 Energy = 0.716131
+Epoch 4
+Train function
+Loss = 4.4878e-03, PNorm = 52.7969, GNorm = 5.2502, lr_0 = 9.3194e-04
+Validation rmse Energy = 1.826942
+Validation R2 Energy = 0.829479
+Epoch 5
+Train function
+Loss = 2.6568e-03, PNorm = 52.8682, GNorm = 1.5364, lr_0 = 9.0118e-04
+Validation rmse Energy = 1.846263
+Validation R2 Energy = 0.825853
+Epoch 6
+Train function
+Loss = 1.8304e-03, PNorm = 52.9366, GNorm = 1.9961, lr_0 = 8.6851e-04
+Loss = 9.4715e-03, PNorm = 52.9394, GNorm = 3.8096, lr_0 = 8.6560e-04
+Validation rmse Energy = 1.670297
+Validation R2 Energy = 0.857467
+Epoch 7
+Train function
+Validation rmse Energy = 1.441602
+Validation R2 Energy = 0.893826
+Epoch 8
+Train function
+Loss = 1.4353e-03, PNorm = 52.9827, GNorm = 1.5342, lr_0 = 8.3422e-04
+Validation rmse Energy = 1.529784
+Validation R2 Energy = 0.880439
+Epoch 9
+Train function
+Loss = 1.2416e-03, PNorm = 53.0275, GNorm = 0.3956, lr_0 = 8.0398e-04
+Validation rmse Energy = 1.264785
+Validation R2 Energy = 0.918274
+Epoch 10
+Train function
+Validation rmse Energy = 1.210608
+Validation R2 Energy = 0.925125
+Epoch 11
+Train function
+Loss = 7.6334e-04, PNorm = 53.0601, GNorm = 1.3484, lr_0 = 7.7484e-04
+Validation rmse Energy = 1.516949
+Validation R2 Energy = 0.882437
+Epoch 12
+Train function
+Loss = 1.2372e-03, PNorm = 53.0888, GNorm = 2.2042, lr_0 = 7.4675e-04
+Validation rmse Energy = 1.342212
+Validation R2 Energy = 0.907961
+Epoch 13
+Train function
+Loss = 1.0066e-03, PNorm = 53.1210, GNorm = 0.7146, lr_0 = 7.1969e-04
+Loss = 1.7597e-03, PNorm = 53.1240, GNorm = 0.7156, lr_0 = 7.1727e-04
+Validation rmse Energy = 1.231782
+Validation R2 Energy = 0.922483
+Epoch 14
+Train function
+Validation rmse Energy = 1.139868
+Validation R2 Energy = 0.933620
+Epoch 15
+Train function
+Loss = 5.0754e-04, PNorm = 53.1505, GNorm = 0.9761, lr_0 = 6.9360e-04
+Validation rmse Energy = 1.150681
+Validation R2 Energy = 0.932355
+Epoch 16
+Train function
+Loss = 3.6583e-04, PNorm = 53.1695, GNorm = 0.5691, lr_0 = 6.6846e-04
+Validation rmse Energy = 1.147348
+Validation R2 Energy = 0.932746
+Epoch 17
+Train function
+Validation rmse Energy = 1.090472
+Validation R2 Energy = 0.939248
+Epoch 18
+Train function
+Loss = 2.1712e-04, PNorm = 53.1961, GNorm = 0.6195, lr_0 = 6.4207e-04
+Validation rmse Energy = 1.186888
+Validation R2 Energy = 0.928031
+Epoch 19
+Train function
+Loss = 4.5730e-04, PNorm = 53.2158, GNorm = 1.3778, lr_0 = 6.1879e-04
+Validation rmse Energy = 1.116470
+Validation R2 Energy = 0.936317
+Epoch 20
+Train function
+Loss = 3.6383e-04, PNorm = 53.2369, GNorm = 1.3124, lr_0 = 5.9837e-04
+Validation rmse Energy = 1.235590
+Validation R2 Energy = 0.922003
+Epoch 21
+Train function
+Validation rmse Energy = 1.090601
+Validation R2 Energy = 0.939234
+Epoch 22
+Train function
+Loss = 2.6445e-04, PNorm = 53.2603, GNorm = 0.5219, lr_0 = 5.7475e-04
+Validation rmse Energy = 1.105019
+Validation R2 Energy = 0.937617
+Epoch 23
+Train function
+Loss = 2.6290e-04, PNorm = 53.2778, GNorm = 0.2659, lr_0 = 5.5391e-04
+Validation rmse Energy = 1.140442
+Validation R2 Energy = 0.933553
+Epoch 24
+Train function
+Loss = 2.4407e-04, PNorm = 53.2938, GNorm = 0.2775, lr_0 = 5.3383e-04
+Validation rmse Energy = 1.203550
+Validation R2 Energy = 0.925996
+Epoch 25
+Train function
+Validation rmse Energy = 1.094584
+Validation R2 Energy = 0.938789
+Epoch 26
+Train function
+Loss = 1.8462e-04, PNorm = 53.3059, GNorm = 0.8073, lr_0 = 5.1448e-04
+Validation rmse Energy = 1.117443
+Validation R2 Energy = 0.936206
+Epoch 27
+Train function
+Loss = 1.6904e-04, PNorm = 53.3167, GNorm = 0.3286, lr_0 = 4.9583e-04
+Validation rmse Energy = 1.067949
+Validation R2 Energy = 0.941732
+Epoch 28
+Train function
+Validation rmse Energy = 1.081796
+Validation R2 Energy = 0.940211
+Epoch 29
+Train function
+Loss = 1.6155e-04, PNorm = 53.3270, GNorm = 0.3394, lr_0 = 4.7626e-04
+Validation rmse Energy = 1.100227
+Validation R2 Energy = 0.938157
+Epoch 30
+Train function
+Loss = 1.3017e-04, PNorm = 53.3371, GNorm = 0.1743, lr_0 = 4.6054e-04
+Validation rmse Energy = 1.073380
+Validation R2 Energy = 0.941138
+Epoch 31
+Train function
+Loss = 1.3791e-04, PNorm = 53.3448, GNorm = 0.5442, lr_0 = 4.4384e-04
+Loss = 6.5764e-04, PNorm = 53.3456, GNorm = 0.7994, lr_0 = 4.4236e-04
+Validation rmse Energy = 1.044165
+Validation R2 Energy = 0.944299
+Epoch 32
+Train function
+Validation rmse Energy = 1.026119
+Validation R2 Energy = 0.946207
+Epoch 33
+Train function
+Loss = 1.1316e-04, PNorm = 53.3526, GNorm = 0.3387, lr_0 = 4.2632e-04
+Validation rmse Energy = 1.055861
+Validation R2 Energy = 0.943044
+Epoch 34
+Train function
+Loss = 1.3668e-04, PNorm = 53.3605, GNorm = 0.5824, lr_0 = 4.1087e-04
+Validation rmse Energy = 1.053267
+Validation R2 Energy = 0.943323
+Epoch 35
+Train function
+Validation rmse Energy = 1.042853
+Validation R2 Energy = 0.944438
+Epoch 36
+Train function
+Loss = 1.3031e-04, PNorm = 53.3673, GNorm = 0.6689, lr_0 = 3.9597e-04
+Validation rmse Energy = 1.057462
+Validation R2 Energy = 0.942871
+Epoch 37
+Train function
+Loss = 6.7353e-05, PNorm = 53.3744, GNorm = 0.5676, lr_0 = 3.8162e-04
+Validation rmse Energy = 1.042488
+Validation R2 Energy = 0.944477
+Epoch 38
+Train function
+Loss = 8.4034e-05, PNorm = 53.3804, GNorm = 0.3894, lr_0 = 3.6779e-04
+Loss = 2.0202e-04, PNorm = 53.3810, GNorm = 0.2253, lr_0 = 3.6656e-04
+Validation rmse Energy = 1.091768
+Validation R2 Energy = 0.939104
+Epoch 39
+Train function
+Validation rmse Energy = 1.058948
+Validation R2 Energy = 0.942710
+Epoch 40
+Train function
+Loss = 6.9125e-05, PNorm = 53.3862, GNorm = 0.1334, lr_0 = 3.5446e-04
+Validation rmse Energy = 1.063886
+Validation R2 Energy = 0.942175
+Epoch 41
+Train function
+Loss = 6.4829e-05, PNorm = 53.3914, GNorm = 0.4292, lr_0 = 3.4161e-04
+Validation rmse Energy = 1.054919
+Validation R2 Energy = 0.943145
+Epoch 42
+Train function
+Validation rmse Energy = 1.040092
+Validation R2 Energy = 0.944732
+Epoch 43
+Train function
+Loss = 4.2382e-05, PNorm = 53.3964, GNorm = 0.1386, lr_0 = 3.2812e-04
+Validation rmse Energy = 1.047755
+Validation R2 Energy = 0.943915
+Epoch 44
+Train function
+Loss = 5.8457e-05, PNorm = 53.4005, GNorm = 0.1589, lr_0 = 3.1623e-04
+Validation rmse Energy = 1.049302
+Validation R2 Energy = 0.943749
+Epoch 45
+Train function
+Loss = 4.5807e-05, PNorm = 53.4046, GNorm = 0.0976, lr_0 = 3.0579e-04
+Validation rmse Energy = 1.040871
+Validation R2 Energy = 0.944649
+Epoch 46
+Train function
+Validation rmse Energy = 1.036516
+Validation R2 Energy = 0.945112
+Epoch 47
+Train function
+Loss = 5.0743e-05, PNorm = 53.4096, GNorm = 0.2570, lr_0 = 2.9372e-04
+Validation rmse Energy = 1.039516
+Validation R2 Energy = 0.944793
+Epoch 48
+Train function
+Loss = 4.4739e-05, PNorm = 53.4146, GNorm = 0.1510, lr_0 = 2.8307e-04
+Validation rmse Energy = 1.032716
+Validation R2 Energy = 0.945513
+Epoch 49
+Train function
+Loss = 4.1088e-05, PNorm = 53.4176, GNorm = 0.1116, lr_0 = 2.7281e-04
+Validation rmse Energy = 1.043704
+Validation R2 Energy = 0.944348
+Epoch 50
+Train function
+Validation rmse Energy = 1.038195
+Validation R2 Energy = 0.944934
+Epoch 51
+Train function
+Loss = 3.8960e-05, PNorm = 53.4209, GNorm = 0.4875, lr_0 = 2.6292e-04
+Validation rmse Energy = 1.038727
+Validation R2 Energy = 0.944877
+Epoch 52
+Train function
+Loss = 4.1284e-05, PNorm = 53.4240, GNorm = 0.3467, lr_0 = 2.5339e-04
+Validation rmse Energy = 1.035867
+Validation R2 Energy = 0.945180
+Epoch 53
+Train function
+Validation rmse Energy = 1.029901
+Validation R2 Energy = 0.945810
+Epoch 54
+Train function
+Loss = 3.4446e-05, PNorm = 53.4269, GNorm = 0.2136, lr_0 = 2.4339e-04
+Validation rmse Energy = 1.033837
+Validation R2 Energy = 0.945395
+Epoch 55
+Train function
+Loss = 2.6995e-05, PNorm = 53.4301, GNorm = 0.1760, lr_0 = 2.3535e-04
+Validation rmse Energy = 1.035530
+Validation R2 Energy = 0.945216
+Epoch 56
+Train function
+Loss = 3.0903e-05, PNorm = 53.4328, GNorm = 0.1879, lr_0 = 2.2682e-04
+Loss = 6.7662e-05, PNorm = 53.4330, GNorm = 0.0923, lr_0 = 2.2606e-04
+Validation rmse Energy = 1.035272
+Validation R2 Energy = 0.945243
+Epoch 57
+Train function
+Validation rmse Energy = 1.044270
+Validation R2 Energy = 0.944287
+Epoch 58
+Train function
+Loss = 2.8914e-05, PNorm = 53.4356, GNorm = 0.1748, lr_0 = 2.1787e-04
+Validation rmse Energy = 1.039110
+Validation R2 Energy = 0.944837
+Epoch 59
+Train function
+Loss = 2.3084e-05, PNorm = 53.4378, GNorm = 0.0847, lr_0 = 2.0997e-04
+Validation rmse Energy = 1.029559
+Validation R2 Energy = 0.945846
+Epoch 60
+Train function
+Validation rmse Energy = 1.039551
+Validation R2 Energy = 0.944790
+Epoch 61
+Train function
+Loss = 2.8500e-05, PNorm = 53.4402, GNorm = 0.0860, lr_0 = 2.0236e-04
+Validation rmse Energy = 1.037058
+Validation R2 Energy = 0.945054
+Epoch 62
+Train function
+Loss = 3.0560e-05, PNorm = 53.4430, GNorm = 0.2530, lr_0 = 1.9502e-04
+Validation rmse Energy = 1.039711
+Validation R2 Energy = 0.944773
+Epoch 63
+Train function
+Loss = 2.5638e-05, PNorm = 53.4457, GNorm = 0.0902, lr_0 = 1.8795e-04
+Loss = 3.3858e-05, PNorm = 53.4460, GNorm = 0.1829, lr_0 = 1.8732e-04
+Validation rmse Energy = 1.039505
+Validation R2 Energy = 0.944795
+Epoch 64
+Train function
+Validation rmse Energy = 1.041769
+Validation R2 Energy = 0.944554
+Epoch 65
+Train function
+Loss = 2.5799e-05, PNorm = 53.4482, GNorm = 0.1144, lr_0 = 1.8114e-04
+Validation rmse Energy = 1.036192
+Validation R2 Energy = 0.945146
+Epoch 66
+Train function
+Loss = 1.6906e-05, PNorm = 53.4498, GNorm = 0.0775, lr_0 = 1.7458e-04
+Validation rmse Energy = 1.032733
+Validation R2 Energy = 0.945512
+Epoch 67
+Train function
+Validation rmse Energy = 1.046411
+Validation R2 Energy = 0.944059
+Epoch 68
+Train function
+Loss = 1.6478e-05, PNorm = 53.4519, GNorm = 0.1177, lr_0 = 1.6768e-04
+Validation rmse Energy = 1.041479
+Validation R2 Energy = 0.944585
+Epoch 69
+Train function
+Loss = 2.6453e-05, PNorm = 53.4533, GNorm = 0.0592, lr_0 = 1.6161e-04
+Validation rmse Energy = 1.041935
+Validation R2 Energy = 0.944536
+Epoch 70
+Train function
+Loss = 2.3474e-05, PNorm = 53.4550, GNorm = 0.1315, lr_0 = 1.5627e-04
+Validation rmse Energy = 1.038341
+Validation R2 Energy = 0.944918
+Epoch 71
+Train function
+Validation rmse Energy = 1.033377
+Validation R2 Energy = 0.945444
+Epoch 72
+Train function
+Loss = 2.1497e-05, PNorm = 53.4565, GNorm = 0.1428, lr_0 = 1.5010e-04
+Validation rmse Energy = 1.038758
+Validation R2 Energy = 0.944874
+Epoch 73
+Train function
+Loss = 1.9057e-05, PNorm = 53.4582, GNorm = 0.0843, lr_0 = 1.4466e-04
+Validation rmse Energy = 1.037069
+Validation R2 Energy = 0.945053
+Epoch 74
+Train function
+Loss = 2.1992e-05, PNorm = 53.4597, GNorm = 0.1330, lr_0 = 1.3942e-04
+Validation rmse Energy = 1.036022
+Validation R2 Energy = 0.945164
+Epoch 75
+Train function
+Validation rmse Energy = 1.039684
+Validation R2 Energy = 0.944776
+Epoch 76
+Train function
+Loss = 1.8207e-05, PNorm = 53.4611, GNorm = 0.0615, lr_0 = 1.3436e-04
+Validation rmse Energy = 1.040332
+Validation R2 Energy = 0.944707
+Epoch 77
+Train function
+Loss = 1.9593e-05, PNorm = 53.4625, GNorm = 0.0491, lr_0 = 1.2949e-04
+Validation rmse Energy = 1.033864
+Validation R2 Energy = 0.945392
+Epoch 78
+Train function
+Validation rmse Energy = 1.034572
+Validation R2 Energy = 0.945317
+Epoch 79
+Train function
+Loss = 2.0334e-05, PNorm = 53.4640, GNorm = 0.1786, lr_0 = 1.2438e-04
+Validation rmse Energy = 1.034206
+Validation R2 Energy = 0.945356
+Epoch 80
+Train function
+Loss = 1.6566e-05, PNorm = 53.4653, GNorm = 0.0451, lr_0 = 1.2027e-04
+Validation rmse Energy = 1.036075
+Validation R2 Energy = 0.945158
+Epoch 81
+Train function
+Loss = 1.7421e-05, PNorm = 53.4666, GNorm = 0.1867, lr_0 = 1.1592e-04
+Loss = 4.5777e-05, PNorm = 53.4667, GNorm = 0.1128, lr_0 = 1.1553e-04
+Validation rmse Energy = 1.039377
+Validation R2 Energy = 0.944808
+Epoch 82
+Train function
+Validation rmse Energy = 1.034932
+Validation R2 Energy = 0.945279
+Epoch 83
+Train function
+Loss = 2.0091e-05, PNorm = 53.4680, GNorm = 0.1368, lr_0 = 1.1134e-04
+Validation rmse Energy = 1.029065
+Validation R2 Energy = 0.945898
+Epoch 84
+Train function
+Loss = 1.7414e-05, PNorm = 53.4691, GNorm = 0.0615, lr_0 = 1.0730e-04
+Validation rmse Energy = 1.033482
+Validation R2 Energy = 0.945433
+Epoch 85
+Train function
+Validation rmse Energy = 1.042049
+Validation R2 Energy = 0.944524
+Epoch 86
+Train function
+Loss = 1.0604e-05, PNorm = 53.4702, GNorm = 0.1010, lr_0 = 1.0341e-04
+Validation rmse Energy = 1.028484
+Validation R2 Energy = 0.945959
+Epoch 87
+Train function
+Loss = 1.6999e-05, PNorm = 53.4710, GNorm = 0.0443, lr_0 = 1.0000e-04
+Validation rmse Energy = 1.039400
+Validation R2 Energy = 0.944806
+Epoch 88
+Train function
+Loss = 1.7343e-05, PNorm = 53.4721, GNorm = 0.0793, lr_0 = 1.0000e-04
+Loss = 3.5319e-05, PNorm = 53.4722, GNorm = 0.0680, lr_0 = 1.0000e-04
+Validation rmse Energy = 1.039395
+Validation R2 Energy = 0.944806
+Epoch 89
+Train function
+Validation rmse Energy = 1.033895
+Validation R2 Energy = 0.945389
+Epoch 90
+Train function
+Loss = 1.0083e-05, PNorm = 53.4732, GNorm = 0.0535, lr_0 = 1.0000e-04
+Validation rmse Energy = 1.030368
+Validation R2 Energy = 0.945761
+Epoch 91
+Train function
+Loss = 1.5488e-05, PNorm = 53.4743, GNorm = 0.0641, lr_0 = 1.0000e-04
+Validation rmse Energy = 1.036338
+Validation R2 Energy = 0.945130
+Epoch 92
+Train function
+Validation rmse Energy = 1.039241
+Validation R2 Energy = 0.944823
+Epoch 93
+Train function
+Loss = 1.6886e-05, PNorm = 53.4756, GNorm = 0.0717, lr_0 = 1.0000e-04
+Validation rmse Energy = 1.033225
+Validation R2 Energy = 0.945460
+Epoch 94
+Train function
+Loss = 1.1503e-05, PNorm = 53.4767, GNorm = 0.1452, lr_0 = 1.0000e-04
+Validation rmse Energy = 1.029962
+Validation R2 Energy = 0.945804
+Epoch 95
+Train function
+Loss = 1.4861e-05, PNorm = 53.4777, GNorm = 0.1291, lr_0 = 1.0000e-04
+Validation rmse Energy = 1.029739
+Validation R2 Energy = 0.945827
+Epoch 96
+Train function
+Validation rmse Energy = 1.038020
+Validation R2 Energy = 0.944952
+Epoch 97
+Train function
+Loss = 1.4201e-05, PNorm = 53.4787, GNorm = 0.0723, lr_0 = 1.0000e-04
+Validation rmse Energy = 1.042368
+Validation R2 Energy = 0.944490
+Epoch 98
+Train function
+Loss = 1.8347e-05, PNorm = 53.4797, GNorm = 0.0760, lr_0 = 1.0000e-04
+Validation rmse Energy = 1.032483
+Validation R2 Energy = 0.945538
+Epoch 99
+Train function
+Loss = 2.1778e-05, PNorm = 53.4809, GNorm = 0.3519, lr_0 = 1.0000e-04
+Validation rmse Energy = 1.032271
+Validation R2 Energy = 0.945560
+Model 0 best validation rmse = 1.026119 on epoch 32
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Moving model to cuda
+Model 0 test rmse Energy = 1.165181
+Model 0 test R2 Energy = 0.918778
+Ensemble test rmse  Energy= 1.165181
+Ensemble test R2  Energy= 0.918778
+Fold 1
+Command line
+python ./scripts/SOTA/dmpnn/train.py --dataset_type regression --num_workers 0 --config_path_yaml ./params.yaml
+Args
+{'activation': 'ReLU',
+ 'additional_encoder': False,
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'cache_cutoff': 10000,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'class_balance': False,
+ 'config_path': None,
+ 'config_path_yaml': './params.yaml',
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'crossval_index_sets': None,
+ 'cuda': True,
+ 'data_path': './data/raw/baselines/dmpnn/train_val_dataset.csv',
+ 'dataset_type': 'regression',
+ 'depth': 6,
+ 'device': device(type='cuda'),
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 100,
+ 'features_generator': ['rdkit_wo_fragments_and_counts'],
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': False,
+ 'features_size': 95,
+ 'ffn_hidden_size': 800,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'grad_clip': None,
+ 'hidden_size': 800,
+ 'ignore_columns': None,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cuda': False,
+ 'no_features_scaling': True,
+ 'num_folds': 4,
+ 'num_lrs': 1,
+ 'num_tasks': 1,
+ 'num_workers': 0,
+ 'pytorch_seed': 0,
+ 'quiet': False,
+ 'save_dir': './data/raw/baselines/dmpnn/logs/exp_310/folds/fold_1',
+ 'save_smiles_splits': False,
+ 'seed': 1,
+ 'separate_test_features_path': None,
+ 'separate_test_path': './data/3_final_data/split_data/freesolv_test.csv',
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'smiles_column': None,
+ 'split_sizes': (0.8, 0.1, 0.1),
+ 'split_type': 'k-fold',
+ 'substructures_atom_messages': False,
+ 'substructures_depth': False,
+ 'substructures_hidden_size': 300,
+ 'substructures_merge': False,
+ 'substructures_undirected': False,
+ 'substructures_use_substructures': True,
+ 'symmetry_feature': False,
+ 'target_columns': ['Energy'],
+ 'task_names': ['Energy'],
+ 'test': False,
+ 'test_fold_index': None,
+ 'train_data_size': 360,
+ 'undirected': False,
+ 'use_input_features': True,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 1
+Total size = 480 | train size = 360 | val size = 120 | test size = 85
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=800, bias=False)
+      (W_h): Linear(in_features=800, out_features=800, bias=False)
+      (W_o): Linear(in_features=933, out_features=800, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=895, out_features=800, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=800, out_features=1, bias=True)
+  )
+)
+Number of parameters = 2,222,401
+Moving model to cuda
+Epoch 0
+Train function
+Validation rmse Energy = 2.336135
+Validation R2 Energy = 0.559600
+Epoch 1
+Train function
+Loss = 1.1154e-02, PNorm = 52.5353, GNorm = 2.4716, lr_0 = 8.7143e-04
+Validation rmse Energy = 2.133472
+Validation R2 Energy = 0.632696
+Epoch 2
+Train function
+Loss = 7.0705e-03, PNorm = 52.6689, GNorm = 3.3106, lr_0 = 9.7024e-04
+Validation rmse Energy = 1.773779
+Validation R2 Energy = 0.746107
+Epoch 3
+Train function
+Validation rmse Energy = 1.393806
+Validation R2 Energy = 0.843232
+Epoch 4
+Train function
+Loss = 3.7236e-03, PNorm = 52.7924, GNorm = 2.1701, lr_0 = 9.3194e-04
+Validation rmse Energy = 1.280932
+Validation R2 Energy = 0.867595
+Epoch 5
+Train function
+Loss = 2.1126e-03, PNorm = 52.8691, GNorm = 3.1921, lr_0 = 9.0118e-04
+Validation rmse Energy = 1.100017
+Validation R2 Energy = 0.902355
+Epoch 6
+Train function
+Loss = 1.5576e-03, PNorm = 52.9229, GNorm = 2.6174, lr_0 = 8.6851e-04
+Loss = 5.1188e-03, PNorm = 52.9264, GNorm = 1.0079, lr_0 = 8.6560e-04
+Validation rmse Energy = 1.180887
+Validation R2 Energy = 0.887470
+Epoch 7
+Train function
+Validation rmse Energy = 1.341757
+Validation R2 Energy = 0.854722
+Epoch 8
+Train function
+Loss = 9.0137e-04, PNorm = 52.9665, GNorm = 0.8939, lr_0 = 8.3422e-04
+Validation rmse Energy = 1.212005
+Validation R2 Energy = 0.881461
+Epoch 9
+Train function
+Loss = 8.0505e-04, PNorm = 52.9958, GNorm = 1.1215, lr_0 = 8.0398e-04
+Validation rmse Energy = 0.977605
+Validation R2 Energy = 0.922878
+Epoch 10
+Train function
+Validation rmse Energy = 0.962061
+Validation R2 Energy = 0.925311
+Epoch 11
+Train function
+Loss = 7.5323e-04, PNorm = 53.0242, GNorm = 1.0046, lr_0 = 7.7484e-04
+Validation rmse Energy = 0.957666
+Validation R2 Energy = 0.925992
+Epoch 12
+Train function
+Loss = 6.9242e-04, PNorm = 53.0497, GNorm = 1.1129, lr_0 = 7.4675e-04
+Validation rmse Energy = 1.115462
+Validation R2 Energy = 0.899594
+Epoch 13
+Train function
+Loss = 9.4194e-04, PNorm = 53.0774, GNorm = 0.8515, lr_0 = 7.1969e-04
+Loss = 9.9516e-03, PNorm = 53.0796, GNorm = 3.9653, lr_0 = 7.1727e-04
+Validation rmse Energy = 1.051328
+Validation R2 Energy = 0.910808
+Epoch 14
+Train function
+Validation rmse Energy = 0.923495
+Validation R2 Energy = 0.931179
+Epoch 15
+Train function
+Loss = 6.4222e-04, PNorm = 53.1045, GNorm = 1.8368, lr_0 = 6.9360e-04
+Validation rmse Energy = 1.015036
+Validation R2 Energy = 0.916859
+Epoch 16
+Train function
+Loss = 5.3457e-04, PNorm = 53.1320, GNorm = 1.9654, lr_0 = 6.6846e-04
+Validation rmse Energy = 0.972430
+Validation R2 Energy = 0.923692
+Epoch 17
+Train function
+Validation rmse Energy = 0.802634
+Validation R2 Energy = 0.948014
+Epoch 18
+Train function
+Loss = 3.1849e-04, PNorm = 53.1560, GNorm = 0.2323, lr_0 = 6.4207e-04
+Validation rmse Energy = 0.873353
+Validation R2 Energy = 0.938450
+Epoch 19
+Train function
+Loss = 2.7061e-04, PNorm = 53.1723, GNorm = 0.4140, lr_0 = 6.1879e-04
+Validation rmse Energy = 0.815123
+Validation R2 Energy = 0.946384
+Epoch 20
+Train function
+Loss = 3.6773e-04, PNorm = 53.1876, GNorm = 0.3190, lr_0 = 5.9837e-04
+Validation rmse Energy = 0.914865
+Validation R2 Energy = 0.932459
+Epoch 21
+Train function
+Validation rmse Energy = 0.882568
+Validation R2 Energy = 0.937144
+Epoch 22
+Train function
+Loss = 4.1252e-04, PNorm = 53.1940, GNorm = 0.7535, lr_0 = 5.7475e-04
+Validation rmse Energy = 0.928884
+Validation R2 Energy = 0.930374
+Epoch 23
+Train function
+Loss = 4.1268e-04, PNorm = 53.2191, GNorm = 0.4413, lr_0 = 5.5391e-04
+Validation rmse Energy = 0.970479
+Validation R2 Energy = 0.923998
+Epoch 24
+Train function
+Loss = 3.5298e-04, PNorm = 53.2244, GNorm = 1.0646, lr_0 = 5.3383e-04
+Validation rmse Energy = 0.887232
+Validation R2 Energy = 0.936478
+Epoch 25
+Train function
+Validation rmse Energy = 0.855676
+Validation R2 Energy = 0.940916
+Epoch 26
+Train function
+Loss = 4.2463e-04, PNorm = 53.2464, GNorm = 0.3936, lr_0 = 5.1448e-04
+Validation rmse Energy = 0.922548
+Validation R2 Energy = 0.931320
+Epoch 27
+Train function
+Loss = 3.2191e-04, PNorm = 53.2598, GNorm = 0.5262, lr_0 = 4.9583e-04
+Validation rmse Energy = 0.897126
+Validation R2 Energy = 0.935053
+Epoch 28
+Train function
+Validation rmse Energy = 0.814658
+Validation R2 Energy = 0.946445
+Epoch 29
+Train function
+Loss = 1.9629e-04, PNorm = 53.2717, GNorm = 0.8660, lr_0 = 4.7626e-04
+Validation rmse Energy = 0.843643
+Validation R2 Energy = 0.942566
+Epoch 30
+Train function
+Loss = 1.5077e-04, PNorm = 53.2805, GNorm = 0.3290, lr_0 = 4.6054e-04
+Validation rmse Energy = 0.861289
+Validation R2 Energy = 0.940138
+Epoch 31
+Train function
+Loss = 1.4487e-04, PNorm = 53.2878, GNorm = 0.5054, lr_0 = 4.4384e-04
+Loss = 3.7624e-04, PNorm = 53.2887, GNorm = 0.2249, lr_0 = 4.4236e-04
+Validation rmse Energy = 0.828200
+Validation R2 Energy = 0.944649
+Epoch 32
+Train function
+Validation rmse Energy = 0.846155
+Validation R2 Energy = 0.942223
+Epoch 33
+Train function
+Loss = 1.1330e-04, PNorm = 53.2965, GNorm = 0.5057, lr_0 = 4.2632e-04
+Validation rmse Energy = 0.827957
+Validation R2 Energy = 0.944682
+Epoch 34
+Train function
+Loss = 1.4279e-04, PNorm = 53.3046, GNorm = 0.8078, lr_0 = 4.1087e-04
+Validation rmse Energy = 0.847374
+Validation R2 Energy = 0.942057
+Epoch 35
+Train function
+Validation rmse Energy = 0.811864
+Validation R2 Energy = 0.946811
+Epoch 36
+Train function
+Loss = 1.1313e-04, PNorm = 53.3119, GNorm = 0.6899, lr_0 = 3.9597e-04
+Validation rmse Energy = 0.830416
+Validation R2 Energy = 0.944353
+Epoch 37
+Train function
+Loss = 6.3055e-05, PNorm = 53.3187, GNorm = 0.1316, lr_0 = 3.8162e-04
+Validation rmse Energy = 0.815718
+Validation R2 Energy = 0.946305
+Epoch 38
+Train function
+Loss = 1.6148e-04, PNorm = 53.3278, GNorm = 0.2138, lr_0 = 3.6779e-04
+Loss = 1.1258e-03, PNorm = 53.3281, GNorm = 0.6252, lr_0 = 3.6656e-04
+Validation rmse Energy = 0.894086
+Validation R2 Energy = 0.935492
+Epoch 39
+Train function
+Validation rmse Energy = 0.856258
+Validation R2 Energy = 0.940836
+Epoch 40
+Train function
+Loss = 1.2474e-04, PNorm = 53.3314, GNorm = 0.2722, lr_0 = 3.5446e-04
+Validation rmse Energy = 0.839387
+Validation R2 Energy = 0.943144
+Epoch 41
+Train function
+Loss = 9.0203e-05, PNorm = 53.3406, GNorm = 0.2784, lr_0 = 3.4161e-04
+Validation rmse Energy = 0.845142
+Validation R2 Energy = 0.942362
+Epoch 42
+Train function
+Validation rmse Energy = 0.816308
+Validation R2 Energy = 0.946228
+Epoch 43
+Train function
+Loss = 6.8828e-05, PNorm = 53.3460, GNorm = 0.2340, lr_0 = 3.2812e-04
+Validation rmse Energy = 0.808655
+Validation R2 Energy = 0.947231
+Epoch 44
+Train function
+Loss = 8.2812e-05, PNorm = 53.3512, GNorm = 0.5690, lr_0 = 3.1623e-04
+Validation rmse Energy = 0.815711
+Validation R2 Energy = 0.946306
+Epoch 45
+Train function
+Loss = 5.9921e-05, PNorm = 53.3565, GNorm = 0.3959, lr_0 = 3.0579e-04
+Validation rmse Energy = 0.819594
+Validation R2 Energy = 0.945794
+Epoch 46
+Train function
+Validation rmse Energy = 0.806898
+Validation R2 Energy = 0.947460
+Epoch 47
+Train function
+Loss = 4.0718e-05, PNorm = 53.3612, GNorm = 0.1577, lr_0 = 2.9372e-04
+Validation rmse Energy = 0.808091
+Validation R2 Energy = 0.947305
+Epoch 48
+Train function
+Loss = 4.2604e-05, PNorm = 53.3652, GNorm = 0.3296, lr_0 = 2.8307e-04
+Validation rmse Energy = 0.811830
+Validation R2 Energy = 0.946816
+Epoch 49
+Train function
+Loss = 7.4068e-05, PNorm = 53.3699, GNorm = 0.9292, lr_0 = 2.7281e-04
+Validation rmse Energy = 0.799347
+Validation R2 Energy = 0.948439
+Epoch 50
+Train function
+Validation rmse Energy = 0.801247
+Validation R2 Energy = 0.948194
+Epoch 51
+Train function
+Loss = 3.6311e-05, PNorm = 53.3746, GNorm = 0.2768, lr_0 = 2.6292e-04
+Validation rmse Energy = 0.806203
+Validation R2 Energy = 0.947551
+Epoch 52
+Train function
+Loss = 3.7167e-05, PNorm = 53.3786, GNorm = 0.2329, lr_0 = 2.5339e-04
+Validation rmse Energy = 0.800113
+Validation R2 Energy = 0.948340
+Epoch 53
+Train function
+Validation rmse Energy = 0.800887
+Validation R2 Energy = 0.948240
+Epoch 54
+Train function
+Loss = 5.7302e-05, PNorm = 53.3830, GNorm = 0.3413, lr_0 = 2.4339e-04
+Validation rmse Energy = 0.793485
+Validation R2 Energy = 0.949192
+Epoch 55
+Train function
+Loss = 3.4552e-05, PNorm = 53.3862, GNorm = 0.2285, lr_0 = 2.3535e-04
+Validation rmse Energy = 0.797459
+Validation R2 Energy = 0.948682
+Epoch 56
+Train function
+Loss = 3.3455e-05, PNorm = 53.3898, GNorm = 0.3168, lr_0 = 2.2682e-04
+Loss = 1.1713e-04, PNorm = 53.3901, GNorm = 0.2082, lr_0 = 2.2606e-04
+Validation rmse Energy = 0.792353
+Validation R2 Energy = 0.949337
+Epoch 57
+Train function
+Validation rmse Energy = 0.784544
+Validation R2 Energy = 0.950331
+Epoch 58
+Train function
+Loss = 3.3790e-05, PNorm = 53.3934, GNorm = 0.1645, lr_0 = 2.1787e-04
+Validation rmse Energy = 0.798688
+Validation R2 Energy = 0.948524
+Epoch 59
+Train function
+Loss = 2.6409e-05, PNorm = 53.3961, GNorm = 0.1021, lr_0 = 2.0997e-04
+Validation rmse Energy = 0.798962
+Validation R2 Energy = 0.948489
+Epoch 60
+Train function
+Validation rmse Energy = 0.798161
+Validation R2 Energy = 0.948592
+Epoch 61
+Train function
+Loss = 2.8108e-05, PNorm = 53.3996, GNorm = 0.3302, lr_0 = 2.0236e-04
+Validation rmse Energy = 0.793424
+Validation R2 Energy = 0.949200
+Epoch 62
+Train function
+Loss = 2.7401e-05, PNorm = 53.4027, GNorm = 0.2448, lr_0 = 1.9502e-04
+Validation rmse Energy = 0.801966
+Validation R2 Energy = 0.948100
+Epoch 63
+Train function
+Loss = 3.5058e-05, PNorm = 53.4052, GNorm = 0.3736, lr_0 = 1.8795e-04
+Loss = 9.6731e-05, PNorm = 53.4056, GNorm = 0.1440, lr_0 = 1.8732e-04
+Validation rmse Energy = 0.793337
+Validation R2 Energy = 0.949211
+Epoch 64
+Train function
+Validation rmse Energy = 0.805413
+Validation R2 Energy = 0.947653
+Epoch 65
+Train function
+Loss = 3.4912e-05, PNorm = 53.4078, GNorm = 0.1168, lr_0 = 1.8114e-04
+Validation rmse Energy = 0.786575
+Validation R2 Energy = 0.950073
+Epoch 66
+Train function
+Loss = 2.7720e-05, PNorm = 53.4099, GNorm = 0.2176, lr_0 = 1.7458e-04
+Validation rmse Energy = 0.793523
+Validation R2 Energy = 0.949187
+Epoch 67
+Train function
+Validation rmse Energy = 0.791680
+Validation R2 Energy = 0.949423
+Epoch 68
+Train function
+Loss = 2.3650e-05, PNorm = 53.4128, GNorm = 0.1267, lr_0 = 1.6768e-04
+Validation rmse Energy = 0.797994
+Validation R2 Energy = 0.948613
+Epoch 69
+Train function
+Loss = 2.7077e-05, PNorm = 53.4150, GNorm = 0.0625, lr_0 = 1.6161e-04
+Validation rmse Energy = 0.790642
+Validation R2 Energy = 0.949556
+Epoch 70
+Train function
+Loss = 2.5654e-05, PNorm = 53.4169, GNorm = 0.2688, lr_0 = 1.5627e-04
+Validation rmse Energy = 0.787916
+Validation R2 Energy = 0.949903
+Epoch 71
+Train function
+Validation rmse Energy = 0.791027
+Validation R2 Energy = 0.949507
+Epoch 72
+Train function
+Loss = 1.8736e-05, PNorm = 53.4193, GNorm = 0.1016, lr_0 = 1.5010e-04
+Validation rmse Energy = 0.786906
+Validation R2 Energy = 0.950031
+Epoch 73
+Train function
+Loss = 2.1798e-05, PNorm = 53.4214, GNorm = 0.2442, lr_0 = 1.4466e-04
+Validation rmse Energy = 0.793824
+Validation R2 Energy = 0.949149
+Epoch 74
+Train function
+Loss = 2.0458e-05, PNorm = 53.4230, GNorm = 0.1635, lr_0 = 1.3942e-04
+Validation rmse Energy = 0.789131
+Validation R2 Energy = 0.949748
+Epoch 75
+Train function
+Validation rmse Energy = 0.785798
+Validation R2 Energy = 0.950172
+Epoch 76
+Train function
+Loss = 1.5944e-05, PNorm = 53.4248, GNorm = 0.0958, lr_0 = 1.3436e-04
+Validation rmse Energy = 0.789772
+Validation R2 Energy = 0.949667
+Epoch 77
+Train function
+Loss = 1.7658e-05, PNorm = 53.4264, GNorm = 0.0709, lr_0 = 1.2949e-04
+Validation rmse Energy = 0.791648
+Validation R2 Energy = 0.949427
+Epoch 78
+Train function
+Validation rmse Energy = 0.787203
+Validation R2 Energy = 0.949994
+Epoch 79
+Train function
+Loss = 1.4917e-05, PNorm = 53.4282, GNorm = 0.0480, lr_0 = 1.2438e-04
+Validation rmse Energy = 0.790235
+Validation R2 Energy = 0.949608
+Epoch 80
+Train function
+Loss = 1.5973e-05, PNorm = 53.4298, GNorm = 0.0485, lr_0 = 1.2027e-04
+Validation rmse Energy = 0.792103
+Validation R2 Energy = 0.949369
+Epoch 81
+Train function
+Loss = 1.6491e-05, PNorm = 53.4310, GNorm = 0.1394, lr_0 = 1.1592e-04
+Loss = 2.3231e-04, PNorm = 53.4311, GNorm = 0.2876, lr_0 = 1.1553e-04
+Validation rmse Energy = 0.792308
+Validation R2 Energy = 0.949343
+Epoch 82
+Train function
+Validation rmse Energy = 0.790358
+Validation R2 Energy = 0.949592
+Epoch 83
+Train function
+Loss = 1.4900e-05, PNorm = 53.4326, GNorm = 0.1050, lr_0 = 1.1134e-04
+Validation rmse Energy = 0.785377
+Validation R2 Energy = 0.950225
+Epoch 84
+Train function
+Loss = 1.3153e-05, PNorm = 53.4339, GNorm = 0.1457, lr_0 = 1.0730e-04
+Validation rmse Energy = 0.791022
+Validation R2 Energy = 0.949507
+Epoch 85
+Train function
+Validation rmse Energy = 0.794313
+Validation R2 Energy = 0.949086
+Epoch 86
+Train function
+Loss = 1.1677e-05, PNorm = 53.4355, GNorm = 0.1601, lr_0 = 1.0341e-04
+Validation rmse Energy = 0.783104
+Validation R2 Energy = 0.950513
+Epoch 87
+Train function
+Loss = 1.9218e-05, PNorm = 53.4368, GNorm = 0.1142, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.797544
+Validation R2 Energy = 0.948671
+Epoch 88
+Train function
+Loss = 1.5648e-05, PNorm = 53.4382, GNorm = 0.1280, lr_0 = 1.0000e-04
+Loss = 2.0625e-04, PNorm = 53.4382, GNorm = 0.2668, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.791749
+Validation R2 Energy = 0.949414
+Epoch 89
+Train function
+Validation rmse Energy = 0.789634
+Validation R2 Energy = 0.949684
+Epoch 90
+Train function
+Loss = 1.7807e-05, PNorm = 53.4391, GNorm = 0.0596, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.788593
+Validation R2 Energy = 0.949817
+Epoch 91
+Train function
+Loss = 1.1556e-05, PNorm = 53.4403, GNorm = 0.0599, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.788570
+Validation R2 Energy = 0.949820
+Epoch 92
+Train function
+Validation rmse Energy = 0.795381
+Validation R2 Energy = 0.948949
+Epoch 93
+Train function
+Loss = 1.7905e-05, PNorm = 53.4419, GNorm = 0.1190, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.787184
+Validation R2 Energy = 0.949996
+Epoch 94
+Train function
+Loss = 1.5111e-05, PNorm = 53.4429, GNorm = 0.0351, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.789426
+Validation R2 Energy = 0.949711
+Epoch 95
+Train function
+Loss = 1.2436e-05, PNorm = 53.4442, GNorm = 0.0781, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.787185
+Validation R2 Energy = 0.949996
+Epoch 96
+Train function
+Validation rmse Energy = 0.786625
+Validation R2 Energy = 0.950067
+Epoch 97
+Train function
+Loss = 1.4978e-05, PNorm = 53.4454, GNorm = 0.0407, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.790848
+Validation R2 Energy = 0.949529
+Epoch 98
+Train function
+Loss = 1.3009e-05, PNorm = 53.4465, GNorm = 0.0446, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.787013
+Validation R2 Energy = 0.950018
+Epoch 99
+Train function
+Loss = 1.5103e-05, PNorm = 53.4480, GNorm = 0.0897, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.791281
+Validation R2 Energy = 0.949474
+Model 0 best validation rmse = 0.783104 on epoch 86
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Moving model to cuda
+Model 0 test rmse Energy = 1.048894
+Model 0 test R2 Energy = 0.934182
+Ensemble test rmse  Energy= 1.048894
+Ensemble test R2  Energy= 0.934182
+Fold 2
+Command line
+python ./scripts/SOTA/dmpnn/train.py --dataset_type regression --num_workers 0 --config_path_yaml ./params.yaml
+Args
+{'activation': 'ReLU',
+ 'additional_encoder': False,
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'cache_cutoff': 10000,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'class_balance': False,
+ 'config_path': None,
+ 'config_path_yaml': './params.yaml',
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'crossval_index_sets': None,
+ 'cuda': True,
+ 'data_path': './data/raw/baselines/dmpnn/train_val_dataset.csv',
+ 'dataset_type': 'regression',
+ 'depth': 6,
+ 'device': device(type='cuda'),
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 100,
+ 'features_generator': ['rdkit_wo_fragments_and_counts'],
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': False,
+ 'features_size': 95,
+ 'ffn_hidden_size': 800,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'grad_clip': None,
+ 'hidden_size': 800,
+ 'ignore_columns': None,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cuda': False,
+ 'no_features_scaling': True,
+ 'num_folds': 4,
+ 'num_lrs': 1,
+ 'num_tasks': 1,
+ 'num_workers': 0,
+ 'pytorch_seed': 0,
+ 'quiet': False,
+ 'save_dir': './data/raw/baselines/dmpnn/logs/exp_310/folds/fold_2',
+ 'save_smiles_splits': False,
+ 'seed': 2,
+ 'separate_test_features_path': None,
+ 'separate_test_path': './data/3_final_data/split_data/freesolv_test.csv',
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'smiles_column': None,
+ 'split_sizes': (0.8, 0.1, 0.1),
+ 'split_type': 'k-fold',
+ 'substructures_atom_messages': False,
+ 'substructures_depth': False,
+ 'substructures_hidden_size': 300,
+ 'substructures_merge': False,
+ 'substructures_undirected': False,
+ 'substructures_use_substructures': True,
+ 'symmetry_feature': False,
+ 'target_columns': ['Energy'],
+ 'task_names': ['Energy'],
+ 'test': False,
+ 'test_fold_index': None,
+ 'train_data_size': 360,
+ 'undirected': False,
+ 'use_input_features': True,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 2
+Total size = 480 | train size = 360 | val size = 120 | test size = 85
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=800, bias=False)
+      (W_h): Linear(in_features=800, out_features=800, bias=False)
+      (W_o): Linear(in_features=933, out_features=800, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=895, out_features=800, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=800, out_features=1, bias=True)
+  )
+)
+Number of parameters = 2,222,401
+Moving model to cuda
+Epoch 0
+Train function
+Validation rmse Energy = 2.523160
+Validation R2 Energy = 0.408690
+Epoch 1
+Train function
+Loss = 1.0904e-02, PNorm = 52.5324, GNorm = 2.0154, lr_0 = 8.7143e-04
+Validation rmse Energy = 2.255568
+Validation R2 Energy = 0.527461
+Epoch 2
+Train function
+Loss = 5.8712e-03, PNorm = 52.6584, GNorm = 2.4128, lr_0 = 9.7024e-04
+Validation rmse Energy = 1.942693
+Validation R2 Energy = 0.649463
+Epoch 3
+Train function
+Validation rmse Energy = 1.967834
+Validation R2 Energy = 0.640331
+Epoch 4
+Train function
+Loss = 3.8295e-03, PNorm = 52.7629, GNorm = 1.2551, lr_0 = 9.3194e-04
+Validation rmse Energy = 1.787393
+Validation R2 Energy = 0.703267
+Epoch 5
+Train function
+Loss = 3.6858e-03, PNorm = 52.8435, GNorm = 1.9037, lr_0 = 9.0118e-04
+Validation rmse Energy = 1.732599
+Validation R2 Energy = 0.721181
+Epoch 6
+Train function
+Loss = 1.9348e-03, PNorm = 52.9184, GNorm = 0.6246, lr_0 = 8.6851e-04
+Loss = 1.1611e-02, PNorm = 52.9247, GNorm = 1.8097, lr_0 = 8.6560e-04
+Validation rmse Energy = 1.665742
+Validation R2 Energy = 0.742284
+Epoch 7
+Train function
+Validation rmse Energy = 1.322687
+Validation R2 Energy = 0.837505
+Epoch 8
+Train function
+Loss = 1.2526e-03, PNorm = 52.9715, GNorm = 1.1614, lr_0 = 8.3422e-04
+Validation rmse Energy = 1.276003
+Validation R2 Energy = 0.848773
+Epoch 9
+Train function
+Loss = 1.3431e-03, PNorm = 53.0069, GNorm = 1.6224, lr_0 = 8.0398e-04
+Validation rmse Energy = 1.262872
+Validation R2 Energy = 0.851869
+Epoch 10
+Train function
+Validation rmse Energy = 1.113883
+Validation R2 Energy = 0.884759
+Epoch 11
+Train function
+Loss = 1.1108e-03, PNorm = 53.0467, GNorm = 2.0522, lr_0 = 7.7484e-04
+Validation rmse Energy = 1.136716
+Validation R2 Energy = 0.879986
+Epoch 12
+Train function
+Loss = 7.0136e-04, PNorm = 53.0739, GNorm = 0.3453, lr_0 = 7.4675e-04
+Validation rmse Energy = 1.090992
+Validation R2 Energy = 0.889447
+Epoch 13
+Train function
+Loss = 5.6328e-04, PNorm = 53.0948, GNorm = 0.5424, lr_0 = 7.1969e-04
+Loss = 5.6003e-03, PNorm = 53.0969, GNorm = 1.9192, lr_0 = 7.1727e-04
+Validation rmse Energy = 1.115382
+Validation R2 Energy = 0.884449
+Epoch 14
+Train function
+Validation rmse Energy = 1.061881
+Validation R2 Energy = 0.895268
+Epoch 15
+Train function
+Loss = 5.8662e-04, PNorm = 53.1192, GNorm = 0.4192, lr_0 = 6.9360e-04
+Validation rmse Energy = 1.157883
+Validation R2 Energy = 0.875475
+Epoch 16
+Train function
+Loss = 5.0393e-04, PNorm = 53.1394, GNorm = 1.1804, lr_0 = 6.6846e-04
+Validation rmse Energy = 1.075206
+Validation R2 Energy = 0.892623
+Epoch 17
+Train function
+Validation rmse Energy = 1.027474
+Validation R2 Energy = 0.901946
+Epoch 18
+Train function
+Loss = 4.8147e-04, PNorm = 53.1619, GNorm = 1.3474, lr_0 = 6.4207e-04
+Validation rmse Energy = 1.010687
+Validation R2 Energy = 0.905123
+Epoch 19
+Train function
+Loss = 3.2983e-04, PNorm = 53.1834, GNorm = 1.0668, lr_0 = 6.1879e-04
+Validation rmse Energy = 0.995159
+Validation R2 Energy = 0.908016
+Epoch 20
+Train function
+Loss = 2.2005e-04, PNorm = 53.1992, GNorm = 0.3534, lr_0 = 5.9837e-04
+Validation rmse Energy = 1.024715
+Validation R2 Energy = 0.902471
+Epoch 21
+Train function
+Validation rmse Energy = 1.069782
+Validation R2 Energy = 0.893704
+Epoch 22
+Train function
+Loss = 2.6872e-04, PNorm = 53.2167, GNorm = 0.4650, lr_0 = 5.7475e-04
+Validation rmse Energy = 1.035697
+Validation R2 Energy = 0.900370
+Epoch 23
+Train function
+Loss = 2.5594e-04, PNorm = 53.2355, GNorm = 0.6953, lr_0 = 5.5391e-04
+Validation rmse Energy = 0.942448
+Validation R2 Energy = 0.917503
+Epoch 24
+Train function
+Loss = 2.5545e-04, PNorm = 53.2474, GNorm = 0.6833, lr_0 = 5.3383e-04
+Validation rmse Energy = 1.060335
+Validation R2 Energy = 0.895573
+Epoch 25
+Train function
+Validation rmse Energy = 0.954824
+Validation R2 Energy = 0.915322
+Epoch 26
+Train function
+Loss = 1.6986e-04, PNorm = 53.2646, GNorm = 0.4405, lr_0 = 5.1448e-04
+Validation rmse Energy = 0.959915
+Validation R2 Energy = 0.914416
+Epoch 27
+Train function
+Loss = 1.6504e-04, PNorm = 53.2719, GNorm = 0.2132, lr_0 = 4.9583e-04
+Validation rmse Energy = 0.978411
+Validation R2 Energy = 0.911086
+Epoch 28
+Train function
+Validation rmse Energy = 0.962087
+Validation R2 Energy = 0.914029
+Epoch 29
+Train function
+Loss = 9.0651e-05, PNorm = 53.2867, GNorm = 0.3440, lr_0 = 4.7626e-04
+Validation rmse Energy = 0.950176
+Validation R2 Energy = 0.916144
+Epoch 30
+Train function
+Loss = 1.0014e-04, PNorm = 53.2931, GNorm = 0.1687, lr_0 = 4.6054e-04
+Validation rmse Energy = 0.966891
+Validation R2 Energy = 0.913168
+Epoch 31
+Train function
+Loss = 1.0657e-04, PNorm = 53.3040, GNorm = 0.2592, lr_0 = 4.4384e-04
+Loss = 1.6497e-04, PNorm = 53.3049, GNorm = 0.3252, lr_0 = 4.4236e-04
+Validation rmse Energy = 0.953219
+Validation R2 Energy = 0.915606
+Epoch 32
+Train function
+Validation rmse Energy = 0.929199
+Validation R2 Energy = 0.919806
+Epoch 33
+Train function
+Loss = 9.7035e-05, PNorm = 53.3123, GNorm = 0.2722, lr_0 = 4.2632e-04
+Validation rmse Energy = 0.959254
+Validation R2 Energy = 0.914534
+Epoch 34
+Train function
+Loss = 7.1616e-05, PNorm = 53.3211, GNorm = 0.1477, lr_0 = 4.1087e-04
+Validation rmse Energy = 0.939647
+Validation R2 Energy = 0.917992
+Epoch 35
+Train function
+Validation rmse Energy = 0.938267
+Validation R2 Energy = 0.918233
+Epoch 36
+Train function
+Loss = 5.3800e-05, PNorm = 53.3288, GNorm = 0.1018, lr_0 = 3.9597e-04
+Validation rmse Energy = 0.959130
+Validation R2 Energy = 0.914556
+Epoch 37
+Train function
+Loss = 7.6422e-05, PNorm = 53.3355, GNorm = 0.1601, lr_0 = 3.8162e-04
+Validation rmse Energy = 0.947820
+Validation R2 Energy = 0.916559
+Epoch 38
+Train function
+Loss = 6.5090e-05, PNorm = 53.3449, GNorm = 0.2956, lr_0 = 3.6779e-04
+Loss = 7.4993e-05, PNorm = 53.3457, GNorm = 0.1694, lr_0 = 3.6656e-04
+Validation rmse Energy = 0.944587
+Validation R2 Energy = 0.917128
+Epoch 39
+Train function
+Validation rmse Energy = 0.942571
+Validation R2 Energy = 0.917481
+Epoch 40
+Train function
+Loss = 5.7796e-05, PNorm = 53.3502, GNorm = 0.2362, lr_0 = 3.5446e-04
+Validation rmse Energy = 0.938121
+Validation R2 Energy = 0.918258
+Epoch 41
+Train function
+Loss = 4.4481e-05, PNorm = 53.3562, GNorm = 0.1850, lr_0 = 3.4161e-04
+Validation rmse Energy = 0.944821
+Validation R2 Energy = 0.917087
+Epoch 42
+Train function
+Validation rmse Energy = 0.970626
+Validation R2 Energy = 0.912496
+Epoch 43
+Train function
+Loss = 9.9742e-05, PNorm = 53.3609, GNorm = 0.6677, lr_0 = 3.2812e-04
+Validation rmse Energy = 0.959543
+Validation R2 Energy = 0.914483
+Epoch 44
+Train function
+Loss = 4.0915e-05, PNorm = 53.3661, GNorm = 0.3238, lr_0 = 3.1623e-04
+Validation rmse Energy = 0.946905
+Validation R2 Energy = 0.916720
+Epoch 45
+Train function
+Loss = 5.4206e-05, PNorm = 53.3707, GNorm = 0.2051, lr_0 = 3.0579e-04
+Validation rmse Energy = 0.943965
+Validation R2 Energy = 0.917237
+Epoch 46
+Train function
+Validation rmse Energy = 0.945399
+Validation R2 Energy = 0.916985
+Epoch 47
+Train function
+Loss = 2.9927e-05, PNorm = 53.3767, GNorm = 0.1214, lr_0 = 2.9372e-04
+Validation rmse Energy = 0.927972
+Validation R2 Energy = 0.920017
+Epoch 48
+Train function
+Loss = 3.7909e-05, PNorm = 53.3817, GNorm = 0.1928, lr_0 = 2.8307e-04
+Validation rmse Energy = 0.942631
+Validation R2 Energy = 0.917470
+Epoch 49
+Train function
+Loss = 3.7526e-05, PNorm = 53.3864, GNorm = 0.4292, lr_0 = 2.7281e-04
+Validation rmse Energy = 0.935920
+Validation R2 Energy = 0.918641
+Epoch 50
+Train function
+Validation rmse Energy = 0.937567
+Validation R2 Energy = 0.918355
+Epoch 51
+Train function
+Loss = 2.5372e-05, PNorm = 53.3897, GNorm = 0.0561, lr_0 = 2.6292e-04
+Validation rmse Energy = 0.936108
+Validation R2 Energy = 0.918609
+Epoch 52
+Train function
+Loss = 2.6965e-05, PNorm = 53.3938, GNorm = 0.1181, lr_0 = 2.5339e-04
+Validation rmse Energy = 0.931903
+Validation R2 Energy = 0.919338
+Epoch 53
+Train function
+Validation rmse Energy = 0.926723
+Validation R2 Energy = 0.920233
+Epoch 54
+Train function
+Loss = 2.0666e-05, PNorm = 53.3978, GNorm = 0.1157, lr_0 = 2.4339e-04
+Validation rmse Energy = 0.934501
+Validation R2 Energy = 0.918888
+Epoch 55
+Train function
+Loss = 3.0021e-05, PNorm = 53.4009, GNorm = 0.1176, lr_0 = 2.3535e-04
+Validation rmse Energy = 0.942624
+Validation R2 Energy = 0.917472
+Epoch 56
+Train function
+Loss = 2.4342e-05, PNorm = 53.4038, GNorm = 0.1131, lr_0 = 2.2682e-04
+Loss = 4.1749e-05, PNorm = 53.4042, GNorm = 0.1454, lr_0 = 2.2606e-04
+Validation rmse Energy = 0.933800
+Validation R2 Energy = 0.919010
+Epoch 57
+Train function
+Validation rmse Energy = 0.931547
+Validation R2 Energy = 0.919400
+Epoch 58
+Train function
+Loss = 2.0945e-05, PNorm = 53.4077, GNorm = 0.0560, lr_0 = 2.1787e-04
+Validation rmse Energy = 0.938111
+Validation R2 Energy = 0.918260
+Epoch 59
+Train function
+Loss = 2.3274e-05, PNorm = 53.4102, GNorm = 0.0723, lr_0 = 2.0997e-04
+Validation rmse Energy = 0.931046
+Validation R2 Energy = 0.919487
+Epoch 60
+Train function
+Validation rmse Energy = 0.927040
+Validation R2 Energy = 0.920178
+Epoch 61
+Train function
+Loss = 3.4956e-05, PNorm = 53.4142, GNorm = 0.1372, lr_0 = 2.0236e-04
+Validation rmse Energy = 0.930186
+Validation R2 Energy = 0.919635
+Epoch 62
+Train function
+Loss = 1.7765e-05, PNorm = 53.4160, GNorm = 0.0888, lr_0 = 1.9502e-04
+Validation rmse Energy = 0.941178
+Validation R2 Energy = 0.917725
+Epoch 63
+Train function
+Loss = 2.7245e-05, PNorm = 53.4186, GNorm = 0.1054, lr_0 = 1.8795e-04
+Loss = 1.1474e-04, PNorm = 53.4188, GNorm = 0.1526, lr_0 = 1.8732e-04
+Validation rmse Energy = 0.939457
+Validation R2 Energy = 0.918025
+Epoch 64
+Train function
+Validation rmse Energy = 0.936855
+Validation R2 Energy = 0.918479
+Epoch 65
+Train function
+Loss = 2.0634e-05, PNorm = 53.4207, GNorm = 0.2256, lr_0 = 1.8114e-04
+Validation rmse Energy = 0.947154
+Validation R2 Energy = 0.916677
+Epoch 66
+Train function
+Loss = 2.4635e-05, PNorm = 53.4233, GNorm = 0.2851, lr_0 = 1.7458e-04
+Validation rmse Energy = 0.951022
+Validation R2 Energy = 0.915995
+Epoch 67
+Train function
+Validation rmse Energy = 0.934825
+Validation R2 Energy = 0.918832
+Epoch 68
+Train function
+Loss = 1.5537e-05, PNorm = 53.4254, GNorm = 0.1493, lr_0 = 1.6768e-04
+Validation rmse Energy = 0.937136
+Validation R2 Energy = 0.918430
+Epoch 69
+Train function
+Loss = 1.7525e-05, PNorm = 53.4273, GNorm = 0.1105, lr_0 = 1.6161e-04
+Validation rmse Energy = 0.935540
+Validation R2 Energy = 0.918707
+Epoch 70
+Train function
+Loss = 1.8643e-05, PNorm = 53.4296, GNorm = 0.0813, lr_0 = 1.5627e-04
+Validation rmse Energy = 0.936719
+Validation R2 Energy = 0.918502
+Epoch 71
+Train function
+Validation rmse Energy = 0.932496
+Validation R2 Energy = 0.919236
+Epoch 72
+Train function
+Loss = 1.2475e-05, PNorm = 53.4316, GNorm = 0.0797, lr_0 = 1.5010e-04
+Validation rmse Energy = 0.936273
+Validation R2 Energy = 0.918580
+Epoch 73
+Train function
+Loss = 1.5974e-05, PNorm = 53.4333, GNorm = 0.0466, lr_0 = 1.4466e-04
+Validation rmse Energy = 0.928767
+Validation R2 Energy = 0.919880
+Epoch 74
+Train function
+Loss = 1.7344e-05, PNorm = 53.4351, GNorm = 0.1751, lr_0 = 1.3942e-04
+Validation rmse Energy = 0.940012
+Validation R2 Energy = 0.917928
+Epoch 75
+Train function
+Validation rmse Energy = 0.931481
+Validation R2 Energy = 0.919411
+Epoch 76
+Train function
+Loss = 1.5744e-05, PNorm = 53.4370, GNorm = 0.0823, lr_0 = 1.3436e-04
+Validation rmse Energy = 0.928232
+Validation R2 Energy = 0.919973
+Epoch 77
+Train function
+Loss = 1.6402e-05, PNorm = 53.4389, GNorm = 0.0667, lr_0 = 1.2949e-04
+Validation rmse Energy = 0.929849
+Validation R2 Energy = 0.919694
+Epoch 78
+Train function
+Validation rmse Energy = 0.929125
+Validation R2 Energy = 0.919819
+Epoch 79
+Train function
+Loss = 1.0891e-05, PNorm = 53.4405, GNorm = 0.0370, lr_0 = 1.2438e-04
+Validation rmse Energy = 0.941624
+Validation R2 Energy = 0.917647
+Epoch 80
+Train function
+Loss = 1.7533e-05, PNorm = 53.4420, GNorm = 0.1343, lr_0 = 1.2027e-04
+Validation rmse Energy = 0.936489
+Validation R2 Energy = 0.918542
+Epoch 81
+Train function
+Loss = 1.2949e-05, PNorm = 53.4434, GNorm = 0.0578, lr_0 = 1.1592e-04
+Loss = 5.0938e-05, PNorm = 53.4435, GNorm = 0.0696, lr_0 = 1.1553e-04
+Validation rmse Energy = 0.935551
+Validation R2 Energy = 0.918706
+Epoch 82
+Train function
+Validation rmse Energy = 0.929157
+Validation R2 Energy = 0.919813
+Epoch 83
+Train function
+Loss = 1.4522e-05, PNorm = 53.4446, GNorm = 0.0820, lr_0 = 1.1134e-04
+Validation rmse Energy = 0.930900
+Validation R2 Energy = 0.919512
+Epoch 84
+Train function
+Loss = 1.2893e-05, PNorm = 53.4459, GNorm = 0.1072, lr_0 = 1.0730e-04
+Validation rmse Energy = 0.929264
+Validation R2 Energy = 0.919795
+Epoch 85
+Train function
+Validation rmse Energy = 0.934965
+Validation R2 Energy = 0.918807
+Epoch 86
+Train function
+Loss = 1.1193e-05, PNorm = 53.4472, GNorm = 0.0757, lr_0 = 1.0341e-04
+Validation rmse Energy = 0.936285
+Validation R2 Energy = 0.918578
+Epoch 87
+Train function
+Loss = 1.1078e-05, PNorm = 53.4484, GNorm = 0.0521, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.933396
+Validation R2 Energy = 0.919080
+Epoch 88
+Train function
+Loss = 1.2560e-05, PNorm = 53.4496, GNorm = 0.1798, lr_0 = 1.0000e-04
+Loss = 1.8262e-05, PNorm = 53.4497, GNorm = 0.1005, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.928921
+Validation R2 Energy = 0.919854
+Epoch 89
+Train function
+Validation rmse Energy = 0.928502
+Validation R2 Energy = 0.919926
+Epoch 90
+Train function
+Loss = 1.4179e-05, PNorm = 53.4506, GNorm = 0.1557, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.928599
+Validation R2 Energy = 0.919909
+Epoch 91
+Train function
+Loss = 1.1473e-05, PNorm = 53.4516, GNorm = 0.0477, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.930141
+Validation R2 Energy = 0.919643
+Epoch 92
+Train function
+Validation rmse Energy = 0.930092
+Validation R2 Energy = 0.919651
+Epoch 93
+Train function
+Loss = 6.0281e-06, PNorm = 53.4529, GNorm = 0.0371, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.930331
+Validation R2 Energy = 0.919610
+Epoch 94
+Train function
+Loss = 1.3381e-05, PNorm = 53.4540, GNorm = 0.0310, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.929162
+Validation R2 Energy = 0.919812
+Epoch 95
+Train function
+Loss = 1.1084e-05, PNorm = 53.4551, GNorm = 0.0616, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.933634
+Validation R2 Energy = 0.919038
+Epoch 96
+Train function
+Validation rmse Energy = 0.929307
+Validation R2 Energy = 0.919787
+Epoch 97
+Train function
+Loss = 4.4736e-06, PNorm = 53.4563, GNorm = 0.0496, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.927442
+Validation R2 Energy = 0.920109
+Epoch 98
+Train function
+Loss = 7.8033e-06, PNorm = 53.4575, GNorm = 0.0679, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.929861
+Validation R2 Energy = 0.919691
+Epoch 99
+Train function
+Loss = 1.0799e-05, PNorm = 53.4587, GNorm = 0.1109, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.928786
+Validation R2 Energy = 0.919877
+Model 0 best validation rmse = 0.926723 on epoch 53
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Moving model to cuda
+Model 0 test rmse Energy = 1.109979
+Model 0 test R2 Energy = 0.926292
+Ensemble test rmse  Energy= 1.109979
+Ensemble test R2  Energy= 0.926292
+Fold 3
+Command line
+python ./scripts/SOTA/dmpnn/train.py --dataset_type regression --num_workers 0 --config_path_yaml ./params.yaml
+Args
+{'activation': 'ReLU',
+ 'additional_encoder': False,
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'cache_cutoff': 10000,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'class_balance': False,
+ 'config_path': None,
+ 'config_path_yaml': './params.yaml',
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'crossval_index_sets': None,
+ 'cuda': True,
+ 'data_path': './data/raw/baselines/dmpnn/train_val_dataset.csv',
+ 'dataset_type': 'regression',
+ 'depth': 6,
+ 'device': device(type='cuda'),
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 100,
+ 'features_generator': ['rdkit_wo_fragments_and_counts'],
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': False,
+ 'features_size': 95,
+ 'ffn_hidden_size': 800,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'grad_clip': None,
+ 'hidden_size': 800,
+ 'ignore_columns': None,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cuda': False,
+ 'no_features_scaling': True,
+ 'num_folds': 4,
+ 'num_lrs': 1,
+ 'num_tasks': 1,
+ 'num_workers': 0,
+ 'pytorch_seed': 0,
+ 'quiet': False,
+ 'save_dir': './data/raw/baselines/dmpnn/logs/exp_310/folds/fold_3',
+ 'save_smiles_splits': False,
+ 'seed': 3,
+ 'separate_test_features_path': None,
+ 'separate_test_path': './data/3_final_data/split_data/freesolv_test.csv',
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'smiles_column': None,
+ 'split_sizes': (0.8, 0.1, 0.1),
+ 'split_type': 'k-fold',
+ 'substructures_atom_messages': False,
+ 'substructures_depth': False,
+ 'substructures_hidden_size': 300,
+ 'substructures_merge': False,
+ 'substructures_undirected': False,
+ 'substructures_use_substructures': True,
+ 'symmetry_feature': False,
+ 'target_columns': ['Energy'],
+ 'task_names': ['Energy'],
+ 'test': False,
+ 'test_fold_index': None,
+ 'train_data_size': 360,
+ 'undirected': False,
+ 'use_input_features': True,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 3
+Total size = 480 | train size = 360 | val size = 120 | test size = 85
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=800, bias=False)
+      (W_h): Linear(in_features=800, out_features=800, bias=False)
+      (W_o): Linear(in_features=933, out_features=800, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=895, out_features=800, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=800, out_features=1, bias=True)
+  )
+)
+Number of parameters = 2,222,401
+Moving model to cuda
+Epoch 0
+Train function
+Validation rmse Energy = 4.007077
+Validation R2 Energy = 0.029475
+Epoch 1
+Train function
+Loss = 1.4694e-02, PNorm = 52.5305, GNorm = 5.8898, lr_0 = 8.7143e-04
+Validation rmse Energy = 3.228349
+Validation R2 Energy = 0.370041
+Epoch 2
+Train function
+Loss = 1.0244e-02, PNorm = 52.6603, GNorm = 1.1291, lr_0 = 9.7024e-04
+Validation rmse Energy = 2.649049
+Validation R2 Energy = 0.575839
+Epoch 3
+Train function
+Validation rmse Energy = 1.986313
+Validation R2 Energy = 0.761523
+Epoch 4
+Train function
+Loss = 3.7017e-03, PNorm = 52.7973, GNorm = 0.9347, lr_0 = 9.3194e-04
+Validation rmse Energy = 1.512889
+Validation R2 Energy = 0.861654
+Epoch 5
+Train function
+Loss = 2.5515e-03, PNorm = 52.8891, GNorm = 0.8141, lr_0 = 9.0118e-04
+Validation rmse Energy = 1.525410
+Validation R2 Energy = 0.859355
+Epoch 6
+Train function
+Loss = 2.3221e-03, PNorm = 52.9611, GNorm = 4.3746, lr_0 = 8.6851e-04
+Loss = 7.7456e-03, PNorm = 52.9669, GNorm = 2.3974, lr_0 = 8.6560e-04
+Validation rmse Energy = 1.538350
+Validation R2 Energy = 0.856959
+Epoch 7
+Train function
+Validation rmse Energy = 1.528508
+Validation R2 Energy = 0.858783
+Epoch 8
+Train function
+Loss = 1.6359e-03, PNorm = 53.0283, GNorm = 0.5839, lr_0 = 8.3422e-04
+Validation rmse Energy = 1.513403
+Validation R2 Energy = 0.861560
+Epoch 9
+Train function
+Loss = 1.3586e-03, PNorm = 53.0793, GNorm = 0.5096, lr_0 = 8.0398e-04
+Validation rmse Energy = 1.287726
+Validation R2 Energy = 0.899770
+Epoch 10
+Train function
+Validation rmse Energy = 1.272930
+Validation R2 Energy = 0.902060
+Epoch 11
+Train function
+Loss = 9.1965e-04, PNorm = 53.1147, GNorm = 1.0660, lr_0 = 7.7484e-04
+Validation rmse Energy = 1.291915
+Validation R2 Energy = 0.899117
+Epoch 12
+Train function
+Loss = 6.5421e-04, PNorm = 53.1474, GNorm = 1.2640, lr_0 = 7.4675e-04
+Validation rmse Energy = 1.100686
+Validation R2 Energy = 0.926772
+Epoch 13
+Train function
+Loss = 5.3352e-04, PNorm = 53.1725, GNorm = 0.2003, lr_0 = 7.1969e-04
+Loss = 2.8982e-03, PNorm = 53.1738, GNorm = 1.8057, lr_0 = 7.1727e-04
+Validation rmse Energy = 1.230076
+Validation R2 Energy = 0.908543
+Epoch 14
+Train function
+Validation rmse Energy = 1.136426
+Validation R2 Energy = 0.921939
+Epoch 15
+Train function
+Loss = 6.5914e-04, PNorm = 53.2002, GNorm = 1.4749, lr_0 = 6.9360e-04
+Validation rmse Energy = 1.118388
+Validation R2 Energy = 0.924397
+Epoch 16
+Train function
+Loss = 3.9959e-04, PNorm = 53.2192, GNorm = 0.3753, lr_0 = 6.6846e-04
+Validation rmse Energy = 1.136324
+Validation R2 Energy = 0.921953
+Epoch 17
+Train function
+Validation rmse Energy = 1.103977
+Validation R2 Energy = 0.926333
+Epoch 18
+Train function
+Loss = 3.2273e-04, PNorm = 53.2466, GNorm = 0.5538, lr_0 = 6.4207e-04
+Validation rmse Energy = 1.057002
+Validation R2 Energy = 0.932469
+Epoch 19
+Train function
+Loss = 2.5111e-04, PNorm = 53.2618, GNorm = 0.2356, lr_0 = 6.1879e-04
+Validation rmse Energy = 1.021861
+Validation R2 Energy = 0.936885
+Epoch 20
+Train function
+Loss = 2.4244e-04, PNorm = 53.2777, GNorm = 0.3312, lr_0 = 5.9837e-04
+Validation rmse Energy = 1.062665
+Validation R2 Energy = 0.931744
+Epoch 21
+Train function
+Validation rmse Energy = 0.996358
+Validation R2 Energy = 0.939996
+Epoch 22
+Train function
+Loss = 1.8143e-04, PNorm = 53.2952, GNorm = 0.3424, lr_0 = 5.7475e-04
+Validation rmse Energy = 0.985227
+Validation R2 Energy = 0.941329
+Epoch 23
+Train function
+Loss = 1.3179e-04, PNorm = 53.3104, GNorm = 0.2343, lr_0 = 5.5391e-04
+Validation rmse Energy = 1.022689
+Validation R2 Energy = 0.936782
+Epoch 24
+Train function
+Loss = 1.6799e-04, PNorm = 53.3231, GNorm = 0.4189, lr_0 = 5.3383e-04
+Validation rmse Energy = 0.989241
+Validation R2 Energy = 0.940850
+Epoch 25
+Train function
+Validation rmse Energy = 1.069741
+Validation R2 Energy = 0.930831
+Epoch 26
+Train function
+Loss = 2.0197e-04, PNorm = 53.3355, GNorm = 0.2589, lr_0 = 5.1448e-04
+Validation rmse Energy = 1.001908
+Validation R2 Energy = 0.939325
+Epoch 27
+Train function
+Loss = 1.2647e-04, PNorm = 53.3487, GNorm = 0.2515, lr_0 = 4.9583e-04
+Validation rmse Energy = 1.041634
+Validation R2 Energy = 0.934418
+Epoch 28
+Train function
+Validation rmse Energy = 1.070702
+Validation R2 Energy = 0.930707
+Epoch 29
+Train function
+Loss = 1.2109e-04, PNorm = 53.3588, GNorm = 0.4765, lr_0 = 4.7626e-04
+Validation rmse Energy = 0.985287
+Validation R2 Energy = 0.941322
+Epoch 30
+Train function
+Loss = 1.1406e-04, PNorm = 53.3669, GNorm = 0.2239, lr_0 = 4.6054e-04
+Validation rmse Energy = 0.995524
+Validation R2 Energy = 0.940096
+Epoch 31
+Train function
+Loss = 9.1852e-05, PNorm = 53.3754, GNorm = 0.1965, lr_0 = 4.4384e-04
+Loss = 4.7701e-04, PNorm = 53.3766, GNorm = 0.4291, lr_0 = 4.4236e-04
+Validation rmse Energy = 0.994822
+Validation R2 Energy = 0.940181
+Epoch 32
+Train function
+Validation rmse Energy = 0.975934
+Validation R2 Energy = 0.942431
+Epoch 33
+Train function
+Loss = 7.2231e-05, PNorm = 53.3875, GNorm = 0.1229, lr_0 = 4.2632e-04
+Validation rmse Energy = 1.001861
+Validation R2 Energy = 0.939331
+Epoch 34
+Train function
+Loss = 8.8682e-05, PNorm = 53.3976, GNorm = 0.4265, lr_0 = 4.1087e-04
+Validation rmse Energy = 0.990188
+Validation R2 Energy = 0.940737
+Epoch 35
+Train function
+Validation rmse Energy = 0.959478
+Validation R2 Energy = 0.944356
+Epoch 36
+Train function
+Loss = 3.9906e-05, PNorm = 53.4060, GNorm = 0.0990, lr_0 = 3.9597e-04
+Validation rmse Energy = 0.965549
+Validation R2 Energy = 0.943649
+Epoch 37
+Train function
+Loss = 5.3178e-05, PNorm = 53.4121, GNorm = 0.3187, lr_0 = 3.8162e-04
+Validation rmse Energy = 0.958146
+Validation R2 Energy = 0.944510
+Epoch 38
+Train function
+Loss = 5.4924e-05, PNorm = 53.4175, GNorm = 0.1951, lr_0 = 3.6779e-04
+Loss = 2.6727e-04, PNorm = 53.4180, GNorm = 0.4217, lr_0 = 3.6656e-04
+Validation rmse Energy = 0.968299
+Validation R2 Energy = 0.943328
+Epoch 39
+Train function
+Validation rmse Energy = 0.973568
+Validation R2 Energy = 0.942709
+Epoch 40
+Train function
+Loss = 5.5569e-05, PNorm = 53.4237, GNorm = 0.0897, lr_0 = 3.5446e-04
+Validation rmse Energy = 0.969788
+Validation R2 Energy = 0.943153
+Epoch 41
+Train function
+Loss = 4.2363e-05, PNorm = 53.4296, GNorm = 0.1305, lr_0 = 3.4161e-04
+Validation rmse Energy = 0.965537
+Validation R2 Energy = 0.943651
+Epoch 42
+Train function
+Validation rmse Energy = 0.986369
+Validation R2 Energy = 0.941193
+Epoch 43
+Train function
+Loss = 4.1993e-05, PNorm = 53.4357, GNorm = 0.3081, lr_0 = 3.2812e-04
+Validation rmse Energy = 0.980723
+Validation R2 Energy = 0.941864
+Epoch 44
+Train function
+Loss = 3.8042e-05, PNorm = 53.4427, GNorm = 0.3141, lr_0 = 3.1623e-04
+Validation rmse Energy = 0.957816
+Validation R2 Energy = 0.944548
+Epoch 45
+Train function
+Loss = 4.1839e-05, PNorm = 53.4457, GNorm = 0.1671, lr_0 = 3.0579e-04
+Validation rmse Energy = 0.960875
+Validation R2 Energy = 0.944193
+Epoch 46
+Train function
+Validation rmse Energy = 0.957152
+Validation R2 Energy = 0.944625
+Epoch 47
+Train function
+Loss = 5.4969e-05, PNorm = 53.4508, GNorm = 0.6403, lr_0 = 2.9372e-04
+Validation rmse Energy = 0.963464
+Validation R2 Energy = 0.943892
+Epoch 48
+Train function
+Loss = 4.8399e-05, PNorm = 53.4548, GNorm = 0.4266, lr_0 = 2.8307e-04
+Validation rmse Energy = 0.964647
+Validation R2 Energy = 0.943754
+Epoch 49
+Train function
+Loss = 4.4934e-05, PNorm = 53.4590, GNorm = 0.1230, lr_0 = 2.7281e-04
+Validation rmse Energy = 0.972834
+Validation R2 Energy = 0.942796
+Epoch 50
+Train function
+Validation rmse Energy = 0.956519
+Validation R2 Energy = 0.944698
+Epoch 51
+Train function
+Loss = 3.7363e-05, PNorm = 53.4629, GNorm = 0.2664, lr_0 = 2.6292e-04
+Validation rmse Energy = 0.987153
+Validation R2 Energy = 0.941099
+Epoch 52
+Train function
+Loss = 3.2813e-05, PNorm = 53.4657, GNorm = 0.0801, lr_0 = 2.5339e-04
+Validation rmse Energy = 0.965025
+Validation R2 Energy = 0.943710
+Epoch 53
+Train function
+Validation rmse Energy = 0.971546
+Validation R2 Energy = 0.942947
+Epoch 54
+Train function
+Loss = 2.6096e-05, PNorm = 53.4698, GNorm = 0.1486, lr_0 = 2.4339e-04
+Validation rmse Energy = 0.985961
+Validation R2 Energy = 0.941242
+Epoch 55
+Train function
+Loss = 2.7100e-05, PNorm = 53.4731, GNorm = 0.0876, lr_0 = 2.3535e-04
+Validation rmse Energy = 0.951354
+Validation R2 Energy = 0.945294
+Epoch 56
+Train function
+Loss = 2.8922e-05, PNorm = 53.4752, GNorm = 0.0827, lr_0 = 2.2682e-04
+Loss = 4.5520e-05, PNorm = 53.4753, GNorm = 0.0672, lr_0 = 2.2606e-04
+Validation rmse Energy = 0.974925
+Validation R2 Energy = 0.942549
+Epoch 57
+Train function
+Validation rmse Energy = 0.967181
+Validation R2 Energy = 0.943459
+Epoch 58
+Train function
+Loss = 2.0564e-05, PNorm = 53.4782, GNorm = 0.0814, lr_0 = 2.1787e-04
+Validation rmse Energy = 0.961721
+Validation R2 Energy = 0.944095
+Epoch 59
+Train function
+Loss = 2.1647e-05, PNorm = 53.4806, GNorm = 0.1200, lr_0 = 2.0997e-04
+Validation rmse Energy = 0.970958
+Validation R2 Energy = 0.943016
+Epoch 60
+Train function
+Validation rmse Energy = 0.972874
+Validation R2 Energy = 0.942791
+Epoch 61
+Train function
+Loss = 2.7122e-05, PNorm = 53.4828, GNorm = 0.2173, lr_0 = 2.0236e-04
+Validation rmse Energy = 0.971405
+Validation R2 Energy = 0.942964
+Epoch 62
+Train function
+Loss = 2.6284e-05, PNorm = 53.4848, GNorm = 0.2480, lr_0 = 1.9502e-04
+Validation rmse Energy = 0.966604
+Validation R2 Energy = 0.943526
+Epoch 63
+Train function
+Loss = 2.2184e-05, PNorm = 53.4873, GNorm = 0.1773, lr_0 = 1.8795e-04
+Loss = 1.5354e-04, PNorm = 53.4874, GNorm = 0.2290, lr_0 = 1.8732e-04
+Validation rmse Energy = 0.967243
+Validation R2 Energy = 0.943451
+Epoch 64
+Train function
+Validation rmse Energy = 0.971474
+Validation R2 Energy = 0.942955
+Epoch 65
+Train function
+Loss = 2.3875e-05, PNorm = 53.4891, GNorm = 0.2548, lr_0 = 1.8114e-04
+Validation rmse Energy = 0.956208
+Validation R2 Energy = 0.944734
+Epoch 66
+Train function
+Loss = 2.3814e-05, PNorm = 53.4912, GNorm = 0.2991, lr_0 = 1.7458e-04
+Validation rmse Energy = 0.964118
+Validation R2 Energy = 0.943816
+Epoch 67
+Train function
+Validation rmse Energy = 0.966707
+Validation R2 Energy = 0.943514
+Epoch 68
+Train function
+Loss = 1.3033e-05, PNorm = 53.4933, GNorm = 0.0717, lr_0 = 1.6768e-04
+Validation rmse Energy = 0.962454
+Validation R2 Energy = 0.944010
+Epoch 69
+Train function
+Loss = 1.8191e-05, PNorm = 53.4954, GNorm = 0.1127, lr_0 = 1.6161e-04
+Validation rmse Energy = 0.966178
+Validation R2 Energy = 0.943576
+Epoch 70
+Train function
+Loss = 1.8873e-05, PNorm = 53.4966, GNorm = 0.0853, lr_0 = 1.5627e-04
+Validation rmse Energy = 0.973300
+Validation R2 Energy = 0.942741
+Epoch 71
+Train function
+Validation rmse Energy = 0.961874
+Validation R2 Energy = 0.944077
+Epoch 72
+Train function
+Loss = 1.1021e-05, PNorm = 53.4988, GNorm = 0.1142, lr_0 = 1.5010e-04
+Validation rmse Energy = 0.975897
+Validation R2 Energy = 0.942435
+Epoch 73
+Train function
+Loss = 2.0062e-05, PNorm = 53.5004, GNorm = 0.1576, lr_0 = 1.4466e-04
+Validation rmse Energy = 0.976859
+Validation R2 Energy = 0.942321
+Epoch 74
+Train function
+Loss = 1.7234e-05, PNorm = 53.5022, GNorm = 0.0670, lr_0 = 1.3942e-04
+Validation rmse Energy = 0.968950
+Validation R2 Energy = 0.943252
+Epoch 75
+Train function
+Validation rmse Energy = 0.968642
+Validation R2 Energy = 0.943288
+Epoch 76
+Train function
+Loss = 1.2881e-05, PNorm = 53.5035, GNorm = 0.1206, lr_0 = 1.3436e-04
+Validation rmse Energy = 0.967158
+Validation R2 Energy = 0.943461
+Epoch 77
+Train function
+Loss = 1.3798e-05, PNorm = 53.5050, GNorm = 0.0418, lr_0 = 1.2949e-04
+Validation rmse Energy = 0.966407
+Validation R2 Energy = 0.943549
+Epoch 78
+Train function
+Validation rmse Energy = 0.968542
+Validation R2 Energy = 0.943299
+Epoch 79
+Train function
+Loss = 2.0271e-05, PNorm = 53.5065, GNorm = 0.1109, lr_0 = 1.2438e-04
+Validation rmse Energy = 0.965196
+Validation R2 Energy = 0.943690
+Epoch 80
+Train function
+Loss = 1.4586e-05, PNorm = 53.5077, GNorm = 0.0929, lr_0 = 1.2027e-04
+Validation rmse Energy = 0.973579
+Validation R2 Energy = 0.942708
+Epoch 81
+Train function
+Loss = 1.3658e-05, PNorm = 53.5087, GNorm = 0.0600, lr_0 = 1.1592e-04
+Loss = 4.9320e-05, PNorm = 53.5088, GNorm = 0.1924, lr_0 = 1.1553e-04
+Validation rmse Energy = 0.968614
+Validation R2 Energy = 0.943291
+Epoch 82
+Train function
+Validation rmse Energy = 0.966846
+Validation R2 Energy = 0.943498
+Epoch 83
+Train function
+Loss = 1.3857e-05, PNorm = 53.5099, GNorm = 0.0579, lr_0 = 1.1134e-04
+Validation rmse Energy = 0.970102
+Validation R2 Energy = 0.943117
+Epoch 84
+Train function
+Loss = 1.3364e-05, PNorm = 53.5109, GNorm = 0.0802, lr_0 = 1.0730e-04
+Validation rmse Energy = 0.971571
+Validation R2 Energy = 0.942944
+Epoch 85
+Train function
+Validation rmse Energy = 0.967736
+Validation R2 Energy = 0.943394
+Epoch 86
+Train function
+Loss = 2.1698e-05, PNorm = 53.5119, GNorm = 0.1010, lr_0 = 1.0341e-04
+Validation rmse Energy = 0.968881
+Validation R2 Energy = 0.943260
+Epoch 87
+Train function
+Loss = 1.2170e-05, PNorm = 53.5130, GNorm = 0.0310, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.971214
+Validation R2 Energy = 0.942986
+Epoch 88
+Train function
+Loss = 1.1974e-05, PNorm = 53.5141, GNorm = 0.0274, lr_0 = 1.0000e-04
+Loss = 2.4514e-05, PNorm = 53.5142, GNorm = 0.0602, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.967497
+Validation R2 Energy = 0.943422
+Epoch 89
+Train function
+Validation rmse Energy = 0.971366
+Validation R2 Energy = 0.942968
+Epoch 90
+Train function
+Loss = 1.2629e-05, PNorm = 53.5152, GNorm = 0.0335, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.968988
+Validation R2 Energy = 0.943247
+Epoch 91
+Train function
+Loss = 1.1719e-05, PNorm = 53.5161, GNorm = 0.0681, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.968592
+Validation R2 Energy = 0.943294
+Epoch 92
+Train function
+Validation rmse Energy = 0.968250
+Validation R2 Energy = 0.943334
+Epoch 93
+Train function
+Loss = 1.7692e-05, PNorm = 53.5172, GNorm = 0.2251, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.970374
+Validation R2 Energy = 0.943085
+Epoch 94
+Train function
+Loss = 8.5992e-06, PNorm = 53.5182, GNorm = 0.0212, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.968027
+Validation R2 Energy = 0.943360
+Epoch 95
+Train function
+Loss = 8.4586e-06, PNorm = 53.5191, GNorm = 0.0552, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.970091
+Validation R2 Energy = 0.943118
+Epoch 96
+Train function
+Validation rmse Energy = 0.969802
+Validation R2 Energy = 0.943152
+Epoch 97
+Train function
+Loss = 1.4219e-05, PNorm = 53.5203, GNorm = 0.1700, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.971105
+Validation R2 Energy = 0.942999
+Epoch 98
+Train function
+Loss = 1.0421e-05, PNorm = 53.5215, GNorm = 0.0390, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.971362
+Validation R2 Energy = 0.942969
+Epoch 99
+Train function
+Loss = 1.2026e-05, PNorm = 53.5226, GNorm = 0.1162, lr_0 = 1.0000e-04
+Validation rmse Energy = 0.967164
+Validation R2 Energy = 0.943461
+Model 0 best validation rmse = 0.951354 on epoch 55
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Moving model to cuda
+Model 0 test rmse Energy = 1.079541
+Model 0 test R2 Energy = 0.930279
+Ensemble test rmse  Energy= 1.079541
+Ensemble test R2  Energy= 0.930279
+4-fold cross validation
+	Seed 0 ==> test rmse = 1.165181
+	Seed 0 ==> test R2 = 0.918778
+	Seed 1 ==> test rmse = 1.048894
+	Seed 1 ==> test R2 = 0.934182
+	Seed 2 ==> test rmse = 1.109979
+	Seed 2 ==> test R2 = 0.926292
+	Seed 3 ==> test rmse = 1.079541
+	Seed 3 ==> test R2 = 0.930279
+Overall val rmse Energy= 0.921825 +/- 0.088057
+Overall val R2 Energy = 0.940562 +/- 0.011901
+Overall test rmse Energy = 1.100899 +/- 0.042940
+Overall test R2 Energy = 0.927383 +/- 0.005697
+Elapsed time = 0:05:55

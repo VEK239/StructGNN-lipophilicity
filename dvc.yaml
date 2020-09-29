@@ -1,21 +1,27 @@
 stages:
   preparation:
-    cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train_val_data_preparation.py
+    cmd: ~/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train_val_data_preparation.py
     deps:
     - ./data/3_final_data/split_data/logd_wo_averaging_train.csv
     - ./data/3_final_data/split_data/logd_wo_averaging_validation.csv
     - ./data/3_final_data/split_data/logp_wo_averaging_train.csv
     - ./data/3_final_data/split_data/logp_wo_averaging_validation.csv
+    - ./data/3_final_data/split_data/logd_Lip_wo_averaging_train.csv
+    - ./data/3_final_data/split_data/logd_Lip_wo_averaging_validation.csv
     - ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_train.csv
     - ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_validation.csv
+    - ./data/3_final_data/split_data/esol_train.csv
+    - ./data/3_final_data/split_data/esol_validation.csv
+    - ./data/3_final_data/split_data/freesolv_train.csv
+    - ./data/3_final_data/split_data/freesolv_validation.csv
     - ./scripts/SOTA/dmpnn/train_val_data_preparation.py
     outs:
     - ./data/raw/baselines/dmpnn/train_val_dataset.csv
     params:
     - file_prefix
   dmpnn_train:
-    cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train.py
-      --dataset_type regression --num_workers 0
+    cmd: ~/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train.py
+      --dataset_type regression --num_workers 0 --config_path_yaml ./params.yaml
     deps:
     - ./data/3_final_data/split_data/logd_wo_averaging_test.csv
     - ./data/3_final_data/split_data/logp_wo_averaging_test.csv
@@ -34,7 +40,7 @@ stages:
     - save_dir
     - separate_test_path
     - split_type
-    - target_column
+    - target_columns
     - additional_encoder
     - substructures_hidden_size
     - hidden_size
