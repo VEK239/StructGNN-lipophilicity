@@ -1,0 +1,9 @@
+Fold 0
+Fold 0
+Fold 0
+Model 0 best validation rmse = 0.463277 on epoch 44
+Model 0 test rmse logP = 0.466797
+Model 0 test R2 logP = 0.935295
+Ensemble test rmse  logP= 0.466797
+Ensemble test R2  logP= 0.935295
+Fold 1
