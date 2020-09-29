@@ -1,0 +1,58 @@
+Fold 0
+Model 0 best validation rmse = 0.566799 on epoch 24
+Model 0 test rmse logD = 0.661463
+Model 0 test R2 logD = 0.817363
+Model 0 test rmse logP = 0.450147
+Model 0 test R2 logP = 0.943111
+Ensemble test rmse  logD= 0.661463
+Ensemble test R2  logD= 0.817363
+Ensemble test rmse  logP= 0.450147
+Ensemble test R2  logP= 0.943111
+Fold 1
+Model 0 best validation rmse = 0.592853 on epoch 59
+Model 0 test rmse logD = 0.634326
+Model 0 test R2 logD = 0.832041
+Model 0 test rmse logP = 0.424092
+Model 0 test R2 logP = 0.949505
+Ensemble test rmse  logD= 0.634326
+Ensemble test R2  logD= 0.832041
+Ensemble test rmse  logP= 0.424092
+Ensemble test R2  logP= 0.949505
+Fold 2
+Model 0 best validation rmse = 0.607778 on epoch 29
+Model 0 test rmse logD = 0.638999
+Model 0 test R2 logD = 0.829558
+Model 0 test rmse logP = 0.429846
+Model 0 test R2 logP = 0.948126
+Ensemble test rmse  logD= 0.638999
+Ensemble test R2  logD= 0.829558
+Ensemble test rmse  logP= 0.429846
+Ensemble test R2  logP= 0.948126
+Fold 3
+Model 0 best validation rmse = 0.543915 on epoch 62
+Model 0 test rmse logD = 0.699443
+Model 0 test R2 logD = 0.795788
+Model 0 test rmse logP = 0.429662
+Model 0 test R2 logP = 0.948171
+Ensemble test rmse  logD= 0.699443
+Ensemble test R2  logD= 0.795788
+Ensemble test rmse  logP= 0.429662
+Ensemble test R2  logP= 0.948171
+4-fold cross validation
+	Seed 0 ==> test rmse = 0.555805
+	Seed 0 ==> test R2 = 0.880237
+	Seed 1 ==> test rmse = 0.529209
+	Seed 1 ==> test R2 = 0.890773
+	Seed 2 ==> test rmse = 0.534423
+	Seed 2 ==> test R2 = 0.888842
+	Seed 3 ==> test rmse = 0.564553
+	Seed 3 ==> test R2 = 0.871979
+Overall val rmse logD= 0.702727 +/- 0.042238
+Overall val R2 logD = 0.721456 +/- 0.045127
+Overall test rmse logD = 0.658558 +/- 0.025738
+Overall test R2 logD = 0.818688 +/- 0.014341
+Overall val rmse logP= 0.452946 +/- 0.012201
+Overall val R2 logP = 0.940809 +/- 0.003719
+Overall test rmse logP = 0.433437 +/- 0.009921
+Overall test R2 logP = 0.947228 +/- 0.002441
+Elapsed time = 14:26:57

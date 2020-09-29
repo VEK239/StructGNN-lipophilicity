@@ -1,0 +1,122 @@
+Fold 0
+Fold 0
+Fold 0
+Model 0 best validation rmse = 1.117238 on epoch 35
+Model 0 test rmse Energy = 1.118383
+Model 0 test R2 Energy = 0.925172
+Ensemble test rmse  Energy= 1.118383
+Ensemble test R2  Energy= 0.925172
+Fold 1
+Model 0 best validation rmse = 0.684480 on epoch 83
+Model 0 test rmse Energy = 0.989051
+Model 0 test R2 Energy = 0.941478
+Ensemble test rmse  Energy= 0.989051
+Ensemble test R2  Energy= 0.941478
+Fold 2
+Model 0 best validation rmse = 0.803578 on epoch 60
+Model 0 test rmse Energy = 1.086317
+Model 0 test R2 Energy = 0.929401
+Ensemble test rmse  Energy= 1.086317
+Ensemble test R2  Energy= 0.929401
+Fold 3
+Model 0 best validation rmse = 1.021467 on epoch 35
+Model 0 test rmse Energy = 1.003269
+Model 0 test R2 Energy = 0.939783
+Ensemble test rmse  Energy= 1.003269
+Ensemble test R2  Energy= 0.939783
+4-fold cross validation
+	Seed 0 ==> test rmse = 1.118383
+	Seed 0 ==> test R2 = 0.925172
+	Seed 1 ==> test rmse = 0.989051
+	Seed 1 ==> test R2 = 0.941478
+	Seed 2 ==> test rmse = 1.086317
+	Seed 2 ==> test R2 = 0.929401
+	Seed 3 ==> test rmse = 1.003269
+	Seed 3 ==> test R2 = 0.939783
+Overall val rmse Energy= 0.906691 +/- 0.171401
+Overall val R2 Energy = 0.943845 +/- 0.010689
+Overall test rmse Energy = 1.049255 +/- 0.054524
+Overall test R2 Energy = 0.933958 +/- 0.006864
+Elapsed time = 0:06:43
+Fold 0
+Model 0 best validation rmse = 1.117238 on epoch 35
+Fold 0
+Model 0 best validation rmse = 1.742818 on epoch 12
+Fold 0
+Model 0 best validation rmse = 1.742818 on epoch 12
+Fold 0
+Model 0 best validation rmse = 1.742818 on epoch 12
+Model 0 test rmse Energy = 2.242065
+Model 0 test R2 Energy = 0.541611
+Ensemble test rmse  Energy= 2.242065
+Ensemble test R2  Energy= 0.541611
+Fold 1
+Model 0 best validation rmse = 1.075748 on epoch 3
+Model 0 test rmse Energy = 2.362148
+Model 0 test R2 Energy = 0.491194
+Ensemble test rmse  Energy= 2.362148
+Ensemble test R2  Energy= 0.491194
+Fold 2
+Model 0 best validation rmse = 4.147843 on epoch 15
+Model 0 test rmse Energy = 2.475596
+Model 0 test R2 Energy = 0.441147
+Ensemble test rmse  Energy= 2.475596
+Ensemble test R2  Energy= 0.441147
+Fold 3
+Model 0 best validation rmse = 0.477563 on epoch 17
+Model 0 test rmse Energy = 2.048360
+Model 0 test R2 Energy = 0.617395
+Ensemble test rmse  Energy= 2.048360
+Ensemble test R2  Energy= 0.617395
+4-fold cross validation
+	Seed 0 ==> test rmse = 2.242065
+	Seed 0 ==> test R2 = 0.541611
+	Seed 1 ==> test rmse = 2.362148
+	Seed 1 ==> test R2 = 0.491194
+	Seed 2 ==> test rmse = 2.475596
+	Seed 2 ==> test R2 = 0.441147
+	Seed 3 ==> test rmse = 2.048360
+	Seed 3 ==> test R2 = 0.617395
+Overall val rmse Energy= 1.860993 +/- 1.394107
+Overall val R2 Energy = -1.342953 +/- 3.096221
+Overall test rmse Energy = 2.282042 +/- 0.158181
+Overall test R2 Energy = 0.522837 +/- 0.065131
+Elapsed time = 0:00:21
+Fold 0
+Model 0 best validation rmse = 1.117238 on epoch 35
+Model 0 test rmse Energy = 1.118383
+Model 0 test R2 Energy = 0.925172
+Ensemble test rmse  Energy= 1.118383
+Ensemble test R2  Energy= 0.925172
+Fold 1
+Model 0 best validation rmse = 0.684480 on epoch 83
+Model 0 test rmse Energy = 0.989051
+Model 0 test R2 Energy = 0.941478
+Ensemble test rmse  Energy= 0.989051
+Ensemble test R2  Energy= 0.941478
+Fold 2
+Model 0 best validation rmse = 0.803578 on epoch 60
+Model 0 test rmse Energy = 1.086317
+Model 0 test R2 Energy = 0.929401
+Ensemble test rmse  Energy= 1.086317
+Ensemble test R2  Energy= 0.929401
+Fold 3
+Model 0 best validation rmse = 1.021467 on epoch 35
+Model 0 test rmse Energy = 1.003269
+Model 0 test R2 Energy = 0.939783
+Ensemble test rmse  Energy= 1.003269
+Ensemble test R2  Energy= 0.939783
+4-fold cross validation
+	Seed 0 ==> test rmse = 1.118383
+	Seed 0 ==> test R2 = 0.925172
+	Seed 1 ==> test rmse = 0.989051
+	Seed 1 ==> test R2 = 0.941478
+	Seed 2 ==> test rmse = 1.086317
+	Seed 2 ==> test R2 = 0.929401
+	Seed 3 ==> test rmse = 1.003269
+	Seed 3 ==> test R2 = 0.939783
+Overall val rmse Energy= 0.906691 +/- 0.171401
+Overall val R2 Energy = 0.943845 +/- 0.010689
+Overall test rmse Energy = 1.049255 +/- 0.054524
+Overall test R2 Energy = 0.933958 +/- 0.006864
+Elapsed time = 0:06:55
