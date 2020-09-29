@@ -1,42 +1,64 @@
 dmpnn_train:
-  cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train.py
-    --dataset_type regression --num_workers 0
+  cmd: ~/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train.py --dataset_type
+    regression --num_workers 0 --config_path_yaml ./params.yaml
   deps:
   - path: ./data/3_final_data/split_data/logd_wo_averaging_test.csv
-    md5: a6965e8ec81a0295303b4e067528e526
+    md5: b3574ee392535ba77c3cad0a82240107
+  - path: ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_test.csv
+    md5: af529a93cbf2b93bd4725da533cf0ec3
   - path: ./data/3_final_data/split_data/logp_wo_averaging_test.csv
     md5: d264256dacc2f2b263c241d746bf9f40
   - path: ./data/raw/baselines/dmpnn/RDKitBestfeatures.txt
     md5: 167bbab04dd44d318ed593c2828b40e9
   - path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
-    md5: 20cefa6e0df77f00ca6eb4f826cb643a
+    md5: ebb8fba42a3c3dd63ba0a3d6da2fd2bf
   - path: ./scripts/SOTA/dmpnn/
-    md5: c0b7d342d09466f4511e37c98c82f42a.dir
+    md5: 3dc130da4111cccec72650c8c6dc9a03.dir
   params:
     params.yaml:
+      additional_encoder: true
       data_path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
       depth: 6
       epochs: 100
-      features_generator: rdkit_2d_normalized_best
-      file_prefix: logd_wo_averaging
+      features_generator:
+      file_prefix: freesolv
+      hidden_size: 800
       no_features_scaling: true
       num_folds: 4
       save_dir: ./data/raw/baselines/dmpnn/logs/exp_221/folds
-      separate_test_path: ./data/3_final_data/split_data/
+      separate_test_path: ./data/3_final_data/split_data
       split_type: k-fold
-      target_column: logD
+      substructures_hidden_size: 300
+      target_columns:
+      - Energy
   outs:
   - path: ./data/raw/baselines/dmpnn/logs/exp_221/final_scores.json
-    md5: 8e235a9d5264e9d3e713629de8a2811f
+    md5: 555c04b0b643127dabf7a205f6a7540e
   - path: ./data/raw/baselines/dmpnn/logs/exp_221/folds
-    md5: 2f80a6b6a80cb3d733b1a2d627fe917c.dir
+    md5: 57c02e930455a20bd063646aebee2d87.dir
 preparation:
-  cmd: /home/mol/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train_val_data_preparation.py
+  cmd: ~/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train_val_data_preparation.py
   deps:
+  - path: ./data/3_final_data/split_data/esol_train.csv
+    md5: 09793ffd46e4a67ea59773ebb211ec59
+  - path: ./data/3_final_data/split_data/esol_validation.csv
+    md5: 46b7f9232f2fcde5e96fdea431a8a574
+  - path: ./data/3_final_data/split_data/freesolv_train.csv
+    md5: 1c7ed8431a222e2b5d6f1fad80253899
+  - path: ./data/3_final_data/split_data/freesolv_validation.csv
+    md5: da51b3b9074ce8b10d93548e2d1e64d7
+  - path: ./data/3_final_data/split_data/logd_Lip_wo_averaging_train.csv
+    md5: 09633af8aba2711da841265253579cfe
+  - path: ./data/3_final_data/split_data/logd_Lip_wo_averaging_validation.csv
+    md5: 46e89bfc1cf0ccb9614ae3013a77ffed
   - path: ./data/3_final_data/split_data/logd_wo_averaging_train.csv
-    md5: 531143a9ddf06dbb3725435dc43d67b4
+    md5: ff7ed46df662b007c2e63d4c1db139f7
   - path: ./data/3_final_data/split_data/logd_wo_averaging_validation.csv
-    md5: d62c94b3db91411be3c9fbe75cb39ce0
+    md5: 37717c6a6ca6b9b8acddadbde56c9fa2
+  - path: ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_train.csv
+    md5: 775d55e7a4c5ac61edf042ef7a3fd285
+  - path: ./data/3_final_data/split_data/logp_logd_Lip_wo_averaging_validation.csv
+    md5: 27ea001d726570ddd0c13bd068852119
   - path: ./data/3_final_data/split_data/logp_wo_averaging_train.csv
     md5: 45e75fcfa52caa39a8d38680a0cf549a
   - path: ./data/3_final_data/split_data/logp_wo_averaging_validation.csv
@@ -45,7 +67,7 @@ preparation:
     md5: 3cc594ce1c8e16aba6d859c5d8aef60b
   params:
     params.yaml:
-      file_prefix: logd_wo_averaging
+      file_prefix: freesolv
   outs:
   - path: ./data/raw/baselines/dmpnn/train_val_dataset.csv
-    md5: 20cefa6e0df77f00ca6eb4f826cb643a
+    md5: ebb8fba42a3c3dd63ba0a3d6da2fd2bf

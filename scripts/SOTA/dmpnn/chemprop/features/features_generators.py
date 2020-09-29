@@ -114,6 +114,13 @@ def rdkit_2d_normalized_features_generator_best(mol: Molecule) -> np.ndarray:
     """Mock implementation raising an ImportError if descriptastorus cannot be imported."""
     raise ImportError('Failed to import descriptastorus. Please install descriptastorus '
                       '(https://github.com/bp-kelley/descriptastorus) to use RDKit 2D normalized features.')
+    
+@register_features_generator('rdkit_wo_fragments_and_counts')
+def rdkit_wo_fragments_and_counts(mol: Molecule) -> np.ndarray:
+    
+    """Mock implementation raising an ImportError if descriptastorus cannot be imported."""
+    raise ImportError('Failed to import descriptastorus. Please install descriptastorus '
+                      '(https://github.com/bp-kelley/descriptastorus) to use RDKit 2D normalized features.')
 
 
 try:
@@ -209,8 +216,28 @@ try:
             best_features.append(feature_dict[best_feature_name])
 
         return best_features
+    
+    @register_features_generator('rdkit_wo_fragments_and_counts')
+    def rdkit_wo_fragments_and_counts(mol: Molecule) -> np.ndarray:
+        """
+        Generates RDKit 2D normalized features for a molecule without features corresponding the count of
+        specific fragments in a molecule or count of fragment types (i.e. ring count).
+        :param mol: A molecule (i.e., either a SMILES or an RDKit molecule).
+        :return: A 1D numpy array containing the RDKit features without fragment features.
+        """
+        feature_names = rdDescriptors.RDKIT_PROPS["1.0.0"].copy()
+        feature_names_copy = feature_names.copy()
+        for name in feature_names:
+            if name.startswith("fr") or "count" in name.lower() or "num" in name.lower() or name == 'MolLogP':
+                feature_names_copy.remove(name)
+        smiles = Chem.MolToSmiles(mol, isomericSmiles=True) if type(mol) != str else mol
+        generator = rdNormalizedDescriptors.RDKit2DNormalized(feature_names_copy)
+        features = generator.process(smiles)[1:]
+        return features
+    
 except ImportError:
     pass
+
 
 
 """

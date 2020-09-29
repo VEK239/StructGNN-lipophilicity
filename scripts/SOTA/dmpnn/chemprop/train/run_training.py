@@ -2,6 +2,8 @@ from logging import Logger
 import os
 import sys
 from typing import List
+import pandas as pd
+
 
 import numpy as np
 from tensorboardX import SummaryWriter
@@ -9,15 +11,20 @@ import torch
 from tqdm import trange
 from torch.optim.lr_scheduler import ExponentialLR
 
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+
 from .evaluate import evaluate, evaluate_predictions
 from .predict import predict
 from .train import train
-from chemprop.args import TrainArgs
-from chemprop.constants import MODEL_FILE_NAME
-from chemprop.data import get_class_sizes, get_data, MoleculeDataLoader, split_data, StandardScaler, validate_dataset_type
-from chemprop.models import MoleculeModel
-from chemprop.nn_utils import param_count
-from chemprop.utils import build_optimizer, build_lr_scheduler, get_loss_func, get_metric_func, load_checkpoint,\
+from args import TrainArgs
+from constants import MODEL_FILE_NAME
+from data import get_class_sizes, get_data, MoleculeDataLoader, split_data, StandardScaler, validate_dataset_type
+from models import MoleculeModel
+from nn_utils import param_count
+from utils import build_optimizer, build_lr_scheduler, get_loss_func, get_metric_func, load_checkpoint,\
     makedirs, save_checkpoint, save_smiles_splits
 
 
@@ -219,31 +226,37 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
                 metric_func=metric_func,
                 dataset_type=args.dataset_type,
                 scaler=scaler,
-                logger=logger
+                logger=logger,
+                args = args
             )
 
             # Average validation score
-            avg_val_score = np.nanmean(val_scores)
-            avg_val_score_r2 = np.nanmean(val_scores_r2)
+            avg_val_score = val_scores
+            avg_val_score_r2 = val_scores_r2
+            print(avg_val_score)
+            for task in range(args.num_tasks):
+                debug(f'Validation {args.metric} {args.target_columns[task]} = {avg_val_score[task]:.6f}')
+                debug(f'Validation R2 {args.target_columns[task]} = {avg_val_score_r2[task]:.6f}')
 
-
-            debug(f'Validation {args.metric} = {avg_val_score:.6f}')
-            debug(f'Validation R2 = {avg_val_score_r2:.6f}')
-
-            writer.add_scalar(f'validation_{args.metric}', avg_val_score, n_iter)
-            writer.add_scalar(f'validation_R2', avg_val_score_r2, n_iter)
+                writer.add_scalar(f'validation_{args.metric}_{args.target_columns[task]}', avg_val_score[task], n_iter)
+                writer.add_scalar(f'validation_R2_{args.target_columns[task]}', avg_val_score_r2[task], n_iter)
 
             if args.show_individual_scores:
                 # Individual validation scores
                 for task_name, val_score in zip(args.task_names, val_scores):
                     debug(f'Validation {task_name} {args.metric} = {val_score:.6f}')
                     writer.add_scalar(f'validation_{task_name}_{args.metric}', val_score, n_iter)
+                    
+            avg_val_score = np.nanmean(val_scores)
+            avg_val_score_r2 = np.nanmean(val_scores_r2)
 
             # Save model checkpoint if improved validation score
             if args.minimize_score and avg_val_score < best_score or \
                     not args.minimize_score and avg_val_score > best_score:
                 best_score, best_epoch = avg_val_score, epoch
                 best_score_r2 = avg_val_score_r2
+                best_vals = val_scores
+                best_vals_r2 = val_scores_r2
                 save_checkpoint(os.path.join(save_dir, MODEL_FILE_NAME), model, scaler, features_scaler, args)
 
         # Evaluate on test set using model with best validation score
@@ -253,8 +266,16 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
         test_preds = predict(
             model=model,
             data_loader=test_data_loader,
-            scaler=scaler
+            scaler=scaler,
+            args = args
         )
+        test_predictions = pd.DataFrame(columns = [args.smiles_column])
+        test_predictions[args.smiles_column] = test_smiles
+        for task in range(args.num_tasks):
+            test_predictions[args.target_columns[task]] = np.array(test_targets)[:, task]
+            test_predictions[args.target_columns[task]+'_pred'] = np.array(test_preds)[:, task]
+        test_predictions.to_csv(os.path.join(args.save_dir, 'test_predictions.csv'), index = False)
+        
         test_scores, test_scores_r2 = evaluate_predictions(
             preds=test_preds,
             targets=test_targets,
@@ -268,12 +289,15 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
             sum_test_preds += np.array(test_preds)
 
         # Average test score
-        avg_test_score = np.nanmean(test_scores)
-        avg_test_score_r2 = np.nanmean(test_scores_r2)
-        info(f'Model {model_idx} test {args.metric} = {avg_test_score:.6f}')
-        info(f'Model {model_idx} test R2 = {avg_test_score_r2:.6f}')
-        writer.add_scalar(f'test_{args.metric}', avg_test_score, 0)
-        writer.add_scalar(f'test_R2', avg_test_score_r2, 0)
+        
+        avg_test_score = test_scores
+        avg_test_score_r2 = test_scores_r2
+#         print(avg_test_score)
+        for task in range(args.num_tasks):
+            info(f'Model {model_idx} test {args.metric} {args.target_columns[task]} = {avg_test_score[task]:.6f}')
+            info(f'Model {model_idx} test R2 {args.target_columns[task]} = {avg_test_score_r2[task]:.6f}')
+            writer.add_scalar(f'test_{args.metric}_{args.target_columns[task]}', avg_test_score[task], 0)
+            writer.add_scalar(f'test_R2_{args.target_columns[task]}', avg_test_score_r2[task], 0)
 
         if args.show_individual_scores:
             # Individual test scores
@@ -295,16 +319,17 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
     )
 
     # Average ensemble score
-    avg_ensemble_test_score = np.nanmean(ensemble_scores)
-    avg_ensemble_test_score_r2 = np.nanmean(ensemble_scores_r2)
+    
+    avg_ensemble_test_score = ensemble_scores
+    avg_ensemble_test_score_r2 = ensemble_scores_r2
 
-
-    info(f'Ensemble test {args.metric} = {avg_ensemble_test_score:.6f}')
-    info(f'Ensemble test R2 = {avg_ensemble_test_score_r2:.6f}')
+    for task in range(args.num_tasks):
+        info(f'Ensemble test {args.metric}  {args.target_columns[task]}= {avg_ensemble_test_score[task]:.6f}')
+        info(f'Ensemble test R2  {args.target_columns[task]}= {avg_ensemble_test_score_r2[task]:.6f}')
 
     # Individual ensemble scores
     if args.show_individual_scores:
         for task_name, ensemble_score in zip(args.task_names, ensemble_scores):
             info(f'Ensemble test {task_name} {args.metric} = {ensemble_score:.6f}')
 
-    return ensemble_scores, ensemble_scores_r2, best_score, best_score_r2
+    return ensemble_scores, ensemble_scores_r2, best_vals, best_vals_r2

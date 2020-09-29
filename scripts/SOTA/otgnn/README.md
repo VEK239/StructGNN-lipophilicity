@@ -13,6 +13,10 @@ basis point clouds (of unaggregated node embeddings).
 
 ## Running instructions 
 
+### Data preparation
+
+1. Prepara data and splits with ```mol_properties/notebooks/baselines/otgnn/1_data_preparation.ipynb``` notebook
+
 ### Training script
 
 Running with best parameters:

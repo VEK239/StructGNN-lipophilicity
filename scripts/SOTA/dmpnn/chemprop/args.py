@@ -57,7 +57,7 @@ def get_checkpoint_paths(checkpoint_path: Optional[str] = None,
 class CommonArgs(Tap):
     """:class:`CommonArgs` contains arguments that are used in both :class:`TrainArgs` and :class:`PredictArgs`."""
 
-    smiles_column: str = None
+    smiles_column: str = 'smiles'
     """Name of the column containing SMILES strings. By default, uses the first column."""
     checkpoint_dir: str = None
     """Directory from which to load model checkpoints (walks directory and ensembles all models that are found)."""
@@ -130,6 +130,8 @@ class TrainArgs(CommonArgs):
     """:class:`TrainArgs` includes :class:`CommonArgs` along with additional arguments used for training a Chemprop model."""
 
     # General arguments
+    additional_encoder: bool = False
+    """Add our encoder to model"""
     data_path: str = ''
     """Path to data CSV file."""
     target_columns: List[str] = None
@@ -196,7 +198,10 @@ class TrainArgs(CommonArgs):
     """Whether to add bias to linear layers."""
     hidden_size: int = 300
     """Dimensionality of hidden layers in MPN."""
+    substructures_hidden_size: int = 300
+    """Dimensionality of hidden layers in SubstructureLayer."""    
     depth: int = 3
+    substructures_depth: bool = False
     """Number of message passing steps."""
     dropout: float = 0.0
     """Dropout probability."""
@@ -204,7 +209,9 @@ class TrainArgs(CommonArgs):
     """Activation function."""
     atom_messages: bool = False
     """Centers messages on atoms instead of on bonds."""
+    substructures_atom_messages: bool = False
     undirected: bool = False
+    substructures_undirected: bool = False
     """Undirected edges (always sum the two relevant bond vectors)."""
     ffn_hidden_size: int = None
     """Hidden dim for higher-capacity FFN (defaults to hidden_size)."""
@@ -216,7 +223,11 @@ class TrainArgs(CommonArgs):
     """Path to file with features for separate val set."""
     separate_test_features_path: List[str] = None
     """Path to file with features for separate test set."""
+    substructures_use_substructures:bool = True
+    substructures_merge: bool = False
     config_path: str = None
+        
+    config_path_yaml: str = None
     """
     Path to a :code:`.json` file containing arguments. Any arguments present in the config file
     will override arguments specified via the command line or by the defaults.
@@ -317,6 +328,25 @@ class TrainArgs(CommonArgs):
                 config = json.load(f)
                 for key, value in config.items():
                     setattr(self, key, value)
+                    
+        if self.config_path_yaml is not None:
+            import yaml
+            with open(self.config_path_yaml) as f:
+                config = yaml.safe_load(f)
+                for key, value in config.items():
+                    if key == 'file_prefix':
+                        continue
+                    if key == 'separate_test_path':
+                        setattr(self, key, os.path.join(value, config['file_prefix']+'_test.csv'))
+                    elif key == 'separate_val_path':
+                        setattr(self, key, os.path.join(value, config['file_prefix']+'_validation.csv'))
+                    elif key == 'data_path':
+                        if 'separate_val_path' in config.keys():
+                            setattr(self, key, os.path.join(value, config['file_prefix']+'_train.csv'))
+                        else:
+                            setattr(self, key, os.path.join(value, config['file_prefix']+'_train_val_dataset.csv'))
+                    else:
+                        setattr(self, key, value)
 
         # Create temporary directory as save directory if not provided
         if self.save_dir is None:

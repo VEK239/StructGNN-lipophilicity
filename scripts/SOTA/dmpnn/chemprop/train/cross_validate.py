@@ -31,16 +31,20 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
 
     with open("params.yaml", 'r') as fd:
             params = yaml.safe_load(fd)
-    args.save_dir = params['save_dir']
-    args.epochs = params['epochs']
-    args.depth = params['depth']
-    args.features_generator = [params['features_generator']]
-    args.no_features_scaling = params['no_features_scaling']
-    args.split_type = params['split_type']
-    args.num_folds = params['num_folds']
-    args.data_path = os.path.join(params['data_path'])
-    args.target_columns = [params['target_column']]
-    args.separate_test_path = os.path.join(params['separate_test_path'], params['file_prefix']+'_test.csv')
+            
+#     args.save_dir = params['save_dir']
+#     args.epochs = params['epochs']
+#     args.depth = params['depth']
+#     args.features_generator = [params['features_generator']]
+#     args.no_features_scaling = params['no_features_scaling']
+#     args.split_type = params['split_type']
+#     args.num_folds = params['num_folds']
+#     args.data_path = os.path.join(params['data_path'])
+#     args.target_columns = params['target_column']
+#     args.separate_test_path = os.path.join(params['separate_test_path'], params['file_prefix']+'_test.csv')
+#     args.additional_encoder = params['additional_encoder']
+#     args.hidden_size = params['hidden_size']
+#     args.substructures_hidden_size = params['substructures_hidden_size']
     
     # Initialize relevant variables
     init_seed = args.seed
@@ -85,32 +89,35 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
                 info(f'\t\tSeed {init_seed + fold_num} ==> test {task_name} R2 = {all_scores_r2[fold_num]:.6f}')
 
     # Report scores across models
-    avg_scores = np.nanmean(all_scores, axis=1)  # average score for each model across tasks
-    mean_score, std_score = np.nanmean(avg_scores), np.nanstd(avg_scores)
+#     avg_scores = np.nanmean(all_scores, axis=1)  # average score for each model across tasks
+    mean_score, std_score = np.nanmean(all_scores, axis = 0), np.nanstd(all_scores, axis=0)
     
 #     avg_val_scores = np.nanmean(val_scores)  # average score for each model across tasks
-    mean_val_score, std_val_score = np.nanmean(val_scores), np.nanstd(val_scores)
+#     avg_val_scores = np.nanmean(val_scores, axis=1)  # average score for each model across tasks
+    mean_val_score, std_val_score = np.nanmean(val_scores, axis = 0), np.nanstd(val_scores, axis = 0)
     
-    avg_scores_r2 = np.nanmean(all_scores_r2, axis=1)  # average score for each model across tasks
-    mean_score_r2, std_score_r2 = np.nanmean(avg_scores_r2), np.nanstd(avg_scores_r2)
+#     avg_scores_r2 = np.nanmean(all_scores_r2, axis=1)  # average score for each model across tasks
+    mean_score_r2, std_score_r2 = np.nanmean(all_scores_r2, axis = 0), np.nanstd(all_scores_r2, axis = 0)
     
 #     avg_val_scores_r2 = np.nanmean(val_scores_r2, axis=1)  # average score for each model across tasks
-    mean_val_score_r2, std_val_score_r2 = np.nanmean(val_scores_r2), np.nanstd(val_scores_r2)
+    mean_val_score_r2, std_val_score_r2 = np.nanmean(val_scores_r2, axis = 0), np.nanstd(val_scores_r2, axis = 0)
     
-    info(f'Overall val {args.metric} = {mean_val_score:.6f} +/- {std_val_score:.6f}')
-    info(f'Overall val R2 = {mean_val_score_r2:.6f} +/- {std_val_score_r2:.6f}')
-    info(f'Overall test {args.metric} = {mean_score:.6f} +/- {std_score:.6f}')
-    info(f'Overall test R2 = {mean_score_r2:.6f} +/- {std_score_r2:.6f}')
+    for task in range(args.num_tasks):
+        info(f'Overall val {args.metric} {args.target_columns[task]}= {mean_val_score[task]:.6f} +/- {std_val_score[task]:.6f}')
+        info(f'Overall val R2 {args.target_columns[task]} = {mean_val_score_r2[task]:.6f} +/- {std_val_score_r2[task]:.6f}')
+        info(f'Overall test {args.metric} {args.target_columns[task]} = {mean_score[task]:.6f} +/- {std_score[task]:.6f}')
+        info(f'Overall test R2 {args.target_columns[task]} = {mean_score_r2[task]:.6f} +/- {std_score_r2[task]:.6f}')
     
     all_scores_dict = {}
-    all_scores_dict['test_RMSE_mean'] = mean_score
-    all_scores_dict['test_R2_mean'] = mean_score_r2
-    all_scores_dict['test_RMSE_std'] = std_score
-    all_scores_dict['test_R2_std'] = std_score_r2
-    all_scores_dict['val_RMSE_mean'] = mean_val_score
-    all_scores_dict['val_R2_mean'] = mean_val_score_r2
-    all_scores_dict['val_RMSE_std'] = std_val_score
-    all_scores_dict['val_R2_std'] = std_val_score_r2
+    for task in range(args.num_tasks):
+        all_scores_dict[args.target_columns[task]+'_test_RMSE_mean'] = mean_score[task]
+        all_scores_dict[args.target_columns[task]+'_test_R2_mean'] = mean_score_r2[task]
+        all_scores_dict[args.target_columns[task]+'_test_RMSE_std'] = std_score[task]
+        all_scores_dict[args.target_columns[task]+'_test_R2_std'] = std_score_r2[task]
+        all_scores_dict[args.target_columns[task]+'_val_RMSE_mean'] = mean_val_score[task]
+        all_scores_dict[args.target_columns[task]+'_val_R2_mean'] = mean_val_score_r2[task]
+        all_scores_dict[args.target_columns[task]+'_val_RMSE_std'] = std_val_score[task]
+        all_scores_dict[args.target_columns[task]+'_val_R2_std'] = std_val_score_r2[task]
     
     with open(os.path.join(os.path.dirname(save_dir), 'final_scores.json'), 'w') as f:
         json.dump(all_scores_dict, f)
