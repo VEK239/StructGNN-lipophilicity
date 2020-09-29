@@ -6,11 +6,14 @@ from tqdm import tqdm
 from chemprop.data import MoleculeDataLoader, MoleculeDataset, StandardScaler
 from chemprop.models import MoleculeModel
 
+from chemprop.args import TrainArgs
+
 
 def predict(model: MoleculeModel,
             data_loader: MoleculeDataLoader,
             disable_progress_bar: bool = False,
-            scaler: StandardScaler = None) -> List[List[float]]:
+            scaler: StandardScaler = None,
+            args: TrainArgs = None) -> List[List[float]]:
     """
     Makes predictions on a dataset using an ensemble of models.
 
@@ -27,11 +30,16 @@ def predict(model: MoleculeModel,
     for batch in tqdm(data_loader, disable=disable_progress_bar):
         # Prepare batch
         batch: MoleculeDataset
+        if args.additional_encoder:
+            substructure_mol_batch = batch.batch_graph(model_type='substructures')
         mol_batch, features_batch = batch.batch_graph(), batch.features()
 
         # Make predictions
         with torch.no_grad():
-            batch_preds = model(mol_batch, features_batch)
+            if args.additional_encoder:        
+                batch_preds = model(batch = mol_batch, substructures_batch = substructure_mol_batch, features_batch = features_batch)
+            else:
+                batch_preds = model(batch = mol_batch, features_batch = features_batch)
 
         batch_preds = batch_preds.data.cpu().numpy()
 

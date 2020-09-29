@@ -5,6 +5,7 @@ from .predict import predict
 from chemprop.data import MoleculeDataLoader, StandardScaler
 from chemprop.models import MoleculeModel
 from sklearn.metrics import r2_score
+from chemprop.args import TrainArgs
 
 
 def evaluate_predictions(preds: List[List[float]],
@@ -58,6 +59,8 @@ def evaluate_predictions(preds: List[List[float]],
                 continue
 
         if len(valid_targets[i]) == 0:
+            results.append(float('nan'))
+            results_r2.append(float('nan'))
             continue
 
         if dataset_type == 'multiclass':
@@ -75,7 +78,8 @@ def evaluate(model: MoleculeModel,
              metric_func: Callable,
              dataset_type: str,
              scaler: StandardScaler = None,
-             logger: logging.Logger = None) -> List[float]:
+             logger: logging.Logger = None,
+             args: TrainArgs = None) -> List[float]:
     """
     Evaluates an ensemble of models on a dataset by making predictions and then evaluating the predictions.
 
@@ -91,7 +95,8 @@ def evaluate(model: MoleculeModel,
     preds = predict(
         model=model,
         data_loader=data_loader,
-        scaler=scaler
+        scaler=scaler,
+        args = args
     )
 
     results, results_r2 = evaluate_predictions(
@@ -102,5 +107,4 @@ def evaluate(model: MoleculeModel,
         dataset_type=dataset_type,
         logger=logger
     )
-
     return results, results_r2

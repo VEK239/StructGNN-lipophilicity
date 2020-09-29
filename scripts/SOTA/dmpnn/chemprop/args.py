@@ -130,6 +130,8 @@ class TrainArgs(CommonArgs):
     """:class:`TrainArgs` includes :class:`CommonArgs` along with additional arguments used for training a Chemprop model."""
 
     # General arguments
+    additional_encoder: bool = False
+    """Add our encoder to model"""
     data_path: str = ''
     """Path to data CSV file."""
     target_columns: List[str] = None
@@ -196,7 +198,10 @@ class TrainArgs(CommonArgs):
     """Whether to add bias to linear layers."""
     hidden_size: int = 300
     """Dimensionality of hidden layers in MPN."""
+    substructures_hidden_size: int = 300
+    """Dimensionality of hidden layers in SubstructureLayer."""    
     depth: int = 3
+    substructures_depth: bool = False
     """Number of message passing steps."""
     dropout: float = 0.0
     """Dropout probability."""
@@ -204,7 +209,9 @@ class TrainArgs(CommonArgs):
     """Activation function."""
     atom_messages: bool = False
     """Centers messages on atoms instead of on bonds."""
+    substructures_atom_messages: bool = False
     undirected: bool = False
+    substructures_undirected: bool = False
     """Undirected edges (always sum the two relevant bond vectors)."""
     ffn_hidden_size: int = None
     """Hidden dim for higher-capacity FFN (defaults to hidden_size)."""
@@ -216,6 +223,8 @@ class TrainArgs(CommonArgs):
     """Path to file with features for separate val set."""
     separate_test_features_path: List[str] = None
     """Path to file with features for separate test set."""
+    substructures_use_substructures:bool = True
+    substructures_merge: bool = False
     config_path: str = None
     """
     Path to a :code:`.json` file containing arguments. Any arguments present in the config file

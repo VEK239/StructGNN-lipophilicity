@@ -5,9 +5,16 @@ from rdkit import Chem
 import torch
 import torch.nn as nn
 
-from chemprop.args import TrainArgs
-from chemprop.features import BatchMolGraph, get_atom_fdim, get_bond_fdim, mol2graph
-from chemprop.nn_utils import index_select_ND, get_activation_function
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+from args import TrainArgs
+
+from features import BatchMolGraph, get_atom_fdim, get_bond_fdim, mol2graph, \
+BatchMolGraphWithSubstructures, get_atom_fdim_with_substructures, \
+    mol2graph_with_substructures
+from nn_utils import index_select_ND, get_activation_function
 
 
 class MPNEncoder(nn.Module):
@@ -22,13 +29,17 @@ class MPNEncoder(nn.Module):
         super(MPNEncoder, self).__init__()
         self.atom_fdim = atom_fdim
         self.bond_fdim = bond_fdim
+        self.args = args
+        
         self.atom_messages = args.atom_messages
         self.hidden_size = args.hidden_size
-        self.bias = args.bias
         self.depth = args.depth
+        self.undirected = args.undirected
+        
+        
+        self.bias = args.bias
         self.dropout = args.dropout
         self.layers_per_message = 1
-        self.undirected = args.undirected
         self.features_only = args.features_only
         self.use_input_features = args.use_input_features
         self.device = args.device
@@ -154,8 +165,15 @@ class MPN(nn.Module):
         :param bond_fdim: Bond feature vector dimension.
         """
         super(MPN, self).__init__()
+        
+        self.args = args
+        
+        
+        
         self.atom_fdim = atom_fdim or get_atom_fdim()
         self.bond_fdim = bond_fdim or get_bond_fdim(atom_messages=args.atom_messages)
+            
+
         self.encoder = MPNEncoder(args, self.atom_fdim, self.bond_fdim)
 
     def forward(self,
@@ -170,6 +188,7 @@ class MPN(nn.Module):
         :return: A PyTorch tensor of shape :code:`(num_molecules, hidden_size)` containing the encoding of each molecule.
         """
         if type(batch) != BatchMolGraph:
+
             batch = mol2graph(batch)
 
         output = self.encoder.forward(batch, features_batch)
