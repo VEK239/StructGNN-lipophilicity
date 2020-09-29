@@ -48,13 +48,12 @@ def train(model: MoleculeModel,
     
     model.train()
     loss_sum, iter_count = 0, 0
-
     for batch in tqdm(data_loader, total=len(data_loader)):
         # Prepare batch
         batch: MoleculeDataset
         if args.additional_encoder:
-            substructure_mol_batch = batch.batch_graph(model_type='substructures')
-        mol_batch, features_batch, target_batch = batch.batch_graph(), batch.features(), batch.targets()
+            substructure_mol_batch = batch.batch_graph(model_type='substructures', args=args)
+        mol_batch, features_batch, target_batch = batch.batch_graph(args=args), batch.features(), batch.targets()
         mask = torch.Tensor([[x is not None for x in tb] for tb in target_batch])
         targets = torch.Tensor([[0 if x is None else x for x in tb] for tb in target_batch])
 

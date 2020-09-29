@@ -139,7 +139,7 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
     else:
         cache = False
         num_workers = args.num_workers
-
+    from torch.utils.data import  Dataset, DataLoader
     # Create data loaders
     train_data_loader = MoleculeDataLoader(
         dataset=train_data,
@@ -148,19 +148,19 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
         cache=cache,
         class_balance=args.class_balance,
         shuffle=True,
-        seed=args.seed, args = args
+        seed=args.seed
     )
     val_data_loader = MoleculeDataLoader(
         dataset=val_data,
         batch_size=args.batch_size,
         num_workers=num_workers,
-        cache=cache, args = args
+        cache=cache
     )
     test_data_loader = MoleculeDataLoader(
         dataset=test_data,
         batch_size=args.batch_size,
         num_workers=num_workers,
-        cache=cache, args = args
+        cache=cache
     )
 
     if args.class_balance:

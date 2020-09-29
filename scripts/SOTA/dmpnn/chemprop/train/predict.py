@@ -36,8 +36,8 @@ def predict(model: MoleculeModel,
         # Prepare batch
         batch: MoleculeDataset
         if args.additional_encoder:
-            substructure_mol_batch = batch.batch_graph(model_type='substructures')
-        mol_batch, features_batch = batch.batch_graph(), batch.features()
+            substructure_mol_batch = batch.batch_graph(model_type='substructures', args = args)
+        mol_batch, features_batch = batch.batch_graph(args = args), batch.features()
 
         # Make predictions
         with torch.no_grad():

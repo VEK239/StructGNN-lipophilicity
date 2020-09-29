@@ -199,7 +199,7 @@ def get_data(path: str,
                 features=features_data[i] if features_data is not None else None
             ) for i, (smiles, targets) in tqdm(enumerate(zip(all_smiles, all_targets)),
                                                total=len(all_smiles))
-        ], args = args)
+        ])
 
     # Filter out invalid SMILES
     if skip_invalid_smiles:
@@ -365,7 +365,7 @@ def split_data(data: MoleculeDataset,
         train = [data[i] for i in train_index]
         val = [data[i] for i in val_index]
 
-        return MoleculeDataset(train, args = args), MoleculeDataset(val, args = args), MoleculeDataset([])
+        return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset([])
 
     else:
         raise ValueError(f'split_type "{split_type}" not supported.')
