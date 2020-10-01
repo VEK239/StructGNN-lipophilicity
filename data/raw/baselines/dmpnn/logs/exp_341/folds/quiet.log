@@ -98,3 +98,61 @@ Fold 0
 Fold 0
 Fold 0
 Fold 0
+Fold 0
+Model 0 best validation rmse = 0.537606 on epoch 88
+Model 0 test rmse logD = 0.582870
+Model 0 test R2 logD = 0.784525
+Model 0 test rmse logP = 0.441929
+Model 0 test R2 logP = 0.943905
+Ensemble test rmse  logD= 0.582870
+Ensemble test R2  logD= 0.784525
+Ensemble test rmse  logP= 0.441929
+Ensemble test R2  logP= 0.943905
+Fold 1
+Model 0 best validation rmse = 0.517991 on epoch 99
+Model 0 test rmse logD = 0.575485
+Model 0 test R2 logD = 0.789950
+Model 0 test rmse logP = 0.455384
+Model 0 test R2 logP = 0.940437
+Ensemble test rmse  logD= 0.575485
+Ensemble test R2  logD= 0.789950
+Ensemble test rmse  logP= 0.455384
+Ensemble test R2  logP= 0.940437
+Fold 2
+Model 0 best validation rmse = 0.509124 on epoch 56
+Model 0 test rmse logD = 0.558478
+Model 0 test R2 logD = 0.802182
+Model 0 test rmse logP = 0.456495
+Model 0 test R2 logP = 0.940146
+Ensemble test rmse  logD= 0.558478
+Ensemble test R2  logD= 0.802182
+Ensemble test rmse  logP= 0.456495
+Ensemble test R2  logP= 0.940146
+Fold 3
+Model 0 best validation rmse = 0.521976 on epoch 92
+Model 0 test rmse logD = 0.572709
+Model 0 test R2 logD = 0.791972
+Model 0 test rmse logP = 0.440423
+Model 0 test R2 logP = 0.944286
+Ensemble test rmse  logD= 0.572709
+Ensemble test R2  logD= 0.791972
+Ensemble test rmse  logP= 0.440423
+Ensemble test R2  logP= 0.944286
+4-fold cross validation
+	Seed 0 ==> test rmse = 0.512399
+	Seed 0 ==> test R2 = 0.864215
+	Seed 1 ==> test rmse = 0.515435
+	Seed 1 ==> test R2 = 0.865194
+	Seed 2 ==> test rmse = 0.507487
+	Seed 2 ==> test R2 = 0.871164
+	Seed 3 ==> test rmse = 0.506566
+	Seed 3 ==> test R2 = 0.868129
+Overall val rmse logD= 0.578357 +/- 0.023756
+Overall val R2 logD = 0.763003 +/- 0.019155
+Overall test rmse logD = 0.572385 +/- 0.008846
+Overall test R2 logD = 0.792157 +/- 0.006396
+Overall val rmse logP= 0.464991 +/- 0.007498
+Overall val R2 logP = 0.937906 +/- 0.002647
+Overall test rmse logP = 0.448558 +/- 0.007412
+Overall test R2 logP = 0.942193 +/- 0.001910
+Elapsed time = 4:19:58

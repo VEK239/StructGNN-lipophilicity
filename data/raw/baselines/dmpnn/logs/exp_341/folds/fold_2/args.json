@@ -26,7 +26,7 @@
     "ensemble_size": 1,
     "epochs": 100,
     "features_generator": [
-        "rdkit_2d_normalized_best"
+        "rdkit_2d_normalized_wo_MolLogP"
     ],
     "features_only": false,
     "features_path": null,
@@ -52,15 +52,15 @@
     "num_folds": 4,
     "num_lrs": 1,
     "num_tasks": 2,
-    "num_workers": 0,
+    "num_workers": 4,
     "pytorch_seed": 0,
     "quiet": false,
     "reproducibility": {
-        "command_line": "python ./scripts/SOTA/dmpnn/train.py --dataset_type regression --num_workers 0 --config_path_yaml ./params.yaml",
+        "command_line": "python ./scripts/SOTA/dmpnn/train.py --dataset_type regression --num_workers 4 --config_path_yaml ./params.yaml",
         "git_has_uncommitted_changes": true,
         "git_root": "/home/mol/alisa/mol_properties",
-        "git_url": "https://github.com/jbr-ai-labs/mol_properties/tree/daf2829a54cff9d5655805d5ca4fa9f5608a579f",
-        "time": "Tue Sep 29 13:14:48 2020"
+        "git_url": "https://github.com/jbr-ai-labs/mol_properties/tree/cdf821484053dea4fdb53cba18a66804a60d97d1",
+        "time": "Tue Sep 29 22:13:01 2020"
     },
     "save_dir": "./data/raw/baselines/dmpnn/logs/exp_341/folds/fold_2",
     "save_smiles_splits": false,
