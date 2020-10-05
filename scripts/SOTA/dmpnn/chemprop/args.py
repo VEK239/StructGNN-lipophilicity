@@ -336,15 +336,17 @@ class TrainArgs(CommonArgs):
                 for key, value in config.items():
                     if key == 'file_prefix':
                         continue
-                    if key == 'separate_test_path':
+                    if key == 'separate_test_path' and config['separate_test_path']:
                         setattr(self, key, os.path.join(value, config['file_prefix']+'_test.csv'))
-                    elif key == 'separate_val_path':
+                    elif key == 'separate_val_path' and config['separate_val_path']:
                         setattr(self, key, os.path.join(value, config['file_prefix']+'_validation.csv'))
                     elif key == 'data_path':
-                        if 'separate_val_path' in config.keys():
+                        if 'separate_val_path' in config.keys() and config['separate_val_path']:
                             setattr(self, key, os.path.join(value, config['file_prefix']+'_train.csv'))
-                        else:
+                        elif 'separate_test_path' in config.keys() and config['separate_test_path']:
                             setattr(self, key, os.path.join(value, config['file_prefix']+'_train_val_dataset.csv'))
+                        else:
+                            setattr(self, key, os.path.join(value, config['file_prefix']+'.csv'))
                     else:
                         setattr(self, key, value)
 
