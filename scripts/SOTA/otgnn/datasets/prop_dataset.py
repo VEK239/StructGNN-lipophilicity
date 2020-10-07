@@ -65,7 +65,7 @@ class PropDataset(Dataset):
             return (smiles, parsed_labels, mask)
 
 def get_loader(data_dir, data_type, batch_size, split=0, parse_func=None,
-               shuffle=False, num_workers=1, n_labels=1):
+               shuffle=False, num_workers=4, n_labels=1):
     prop_dataset = PropDataset(
         data_dir, data_type, split=split, parse_func=parse_func, n_labels=n_labels)
 
