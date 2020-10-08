@@ -10,6 +10,7 @@ DATA_TASK = {
     'sol': 'rmse',
     'logp': 'rmse',
     'logp_wo_par': 'rmse',
+    'logd_Lip': 'rmse',
     'logp_wo_json': 'rmse',
     'logp_wo_aver': 'rmse',
     'lipo': 'rmse',
