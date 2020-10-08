@@ -137,6 +137,7 @@ class MoleculeModel(nn.Module):
         if self.featurizer:
             return self.featurize(batch, features_batch)
         if self.args.additional_encoder:
+            
             substructures_mol_o = self.substructures_encoder(substructures_batch)
             out = torch.cat((self.encoder(batch, features_batch),
                          substructures_mol_o), dim=1)

@@ -63,7 +63,6 @@ class SubstructureEncoder(nn.Module):
         a_input = f_atoms
         atom_hiddens = self.act_func(self.W_o(a_input))  # num_atoms x hidden
         atom_hiddens = self.dropout_layer(atom_hiddens)  # num_atoms x hidden
-
         # Readout
         mol_vecs = []
         for i, (a_start, a_size) in enumerate(a_scope):
