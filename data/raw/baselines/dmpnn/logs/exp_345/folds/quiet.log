@@ -1,0 +1,58 @@
+Fold 0
+Model 0 best validation rmse = 0.666131 on epoch 95
+Model 0 test rmse Energy = 0.901732
+Model 0 test R2 Energy = 0.952278
+Model 0 test rmse logP = 0.469275
+Model 0 test R2 logP = 0.936398
+Ensemble test rmse  Energy= 0.901732
+Ensemble test R2  Energy= 0.952278
+Ensemble test rmse  logP= 0.469275
+Ensemble test R2  logP= 0.936398
+Fold 1
+Model 0 best validation rmse = 0.633380 on epoch 80
+Model 0 test rmse Energy = 0.931598
+Model 0 test R2 Energy = 0.949065
+Model 0 test rmse logP = 0.475326
+Model 0 test R2 logP = 0.934747
+Ensemble test rmse  Energy= 0.931598
+Ensemble test R2  Energy= 0.949065
+Ensemble test rmse  logP= 0.475326
+Ensemble test R2  logP= 0.934747
+Fold 2
+Model 0 best validation rmse = 0.747651 on epoch 52
+Model 0 test rmse Energy = 0.899007
+Model 0 test R2 Energy = 0.952566
+Model 0 test rmse logP = 0.464388
+Model 0 test R2 logP = 0.937716
+Ensemble test rmse  Energy= 0.899007
+Ensemble test R2  Energy= 0.952566
+Ensemble test rmse  logP= 0.464388
+Ensemble test R2  logP= 0.937716
+Fold 3
+Model 0 best validation rmse = 0.702588 on epoch 45
+Model 0 test rmse Energy = 0.852249
+Model 0 test R2 Energy = 0.957372
+Model 0 test rmse logP = 0.479321
+Model 0 test R2 logP = 0.933646
+Ensemble test rmse  Energy= 0.852249
+Ensemble test R2  Energy= 0.957372
+Ensemble test rmse  logP= 0.479321
+Ensemble test R2  logP= 0.933646
+4-fold cross validation
+	Seed 0 ==> test rmse = 0.685504
+	Seed 0 ==> test R2 = 0.944338
+	Seed 1 ==> test rmse = 0.703462
+	Seed 1 ==> test R2 = 0.941906
+	Seed 2 ==> test rmse = 0.681697
+	Seed 2 ==> test R2 = 0.945141
+	Seed 3 ==> test rmse = 0.665785
+	Seed 3 ==> test R2 = 0.945509
+Overall val rmse Energy= 0.926666 +/- 0.086613
+Overall val R2 Energy = 0.937822 +/- 0.015405
+Overall test rmse Energy = 0.896147 +/- 0.028386
+Overall test R2 Energy = 0.952820 +/- 0.002966
+Overall val rmse logP= 0.448209 +/- 0.005825
+Overall val R2 logP = 0.942337 +/- 0.002056
+Overall test rmse logP = 0.472078 +/- 0.005701
+Overall test R2 logP = 0.935627 +/- 0.001554
+Elapsed time = 9:37:28

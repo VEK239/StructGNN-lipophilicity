@@ -1,0 +1,59 @@
+Fold 0
+Fold 0
+Model 0 best validation rmse = 0.502171 on epoch 76
+Model 0 test rmse logS = 0.522247
+Model 0 test R2 logS = 0.927911
+Model 0 test rmse logP = 0.423654
+Model 0 test R2 logP = 0.946265
+Ensemble test rmse  logS= 0.522247
+Ensemble test R2  logS= 0.927911
+Ensemble test rmse  logP= 0.423654
+Ensemble test R2  logP= 0.946265
+Fold 1
+Model 0 best validation rmse = 0.523248 on epoch 35
+Model 0 test rmse logS = 0.498400
+Model 0 test R2 logS = 0.934344
+Model 0 test rmse logP = 0.429505
+Model 0 test R2 logP = 0.944770
+Ensemble test rmse  logS= 0.498400
+Ensemble test R2  logS= 0.934344
+Ensemble test rmse  logP= 0.429505
+Ensemble test R2  logP= 0.944770
+Fold 2
+Model 0 best validation rmse = 0.500453 on epoch 50
+Model 0 test rmse logS = 0.472462
+Model 0 test R2 logS = 0.941000
+Model 0 test rmse logP = 0.421042
+Model 0 test R2 logP = 0.946925
+Ensemble test rmse  logS= 0.472462
+Ensemble test R2  logS= 0.941000
+Ensemble test rmse  logP= 0.421042
+Ensemble test R2  logP= 0.946925
+Fold 3
+Model 0 best validation rmse = 0.540251 on epoch 55
+Model 0 test rmse logS = 0.490346
+Model 0 test R2 logS = 0.936449
+Model 0 test rmse logP = 0.400345
+Model 0 test R2 logP = 0.952015
+Ensemble test rmse  logS= 0.490346
+Ensemble test R2  logS= 0.936449
+Ensemble test rmse  logP= 0.400345
+Ensemble test R2  logP= 0.952015
+4-fold cross validation
+	Seed 0 ==> test rmse = 0.472951
+	Seed 0 ==> test R2 = 0.937088
+	Seed 1 ==> test rmse = 0.463952
+	Seed 1 ==> test R2 = 0.939557
+	Seed 2 ==> test rmse = 0.446752
+	Seed 2 ==> test R2 = 0.943963
+	Seed 3 ==> test rmse = 0.445346
+	Seed 3 ==> test R2 = 0.944232
+Overall val rmse logS= 0.573634 +/- 0.026317
+Overall val R2 logS = 0.923479 +/- 0.007337
+Overall test rmse logS = 0.495864 +/- 0.017893
+Overall test R2 logS = 0.934926 +/- 0.004711
+Overall val rmse logP= 0.459428 +/- 0.024044
+Overall val R2 logP = 0.939715 +/- 0.005778
+Overall test rmse logP = 0.418637 +/- 0.010996
+Overall test R2 logP = 0.947494 +/- 0.002725
+Elapsed time = 11:43:11

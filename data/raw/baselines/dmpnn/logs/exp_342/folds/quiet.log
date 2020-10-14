@@ -1,3 +1,60 @@
 Fold 0
 Fold 0
 Fold 0
+Model 0 best validation rmse = 0.506955 on epoch 88
+Model 0 test rmse logD = 0.560913
+Model 0 test R2 logD = 0.800453
+Model 0 test rmse logP = 0.433500
+Model 0 test R2 logP = 0.946024
+Ensemble test rmse  logD= 0.560913
+Ensemble test R2  logD= 0.800453
+Ensemble test rmse  logP= 0.433500
+Ensemble test R2  logP= 0.946024
+Fold 1
+Model 0 best validation rmse = 0.501145 on epoch 62
+Model 0 test rmse logD = 0.569153
+Model 0 test R2 logD = 0.794547
+Model 0 test rmse logP = 0.436006
+Model 0 test R2 logP = 0.945398
+Ensemble test rmse  logD= 0.569153
+Ensemble test R2  logD= 0.794547
+Ensemble test rmse  logP= 0.436006
+Ensemble test R2  logP= 0.945398
+Fold 2
+Model 0 best validation rmse = 0.469025 on epoch 57
+Model 0 test rmse logD = 0.535600
+Model 0 test R2 logD = 0.818057
+Model 0 test rmse logP = 0.425906
+Model 0 test R2 logP = 0.947899
+Ensemble test rmse  logD= 0.535600
+Ensemble test R2  logD= 0.818057
+Ensemble test rmse  logP= 0.425906
+Ensemble test R2  logP= 0.947899
+Fold 3
+Model 0 best validation rmse = 0.511460 on epoch 75
+Model 0 test rmse logD = 0.530555
+Model 0 test R2 logD = 0.821468
+Model 0 test rmse logP = 0.422060
+Model 0 test R2 logP = 0.948835
+Ensemble test rmse  logD= 0.530555
+Ensemble test R2  logD= 0.821468
+Ensemble test rmse  logP= 0.422060
+Ensemble test R2  logP= 0.948835
+4-fold cross validation
+	Seed 0 ==> test rmse = 0.497207
+	Seed 0 ==> test R2 = 0.873239
+	Seed 1 ==> test rmse = 0.502579
+	Seed 1 ==> test R2 = 0.869973
+	Seed 2 ==> test rmse = 0.480753
+	Seed 2 ==> test R2 = 0.882978
+	Seed 3 ==> test rmse = 0.476308
+	Seed 3 ==> test R2 = 0.885152
+Overall val rmse logD= 0.548654 +/- 0.033475
+Overall val R2 logD = 0.786252 +/- 0.025349
+Overall test rmse logD = 0.549055 +/- 0.016339
+Overall test R2 logD = 0.808632 +/- 0.011389
+Overall val rmse logP= 0.445638 +/- 0.007402
+Overall val R2 logP = 0.942961 +/- 0.002577
+Overall test rmse logP = 0.429368 +/- 0.005624
+Overall test R2 logP = 0.947039 +/- 0.001386
+Elapsed time = 11:04:09

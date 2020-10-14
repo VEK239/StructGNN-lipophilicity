@@ -1,0 +1,70 @@
+Fold 0
+Model 0 best validation rmse = 0.686239 on epoch 58
+Model 0 test rmse logP = 0.462388
+Model 0 test R2 logP = 0.937543
+Model 0 test rmse Energy = 0.812345
+Model 0 test R2 Energy = 0.947401
+Ensemble test rmse  logP= 0.462388
+Ensemble test R2  logP= 0.937543
+Ensemble test rmse  Energy= 0.812345
+Ensemble test R2  Energy= 0.947401
+Fold 1
+Model 0 best validation rmse = 0.751230 on epoch 73
+Model 0 test rmse logP = 0.415948
+Model 0 test R2 logP = 0.949734
+Model 0 test rmse Energy = 0.855648
+Model 0 test R2 Energy = 0.952872
+Ensemble test rmse  logP= 0.415948
+Ensemble test R2  logP= 0.949734
+Ensemble test rmse  Energy= 0.855648
+Ensemble test R2  Energy= 0.952872
+Fold 2
+Model 0 best validation rmse = 0.742069 on epoch 48
+Model 0 test rmse logP = 0.448612
+Model 0 test R2 logP = 0.943913
+Model 0 test rmse Energy = 0.883714
+Model 0 test R2 Energy = 0.946385
+Ensemble test rmse  logP= 0.448612
+Ensemble test R2  logP= 0.943913
+Ensemble test rmse  Energy= 0.883714
+Ensemble test R2  Energy= 0.946385
+Fold 3
+Model 0 best validation rmse = 0.667072 on epoch 44
+Model 0 test rmse logP = 0.433364
+Model 0 test R2 logP = 0.947593
+Model 0 test rmse Energy = 1.043927
+Model 0 test R2 Energy = 0.937433
+Ensemble test rmse  logP= 0.433364
+Ensemble test R2  logP= 0.947593
+Ensemble test rmse  Energy= 1.043927
+Ensemble test R2  Energy= 0.937433
+Fold 4
+Model 0 best validation rmse = 0.643241 on epoch 49
+Model 0 test rmse logP = 0.436428
+Model 0 test R2 logP = 0.943713
+Model 0 test rmse Energy = 1.065593
+Model 0 test R2 Energy = 0.929742
+Ensemble test rmse  logP= 0.436428
+Ensemble test R2  logP= 0.943713
+Ensemble test rmse  Energy= 1.065593
+Ensemble test R2  Energy= 0.929742
+5-fold cross validation
+	Seed 0 ==> test rmse = 0.637367
+	Seed 0 ==> test R2 = 0.942472
+	Seed 1 ==> test rmse = 0.635798
+	Seed 1 ==> test R2 = 0.951303
+	Seed 2 ==> test rmse = 0.666163
+	Seed 2 ==> test R2 = 0.945149
+	Seed 3 ==> test rmse = 0.738646
+	Seed 3 ==> test R2 = 0.942513
+	Seed 4 ==> test rmse = 0.751010
+	Seed 4 ==> test R2 = 0.936728
+Overall val rmse logP= 0.424636 +/- 0.016278
+Overall val R2 logP = 0.948620 +/- 0.004117
+Overall test rmse logP = 0.439348 +/- 0.015547
+Overall test R2 logP = 0.944499 +/- 0.004155
+Overall val rmse Energy= 0.971304 +/- 0.071278
+Overall val R2 Energy = 0.924834 +/- 0.013692
+Overall test rmse Energy = 0.932245 +/- 0.102814
+Overall test R2 Energy = 0.942767 +/- 0.008183
+Elapsed time = 1 day, 1:06:15

@@ -1,0 +1,71 @@
+Fold 0
+Fold 0
+Model 0 best validation rmse = 0.562721 on epoch 125
+Model 0 test rmse logD = 0.761055
+Model 0 test R2 logD = 0.688627
+Model 0 test rmse logP = 0.450880
+Model 0 test R2 logP = 0.942984
+Ensemble test rmse  logD= 0.761055
+Ensemble test R2  logD= 0.688627
+Ensemble test rmse  logP= 0.450880
+Ensemble test R2  logP= 0.942984
+Fold 1
+Model 0 best validation rmse = 0.461310 on epoch 192
+Model 0 test rmse logD = 0.488101
+Model 0 test R2 logD = 0.884866
+Model 0 test rmse logP = 0.433791
+Model 0 test R2 logP = 0.945866
+Ensemble test rmse  logD= 0.488101
+Ensemble test R2  logD= 0.884866
+Ensemble test rmse  logP= 0.433791
+Ensemble test R2  logP= 0.945866
+Fold 2
+Model 0 best validation rmse = 0.491916 on epoch 177
+Model 0 test rmse logD = 0.709291
+Model 0 test R2 logD = 0.752689
+Model 0 test rmse logP = 0.433273
+Model 0 test R2 logP = 0.946471
+Ensemble test rmse  logD= 0.709291
+Ensemble test R2  logD= 0.752689
+Ensemble test rmse  logP= 0.433273
+Ensemble test R2  logP= 0.946471
+Fold 3
+Model 0 best validation rmse = 0.545031 on epoch 66
+Model 0 test rmse logD = 0.701762
+Model 0 test R2 logD = 0.723539
+Model 0 test rmse logP = 0.450525
+Model 0 test R2 logP = 0.942359
+Ensemble test rmse  logD= 0.701762
+Ensemble test R2  logD= 0.723539
+Ensemble test rmse  logP= 0.450525
+Ensemble test R2  logP= 0.942359
+Fold 4
+Model 0 best validation rmse = 0.536772 on epoch 181
+Model 0 test rmse logD = 0.663754
+Model 0 test R2 logD = 0.711448
+Model 0 test rmse logP = 0.446315
+Model 0 test R2 logP = 0.940583
+Ensemble test rmse  logD= 0.663754
+Ensemble test R2  logD= 0.711448
+Ensemble test rmse  logP= 0.446315
+Ensemble test R2  logP= 0.940583
+5-fold cross validation
+	Seed 0 ==> test rmse = 0.605968
+	Seed 0 ==> test R2 = 0.815806
+	Seed 1 ==> test rmse = 0.460946
+	Seed 1 ==> test R2 = 0.915366
+	Seed 2 ==> test rmse = 0.571282
+	Seed 2 ==> test R2 = 0.849580
+	Seed 3 ==> test rmse = 0.576143
+	Seed 3 ==> test R2 = 0.832949
+	Seed 4 ==> test rmse = 0.555035
+	Seed 4 ==> test R2 = 0.826016
+Overall val rmse logD= 0.614309 +/- 0.079710
+Overall val R2 logD = 0.770377 +/- 0.049970
+Overall test rmse logD = 0.664793 +/- 0.093632
+Overall test R2 logD = 0.752234 +/- 0.069461
+Overall val rmse logP= 0.424791 +/- 0.018844
+Overall val R2 logP = 0.947848 +/- 0.003777
+Overall test rmse logP = 0.442957 +/- 0.007863
+Overall test R2 logP = 0.943653 +/- 0.002208
+Elapsed time = 16:33:39
