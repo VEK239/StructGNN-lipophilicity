@@ -14,16 +14,32 @@ The algorithm is based on the MPNN (Message Passing Neural Networks), which cons
 
 ### Training script
 
-Running with best parameters:
+Running:
 
-```python train.py --data_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_train.csv --dataset_type regression --save_dir ../../../data/raw/baselines/dmpnn/logs/exp_20 --separate_val_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_validation.csv --separate_test_path ../../../data/raw/baselines/dmpnn/logp_wo_averaging_test.csv --epochs 100 --depth 6 --features_generator rdkit_2d_normalized --no_features_scaling```
+```~/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train.py --dataset_type regression --num_workers 4 --config_path_yaml ./params.yaml```
+Set prameters with ```params.yaml``` file.
 
-Results are stored on the server in `~/alisa/mol_properties/data/raw/baselines/dmpnn/logs`
+It consists of hyperparameters:
 
-| Number of experiment | Parameters | test RMSE | test R2 | Dataset Name |
-| --- | --- | --- | --- | --- |
-| 201 | DMPNN with RDKit features (include MolLogP) | 0.461395 +/- 0.007687 | 0.936766 +/- 0.002100 | logp_wo_averaging |
+| Name of parameter | Description | Example|
+| --- | --- | --- |
+|file_prefix| name of dataset (without '.csv')|logp_wo_logp_json_logd_Lip_wo_averaging|
+|save_dir|path to directory with logs| ./data/raw/baselines/dmpnn/logs/exp_380/folds|
+|epochs|Number of training epochs| 200|
+|depth|DMPNN encoder depth parameter| 6|
+|features_generator|list containing names of feature generators or 'null' if not used| [rdkit_wo_fragments_and_counts]|
+|no_features_scaling|no feature scaling option |True|
+|split_type| name of split procedure| k-fold|
+|num_folds|Number of folds for cross-validation| 5|
+|target_columns|list of columns names of dataset containing target values| [logP, logD]|
+|data_path|Directory contatining dataset|./data/3_final_data|
+|separate_test_path|Directory containing test dataset| ./data/3_final_data/split_data|
+|additional_encoder|if True - model uses our encoder -> StructGNN; if False - plain DMPNN | True|
+|substructures_hidden_size|hidden size of molecule representation in our encoder| 300|
+|hidden_size|hidden size of molecule representation in DMPNN encoder|800|
+|dropout|---| 0.2|
 
+Results are stored on the server in `mol_properties/data/raw/baselines/dmpnn/logs`
 
 ## Changes in source code
 
@@ -31,4 +47,7 @@ Results are stored on the server in `~/alisa/mol_properties/data/raw/baselines/d
 - [x] Added rdkit_2d_normalized_best features generator (uses only features named in file `mol_properties/data/raw/baselines/dmpnn//RDKitBestfeatures.txt`)
 - [x] Added k-fold cross-validation option
 - [x] Debug of rdkit features without default normalization scaling (coupling with inf values in calculated features)
+- [x] Add model without edges to classical realization
+- [x] Add params.yaml file for storng arguments
+- [x] Add saving final test predictions in cross-validation
 
