@@ -1,4 +1,4 @@
-# Baseline D-MPNN
+# D-MPNN & StructGNN
 
 ## Sources
 
