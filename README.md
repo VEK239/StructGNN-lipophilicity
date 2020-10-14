@@ -16,7 +16,7 @@
 
 # Models
 
-1. OTGNN
-2. JTree
-3. DMPNN + StructGNN
+1. [OTGNN](https://github.com/jbr-ai-labs/mol_properties/tree/SOTA/scripts/SOTA/otgnn)
+2. [PAGTNN](https://github.com/jbr-ai-labs/mol_properties/tree/SOTA/scripts/SOTA/pa-graph-transformer-neural-network)
+3. [DMPNN + StructGNN](https://github.com/jbr-ai-labs/mol_properties/tree/SOTA/scripts/SOTA/dmpnn)
 
