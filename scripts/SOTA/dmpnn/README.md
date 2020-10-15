@@ -17,7 +17,7 @@ The algorithm is based on the MPNN (Message Passing Neural Networks), which cons
 Running:
 
 ```~/anaconda3/envs/chemprop/bin/python ./scripts/SOTA/dmpnn/train.py --dataset_type regression --num_workers 4 --config_path_yaml ./params.yaml```
-Set prameters with ```params.yaml``` file.
+Set parameters with ```params.yaml``` file.
 
 It consists of hyperparameters:
 
@@ -39,7 +39,7 @@ It consists of hyperparameters:
 |hidden_size|hidden size of molecule representation in DMPNN encoder|800|
 |dropout|---| 0.2|
 
-Results are stored on the server in `mol_properties/data/raw/baselines/dmpnn/logs`
+Results are stored in `mol_properties/data/raw/baselines/dmpnn/logs`
 
 ## Changes in source code
 
