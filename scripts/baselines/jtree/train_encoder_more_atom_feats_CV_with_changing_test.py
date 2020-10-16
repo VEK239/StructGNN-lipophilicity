@@ -32,6 +32,8 @@ from sklearn.metrics import roc_auc_score, r2_score, mean_squared_error
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import KFold
 
+from random import Random
+
 
 import pandas as pd
 
@@ -70,10 +72,7 @@ class MoleculeDataset(Dataset):
         self.data = pd.read_csv(data_file)
         data_options = ['train','val','test']
         
-        broken_smiles = []
-        for option in data_options:
-            if option in data_file:
-                broken_smiles  = broken_smiles + [x.strip("\r\n ") for x in open(os.path.join(args.raw_path,option+'_errs.txt'))] 
+        broken_smiles = [x.strip("\r\n ") for x in open(os.path.join(args.raw_path,'errs.txt'))] 
                 
         if 'logp' not in args.vocab_path:
             self.data = self.data[~self.data[SMILES_COLUMN].isin(broken_smiles)]
@@ -395,7 +394,7 @@ def main():
                         help='Patience of early stopping (default: 50)')
     parser.add_argument('--raw_path', type=str, default='../../../data/raw/baselines/jtree/',
                         help='path to broken smiles')
-    parser.add_argument('--dataset', type=str, default = '../../../data/3_final_data/split_data', help='root directory of dataset.')
+    parser.add_argument('--dataset', type=str, default = '../../../data/3_final_data', help='root directory of dataset.')
     parser.add_argument('--file_prefix', type=str, default = 'logp_wo_averaging', help='File prefix of data_file')
     parser.add_argument('--dataset_cv', type=str, default = '../../../data/raw/baselines/jtree/', help='root directory of dataset for cross_validation')
     parser.add_argument('--vocab_path', type=str, default = '../../../../icml18-jtnn/data/zinc/vocab.txt', help='root directory of dataset. For now, only classification.')
@@ -440,9 +439,9 @@ def main():
     dataset = MoleculeDataset(os.path.join(args.dataset, args.file_prefix+'.csv'), args)
     
     
-    
-    with open(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle'), 'wb') as handle:
-          pickle.dump(SMILES_TO_MOLTREE, handle, protocol=pickle.HIGHEST_PROTOCOL)    
+    if not os.path.exists(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle')):
+        with open(os.path.join(args.raw_path, 'SMILES_TO_MOLTREE.pickle'), 'wb') as handle:
+              pickle.dump(SMILES_TO_MOLTREE, handle, protocol=pickle.HIGHEST_PROTOCOL)    
     
     kf = KFold(n_splits=args.folds_num)
     num_of_fold = 0
@@ -457,10 +456,10 @@ def main():
         train_size = int(0.85 * len(train_val_index))
         train_val_size = int(len(train_val_index))
 
-        train_indexe = train_val_index[:train_size]
+        train_index = train_val_index[:train_size]
         val_index = train_val_index[train_size:train_val_size]
         
-        train_dataset, val_dataset, test_dataset = Subset(dataset, train_index), Subset(dataset, val_index), Subset(dataset, test_index)
+        train_dataset, valid_dataset, test_dataset = Subset(dataset, train_index), Subset(dataset, val_index), Subset(dataset, test_index)
         
         
         scaler = StandardScaler()
