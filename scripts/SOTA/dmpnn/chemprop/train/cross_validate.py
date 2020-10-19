@@ -7,6 +7,7 @@ import numpy as np
 import os,sys,inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
+project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(currentdir))))
 sys.path.insert(0,parentdir) 
 
 from .run_training import run_training
@@ -32,24 +33,14 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
     """
     logger = create_logger(name=TRAIN_LOGGER_NAME, save_dir=args.save_dir, quiet=args.quiet)
     info = logger.info if logger is not None else print
-    import yaml
-
-    with open("params.yaml", 'r') as fd:
-            params = yaml.safe_load(fd)
-            
-#     args.save_dir = params['save_dir']
-#     args.epochs = params['epochs']
-#     args.depth = params['depth']
-#     args.features_generator = [params['features_generator']]
-#     args.no_features_scaling = params['no_features_scaling']
-#     args.split_type = params['split_type']
-#     args.num_folds = params['num_folds']
-#     args.data_path = os.path.join(params['data_path'])
-#     args.target_columns = params['target_column']
-#     args.separate_test_path = os.path.join(params['separate_test_path'], params['file_prefix']+'_test.csv')
-#     args.additional_encoder = params['additional_encoder']
-#     args.hidden_size = params['hidden_size']
-#     args.substructures_hidden_size = params['substructures_hidden_size']
+    
+    if args.separate_test_path!='' and args.separate_val_path=='':
+        DATASET_PATH = args.separate_test_path
+        DATASET_OUTPUT_PATH = os.path.join(project_path,'./data/raw/baselines/dmpnn')
+        dataset_train = pd.read_csv(os.path.join(DATASET_PATH, args.file_prefix+'_train.csv'), index_col=0)
+        dataset_val = pd.read_csv(os.path.join(DATASET_PATH, args.file_prefix+'_validation.csv'), index_col=0)
+        dataset_train_val = pd.concat([dataset_train, dataset_val], axis = 0).reset_index(drop = True)
+        dataset_train_val.to_csv(os.path.join(DATASET_OUTPUT_PATH,  args.file_prefix+'_train_val_dataset.csv'),index = False)
     
     # Initialize relevant variables
     init_seed = args.seed

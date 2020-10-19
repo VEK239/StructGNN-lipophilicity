@@ -27,6 +27,65 @@ from nn_utils import param_count
 from utils import build_optimizer, build_lr_scheduler, get_loss_func, get_metric_func, load_checkpoint,\
     makedirs, save_checkpoint, save_smiles_splits
 
+class EarlyStopping:
+    """Early stops the training if validation loss doesn't improve after a given patience."""
+    def __init__(self,scaler, features_scaler, args, patience=7, verbose=False, delta=0, path='checkpoint.pt'):
+        """
+        Args:
+            patience (int): How long to wait after last time validation loss improved.
+                            Default: 7
+            verbose (bool): If True, prints a message for each validation loss improvement.
+                            Default: False
+            delta (float): Minimum change in the monitored quantity to qualify as an improvement.
+                            Default: 0
+            path (str): Path for the checkpoint to be saved to.
+                            Default: 'checkpoint.pt'
+        """
+        self.patience = patience
+        self.verbose = verbose
+        self.counter = 0
+        self.best_score = None
+        self.best_rmses = None
+        self.best_r2s = None
+        self.early_stop = False
+        self.val_loss_min = np.Inf
+        self.delta = delta
+        self.path = path
+        self.epoch = 0
+
+            
+        self.scaler = scaler
+        self.features_scaler = features_scaler
+        self.args = args
+    def __call__(self, val_loss, val_rmses, val_r2s, model, epoch = 0):
+
+        score = -val_loss
+
+        if self.best_score is None:
+            self.best_score = score
+            self.best_rmses = val_rmses
+            self.best_r2s = val_r2s
+            self.save_chckpt(val_loss, model)
+        elif score < self.best_score + self.delta:
+            self.counter += 1
+            self.epoch = epoch
+            print ('EarlyStopping counter: ',self.counter,  ' out of ', self.patience)
+            if self.counter >= self.patience:
+                self.early_stop = True
+        else:
+            self.best_score = score
+            self.best_rmses = val_rmses
+            self.best_r2s = val_r2s
+            self.save_chckpt(val_loss, model)
+            self.counter = 0
+
+    def save_chckpt(self, val_loss, model):
+        '''Saves model when validation loss decrease.'''
+        if self.verbose:
+            print ('Validation loss decreased', round(self.val_loss_min,6),' -->', round(val_loss,6), '.  Saving model ...')
+        save_checkpoint(self.path, model, self.scaler, self.features_scaler, self.args)
+        self.val_loss_min = val_loss
+
 
 def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
     """
@@ -203,6 +262,10 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
         best_score = float('inf') if args.minimize_score else -float('inf')
         best_score_R2 = 0
         best_epoch, n_iter = 0, 0
+        
+        early_stopping = EarlyStopping(scaler, features_scaler, args, patience=args.patience, delta = args.delta, \
+                                       verbose=True, path = os.path.join(save_dir, MODEL_FILE_NAME))
+        
         for epoch in trange(args.epochs):
             debug(f'Epoch {epoch}')
 
@@ -249,16 +312,22 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
                     
             avg_val_score = np.nanmean(val_scores)
             avg_val_score_r2 = np.nanmean(val_scores_r2)
+            
+            early_stopping(avg_val_score, val_scores, val_scores_r2, model, epoch)
 
             # Save model checkpoint if improved validation score
-            if args.minimize_score and avg_val_score < best_score or \
-                    not args.minimize_score and avg_val_score > best_score:
-                best_score, best_epoch = avg_val_score, epoch
-                best_score_r2 = avg_val_score_r2
-                best_vals = val_scores
-                best_vals_r2 = val_scores_r2
-                save_checkpoint(os.path.join(save_dir, MODEL_FILE_NAME), model, scaler, features_scaler, args)
-
+#             if args.minimize_score and avg_val_score < best_score or \
+#                     not args.minimize_score and avg_val_score > best_score:
+#                 best_score, best_epoch = avg_val_score, epoch
+#                 best_score_r2 = avg_val_score_r2
+#                 best_vals = val_scores
+#                 best_vals_r2 = val_scores_r2
+#                 save_checkpoint(os.path.join(save_dir, MODEL_FILE_NAME), model, scaler, features_scaler, args)
+            
+            if early_stopping.early_stop:
+                print("Early stopping", epoch)
+                break
+            
         # Evaluate on test set using model with best validation score
         info(f'Model {model_idx} best validation {args.metric} = {best_score:.6f} on epoch {best_epoch}')
         model = load_checkpoint(os.path.join(save_dir, MODEL_FILE_NAME), device=args.device, logger=logger)
@@ -332,4 +401,4 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
         for task_name, ensemble_score in zip(args.task_names, ensemble_scores):
             info(f'Ensemble test {task_name} {args.metric} = {ensemble_score:.6f}')
 
-    return ensemble_scores, ensemble_scores_r2, best_vals, best_vals_r2
+    return ensemble_scores, ensemble_scores_r2, early_stopping.best_rmses, early_stopping.best_r2s

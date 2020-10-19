@@ -134,6 +134,8 @@ class TrainArgs(CommonArgs):
     """Add our encoder to model"""
     data_path: str = ''
     """Path to data CSV file."""
+    file_prefix: str = ''
+    """Prefix name of data file without .csv"""
     target_columns: List[str] = None
     """
     Name of the columns containing target values.
@@ -201,8 +203,9 @@ class TrainArgs(CommonArgs):
     substructures_hidden_size: int = 300
     """Dimensionality of hidden layers in SubstructureLayer."""    
     depth: int = 3
-    substructures_depth: bool = False
     """Number of message passing steps."""
+    substructures_depth: bool = False
+    """Number of message passing steps in StructGNN."""
     dropout: float = 0.0
     """Dropout probability."""
     activation: Literal['ReLU', 'LeakyReLU', 'PReLU', 'tanh', 'SELU', 'ELU'] = 'ReLU'
@@ -255,6 +258,10 @@ class TrainArgs(CommonArgs):
     """Maximum magnitude of gradient during training."""
     class_balance: bool = False
     """Trains with an equal number of positives and negatives in each batch (only for single task classification)."""
+    patience: int = 0
+    """Early stopping patience"""
+    delta: float = 0.0
+    """Early stopping delta"""
 
     def __init__(self, *args, **kwargs) -> None:
         super(TrainArgs, self).__init__(*args, **kwargs)
@@ -334,8 +341,7 @@ class TrainArgs(CommonArgs):
             with open(self.config_path_yaml) as f:
                 config = yaml.safe_load(f)
                 for key, value in config.items():
-                    if key == 'file_prefix':
-                        continue
+                    
                     if key == 'separate_test_path' and config['separate_test_path']:
                         setattr(self, key, os.path.join(value, config['file_prefix']+'_test.csv'))
                     elif key == 'separate_val_path' and config['separate_val_path']:
