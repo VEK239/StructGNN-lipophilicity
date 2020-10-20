@@ -75,25 +75,33 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
     info(f'{args.num_folds}-fold cross validation')
 
     # Report scores for each fold
+    
     for fold_num, scores in enumerate(all_scores):
-        info(f'\tSeed {init_seed + fold_num} ==> test {args.metric} = {np.nanmean(scores):.6f}')
-        info(f'\tSeed {init_seed + fold_num} ==> test R2 = {np.nanmean(all_scores_r2[fold_num]):.6f}')
+        if np.sum(~np.isnan(scores)) == len(scores):
+            info(f'\tSeed {init_seed + fold_num} ==> test {args.metric} = {np.nanmean(scores):.6f}')
+            info(f'\tSeed {init_seed + fold_num} ==> test R2 = {np.nanmean(all_scores_r2[fold_num]):.6f}')
 
-        if args.show_individual_scores:
-            for task_name, score in zip(args.task_names, scores):
-                info(f'\t\tSeed {init_seed + fold_num} ==> test {task_name} {args.metric} = {score:.6f}')
-                info(f'\t\tSeed {init_seed + fold_num} ==> test {task_name} R2 = {all_scores_r2[fold_num]:.6f}')
+            if args.show_individual_scores:
+                for task_name, score in zip(args.task_names, scores):
+                    info(f'\t\tSeed {init_seed + fold_num} ==> test {task_name} {args.metric} = {score:.6f}')
+                    info(f'\t\tSeed {init_seed + fold_num} ==> test {task_name} R2 = {all_scores_r2[fold_num]:.6f}')
 
     # Report scores across models
 #     avg_scores = np.nanmean(all_scores, axis=1)  # average score for each model across tasks
-    mean_score, std_score = np.nanmean(all_scores, axis = 0), np.nanstd(all_scores, axis=0)
+    if np.sum(~np.isnan(all_scores)) == all_scores.shape[0]*all_scores.shape[1]:
+        mean_score, std_score = np.nanmean(all_scores, axis = 0), np.nanstd(all_scores, axis=0)
+    else:
+        mean_score, std_score = [float('nan')] * all_scores.shape[1], [float('nan')] * all_scores.shape[1]
     
 #     avg_val_scores = np.nanmean(val_scores)  # average score for each model across tasks
 #     avg_val_scores = np.nanmean(val_scores, axis=1)  # average score for each model across tasks
     mean_val_score, std_val_score = np.nanmean(val_scores, axis = 0), np.nanstd(val_scores, axis = 0)
     
 #     avg_scores_r2 = np.nanmean(all_scores_r2, axis=1)  # average score for each model across tasks
-    mean_score_r2, std_score_r2 = np.nanmean(all_scores_r2, axis = 0), np.nanstd(all_scores_r2, axis = 0)
+    if np.sum(~np.isnan(all_scores_r2)) == all_scores_r2.shape[0]*all_scores_r2.shape[1]:
+        mean_score_r2, std_score_r2 = np.nanmean(all_scores_r2, axis = 0), np.nanstd(all_scores_r2, axis = 0)
+    else:
+        mean_score_r2, std_score_r2 = [float('nan')] * all_scores.shape[1], [float('nan')] * all_scores.shape[1]
     
 #     avg_val_scores_r2 = np.nanmean(val_scores_r2, axis=1)  # average score for each model across tasks
     mean_val_score_r2, std_val_score_r2 = np.nanmean(val_scores_r2, axis = 0), np.nanstd(val_scores_r2, axis = 0)
@@ -131,10 +139,15 @@ def cross_validate(args: TrainArgs) -> Tuple[float, float]:
 
         for task_num, task_name in enumerate(args.task_names):
             task_scores = all_scores[:, task_num]
-            mean, std = np.nanmean(task_scores), np.nanstd(task_scores)
+            if np.sum(~np.isnan(mean_score)) == len(mean_score):
+                mean, std = np.nanmean(task_scores), np.nanstd(task_scores)
+            else:
+                mean, std = float('nan'), float('nan')
             writer.writerow([task_name, mean, std] + task_scores.tolist())
-
-    return mean_score, std_score
+    if np.sum(~np.isnan(mean_score)) == len(mean_score):
+        return np.nanmean(mean_score), np.nanmean(std_score)
+    else:
+        return np.nanmean(mean_val_score), np.nanmean(std_val_score)
 
 
 def chemprop_train() -> None:

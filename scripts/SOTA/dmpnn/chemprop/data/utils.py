@@ -354,46 +354,46 @@ def split_data(data: MoleculeDataset,
 
         return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset(test)
     elif split_type == 'k-fold':
-        if args.separate_test_path:
-            kf = KFold(n_splits=args.num_folds, shuffle=True, random_state = 42)
+#         if args.separate_test_path:
+        kf = KFold(n_splits=args.num_folds, shuffle=True, random_state = 42)
 
-            fold_num = 0
-            for train_index, val_index in kf.split(data):
-                if fold_num==args.seed:
-                    break
-                else:
-                    fold_num+=1
-            train = [data[i] for i in train_index]
-            val = [data[i] for i in val_index]
+        fold_num = 0
+        for train_index, val_index in kf.split(data):
+            if fold_num==args.seed:
+                break
+            else:
+                fold_num+=1
+        train = [data[i] for i in train_index]
+        val = [data[i] for i in val_index]
 
-            return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset([])
-        else:
-            kf = KFold(n_splits=args.num_folds, shuffle=True, random_state = 42)
+        return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset([])
+#         else:
+#             kf = KFold(n_splits=args.num_folds, shuffle=True, random_state = 42)
 
-            fold_num = 0
-            for train_val_index, test_index in kf.split(data):
-                if fold_num==args.seed:
-                    break
-                else:
-                    fold_num+=1
+#             fold_num = 0
+#             for train_val_index, test_index in kf.split(data):
+#                 if fold_num==args.seed:
+#                     break
+#                 else:
+#                     fold_num+=1
                     
-            random = Random(42)
+#             random = Random(42)
             
             
-            random.shuffle(train_val_index)
+#             random.shuffle(train_val_index)
 
-            train_size = int(0.85 * len(train_val_index))
-            train_val_size = int(len(train_val_index))
+#             train_size = int(0.85 * len(train_val_index))
+#             train_val_size = int(len(train_val_index))
 
-            train_index = train_val_index[:train_size]
-            val_index = train_val_index[train_size:train_val_size]
+#             train_index = train_val_index[:train_size]
+#             val_index = train_val_index[train_size:train_val_size]
             
             
-            train = [data[i] for i in train_index]
-            val = [data[i] for i in val_index]
-            test = [data[i] for i in test_index]
+#             train = [data[i] for i in train_index]
+#             val = [data[i] for i in val_index]
+#             test = [data[i] for i in test_index]
             
-            return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset(test)
+#             return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset(test)
 
     else:
         raise ValueError(f'split_type "{split_type}" not supported.')

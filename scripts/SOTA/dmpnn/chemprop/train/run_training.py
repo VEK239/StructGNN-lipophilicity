@@ -338,12 +338,13 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
             scaler=scaler,
             args = args
         )
-        test_predictions = pd.DataFrame(columns = [args.smiles_column])
-        test_predictions[args.smiles_column] = test_smiles
-        for task in range(args.num_tasks):
-            test_predictions[args.target_columns[task]] = np.array(test_targets)[:, task]
-            test_predictions[args.target_columns[task]+'_pred'] = np.array(test_preds)[:, task]
-        test_predictions.to_csv(os.path.join(args.save_dir, 'test_predictions.csv'), index = False)
+        if len(test_preds) != 0:
+            test_predictions = pd.DataFrame(columns = [args.smiles_column])
+            test_predictions[args.smiles_column] = test_smiles
+            for task in range(args.num_tasks):
+                test_predictions[args.target_columns[task]] = np.array(test_targets)[:, task]
+                test_predictions[args.target_columns[task]+'_pred'] = np.array(test_preds)[:, task]
+            test_predictions.to_csv(os.path.join(args.save_dir, 'test_predictions.csv'), index = False)
         
         test_scores, test_scores_r2 = evaluate_predictions(
             preds=test_preds,

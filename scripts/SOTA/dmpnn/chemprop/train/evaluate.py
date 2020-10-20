@@ -33,7 +33,7 @@ def evaluate_predictions(preds: List[List[float]],
     info = logger.info if logger is not None else print
 
     if len(preds) == 0:
-        return [float('nan')] * num_tasks
+        return [float('nan')] * num_tasks, [float('nan')] * num_tasks
 
     # Filter out empty targets
     # valid_preds and valid_targets have shape (num_tasks, data_size)
