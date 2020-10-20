@@ -7,6 +7,7 @@ import os
 
 from hyperopt import fmin, hp, tpe
 import numpy as np
+from functools import partial
 
 import os,sys,inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
