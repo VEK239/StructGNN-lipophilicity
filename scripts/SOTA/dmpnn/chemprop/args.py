@@ -477,6 +477,8 @@ class HyperoptArgs(TrainArgs):
 
     num_iters: int = 20
     """Number of hyperparameter choices to try."""
+    num_start_jobs: int = 20
+    """Number of initial tpe random trials."""
     config_save_path: str
     """Path to :code:`.json` file where best hyperparameter settings will be written."""
     log_dir: str = None

@@ -104,8 +104,10 @@ def hyperopt(args: HyperoptArgs) -> None:
                 raise ValueError('Can\'t handle nan score for non-classification dataset.')
 
         return (1 if hyper_args.minimize_score else -1) * mean_score
-
-    fmin(objective, SPACE, algo=tpe.suggest, max_evals=args.num_iters, rstate=np.random.RandomState(args.seed))
+    
+    algo = partial(tpe.suggest, n_startup_jobs=args.num_start_jobs)
+    
+    fmin(objective, SPACE, algo=algo, max_evals=args.num_iters, rstate=np.random.RandomState(args.seed))
 
     # Report best result
     results = [result for result in results if not np.isnan(result['mean_score'])]
