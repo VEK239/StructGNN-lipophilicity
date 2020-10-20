@@ -8,21 +8,27 @@ import os
 from hyperopt import fmin, hp, tpe
 import numpy as np
 
-from chemprop.args import HyperoptArgs
-from chemprop.constants import HYPEROPT_LOGGER_NAME
-from chemprop.models import MoleculeModel
-from chemprop.nn_utils import param_count
-from chemprop.train import cross_validate
-from chemprop.utils import create_logger, makedirs, timeit
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+
+from .args import HyperoptArgs
+from .constants import HYPEROPT_LOGGER_NAME
+from .models import MoleculeModel
+from .nn_utils import param_count
+from .train import cross_validate
+from .utils import create_logger, makedirs, timeit
 
 
 SPACE = {
     'hidden_size': hp.quniform('hidden_size', low=300, high=2400, q=100),
+    'substructure_hidden_size': hp.quniform('substructure_hidden_size', low=300, high=2400, q=100),
     'depth': hp.quniform('depth', low=2, high=6, q=1),
     'dropout': hp.quniform('dropout', low=0.0, high=0.4, q=0.05),
     'ffn_num_layers': hp.quniform('ffn_num_layers', low=1, high=3, q=1)
 }
-INT_KEYS = ['hidden_size', 'depth', 'ffn_num_layers']
+INT_KEYS = ['substructure_hidden_size','hidden_size', 'depth', 'ffn_num_layers']
 
 
 @timeit(logger_name=HYPEROPT_LOGGER_NAME)
