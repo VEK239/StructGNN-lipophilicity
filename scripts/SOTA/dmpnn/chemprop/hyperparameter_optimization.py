@@ -54,6 +54,10 @@ def hyperopt(args: HyperoptArgs) -> None:
     # Run grid search
     results = []
 
+    if not args.additional_encoder:
+        del SPACE['substructure_hidden_size']
+        INT_KEYS.remove('substructure_hidden_size')
+    
     # Define hyperparameter optimization
     def objective(hyperparams: Dict[str, Union[int, float]]) -> float:
         # Convert hyperparams from float to int when necessary
