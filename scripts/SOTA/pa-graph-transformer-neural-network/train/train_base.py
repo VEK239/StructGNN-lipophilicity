@@ -120,6 +120,10 @@ def train_model(dataset_loaders, model, optimizer, stat_names, selection_stat,
             torch.save(model.state_dict(), model_path)
             print('Model saved to %s' % model_path)
 
+        if early_stopping.early_stop:
+            print('Early stopping at', epoch)
+            break
+
     train_output.close()
     valid_output.close()
 
