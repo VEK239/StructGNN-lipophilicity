@@ -5,10 +5,10 @@ import rdkit.Chem as Chem
 import graph.mol_features as mol_features
 import pdb
 
+
 # Supress warnings from rdkit
 from rdkit import rdBase
 from rdkit import RDLogger
-
 rdBase.DisableLog('rdApp.error')
 lg = RDLogger.logger()
 lg.setLevel(RDLogger.ERROR)
@@ -56,10 +56,9 @@ class Bond:
 
 
 class Molecule:
-    def __init__(self, atoms, bonds, symmetry_classes):
+    def __init__(self, atoms, bonds):
         self.atoms = atoms
         self.bonds = bonds
-        self.symmetry_classes = symmetry_classes
 
     def get_bond(self, atom_1, atom_2):
         # If bond does not exist between atom_1 and atom_2, return None
@@ -67,10 +66,6 @@ class Molecule:
             if atom_2 == bond.out_atom_idx or atom_2 == bond.in_atom_idx:
                 return bond
         return None
-
-    def get_symmetry_class(self, ind_atom):
-        atom_class = self.symmetry_classes[ind_atom]
-        return self.symmetry_classes.count(atom_class)
 
 
 class MolGraph:
@@ -111,7 +106,6 @@ class MolGraph:
                 strings are valid.
             max_atoms: If provided, truncate graphs to this size.
         """
-
         def skip_atom(atom_idx, max):
             return (max != 0) and (atom_idx >= max)
 
@@ -123,7 +117,6 @@ class MolGraph:
 
             mol_atoms = []
             mol_bonds = []
-            mol_symmetry_classes = list(Chem.CanonicalRankAtoms(rd_mol, breakTies=False))
             for rd_atom in rd_mol.GetAtoms():
                 atom_idx = rd_atom.GetIdx()
                 mol_atoms.append(Atom(idx=atom_idx, rd_atom=rd_atom))
@@ -142,7 +135,7 @@ class MolGraph:
                 mol_bonds.append(new_bond)
                 mol_atoms[atom_1_idx].add_bond(new_bond)  # bond is 2 -> 1
 
-            new_mol = Molecule(mol_atoms, mol_bonds, mol_symmetry_classes)
+            new_mol = Molecule(mol_atoms, mol_bonds)
             self.mols.append(new_mol)
 
             self.scope.append((a_offset, len(mol_atoms)))
@@ -156,7 +149,7 @@ class MolGraph:
             atoms = mol.atoms
 
             for atom_idx, atom in enumerate(atoms):
-                atom_features = np.append(mol_features.get_atom_features(atom), mol.get_symmetry_class(atom_idx))
+                atom_features = mol_features.get_atom_features(atom)
                 fatoms.append(atom_features)
 
         fatoms = np.stack(fatoms, axis=0)
@@ -188,18 +181,15 @@ class MolGraph:
             cur_bgraph = np.zeros([len(bonds), max_neighbors])
 
             for atom_idx, atom in enumerate(atoms):
-                atom_features = np.append(mol_features.get_atom_features(atom), mol.get_symmetry_class(atom_idx))
+                atom_features = mol_features.get_atom_features(atom)
                 fatoms.append(atom_features)
                 for nei_idx, bond in enumerate(atom.bonds):
                     cur_agraph[atom.idx, nei_idx] = bond.idx + b_offset
             for bond in bonds:
                 out_atom = atoms[bond.out_atom_idx]
-                out_class = mol.get_symmetry_class(bond.out_atom_idx)[0]
-                in_class = mol.get_symmetry_class(bond.in_atom_idx)[0]
                 bond_features = np.concatenate([
-                    np.append(mol_features.get_atom_features(out_atom), mol.get_symmetry_class(bond.out_atom_idx)),
+                    mol_features.get_atom_features(out_atom),
                     mol_features.get_bond_features(bond)], axis=0)
-                # np.append(mol_features.get_bond_features(bond), int(in_class == out_class))], axis=0)
                 fbonds.append(bond_features)
                 for i, in_bond in enumerate(out_atom.bonds):
                     if bonds[in_bond.idx].out_atom_idx != bond.in_atom_idx:
@@ -221,7 +211,6 @@ class MolGraph:
             bgraph = torch.tensor(bgraph, device=self.device).long()
 
         graph_inputs = [fatoms, fbonds, agraph, bgraph]
-        # print(graph_inputs.shape)
         return (graph_inputs, self.scope)
 
 
