@@ -3,7 +3,7 @@ import argparse
 import utils.data_utils as utils
 
 
-def get_args(args):
+def get_args(args=None):
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-cuda', action='store_true', default=False,
@@ -75,8 +75,14 @@ def get_args(args):
                         help='Whether to deactivate weight sharing for gcn')
     parser.add_argument('-mask_neigh', action='store_true', default=False,
                         help='Whether or not to mask outside neighborhood')
-
-    args = parser.parse_args(args)
+    parser.add_argument('-patience', type=int, default=7,
+                        help='Epochs count for early stopping')
+    parser.add_argument('-delta', type=float, default=0,
+                        help='Min delta for early stopping')
+    if args != None:
+        args = parser.parse_args(args)
+    else:
+        args = parser.parse_args()
     args.device = torch.device('cuda:0' if args.cuda else 'cpu')
     print('Using device %s' % (args.device))
 

@@ -42,117 +42,117 @@ def get_test_loader(raw_data, split_idx, args):
 
 
 def main():
-    idx = 0
-    for max_grad_norm in [10]:
-        for batch_size in [50]:
-            for hidden_size in [200, 250, 300]:
-                for max_path_length in [3, 4, 5]:
-                    for n_heads in [3, 4]:
-                        for d_k in [80]:
-                            for dropout in [0.2]:
-                                if idx <= 5:
-                                    idx += 1
-                                    continue
-                                args_lst = ['-data', '../../data/logP_wo_averaging', '-cuda', '-loss_type', 'mse',
-                                            '-max_grad_norm', max_grad_norm, '-batch_size', batch_size, '-num_epochs',
-                                            35,
-                                            '-output_dir', '../../data/logP_wo_averaging/output_test/symmetry_params/sol_transformer_{0}'.format(idx),
-                                            '-n_rounds', 1, '-model_type', 'transformer', '-ring_embed',
-                                            '-dropout', dropout, '-n_heads', n_heads, '-d_k', d_k,
-                                            '-hidden_size', hidden_size, '-p_embed', '-max_path_length', max_path_length]
-                                args = get_args([str(a) for a in args_lst])
-                                print(args.data)
-                                print(os.path.abspath(args.output_dir))
-                                idx += 1
-                                model_types = ['conv_net', 'conv_net_attn', 'transformer']
-                                assert args.model_type in model_types
+    # idx = 0
+    # for max_grad_norm in [10]:
+    #     for batch_size in [50]:
+    #         for hidden_size in [200, 250, 300]:
+    #             for max_path_length in [3, 4, 5]:
+    #                 for n_heads in [3, 4]:
+    #                     for d_k in [80]:
+    #                         for dropout in [0.2]:
+    #                             if idx <= 5:
+    #                                 idx += 1
+    #                                 continue
+    #                             args_lst = ['-data', '../../data/logP_wo_averaging', '-cuda', '-loss_type', 'mse',
+    #                                         '-max_grad_norm', max_grad_norm, '-batch_size', batch_size, '-num_epochs',
+    #                                         35,
+    #                                         '-output_dir', '../../data/logP_wo_averaging/output_test/symmetry_params/sol_transformer_{0}'.format(idx),
+    #                                         '-n_rounds', 1, '-model_type', 'transformer', '-ring_embed',
+    #                                         '-dropout', dropout, '-n_heads', n_heads, '-d_k', d_k,
+    #                                         '-hidden_size', hidden_size, '-p_embed', '-max_path_length', max_path_length]
+    #                             args = get_args([str(a) for a in args_lst])
+    args = get_args()
+    print(args.data)
+    print(os.path.abspath(args.output_dir))
+    model_types = ['conv_net', 'conv_net_attn', 'transformer']
+    assert args.model_type in model_types
 
-                                if args.multi:
-                                    raw_data = data_utils.read_smiles_multiclass('%s/raw.csv' % args.data)
-                                    n_classes = len(raw_data[0][1])
-                                else:
-                                    raw_data = data_utils.read_smiles_from_file('%s/raw.csv' % args.data)
-                                    n_classes = 1
+    if args.multi:
+        raw_data = data_utils.read_smiles_multiclass('%s/raw.csv' % args.data)
+        n_classes = len(raw_data[0][1])
+    else:
+        raw_data = data_utils.read_smiles_from_file('%s/raw.csv' % args.data)
+        n_classes = 1
 
-                                prop_predictor, optimizer = init_model(args, n_classes)
-                                data_utils.load_shortest_paths(args)  # Shortest paths includes all splits
+    prop_predictor, optimizer = init_model(args, n_classes)
+    data_utils.load_shortest_paths(args)  # Shortest paths includes all splits
 
-                                agg_stats = ['loss', 'nei_score']
-                                if args.loss_type == 'ce':
-                                    agg_stats += ['acc', 'auc']
-                                elif args.loss_type == 'mae':
-                                    agg_stats += ['mae']
+    agg_stats = ['loss', 'nei_score']
+    if args.loss_type == 'ce':
+        agg_stats += ['acc', 'auc']
+    elif args.loss_type == 'mae':
+        agg_stats += ['mae']
 
-                                stat_names = agg_stats + ['gnorm', 'gnorm_clip', 'r2']
+    stat_names = agg_stats + ['gnorm', 'gnorm_clip', 'r2']
 
-                                selection_stat = 'loss'
-                                select_higher = False
-                                if args.loss_type == 'ce':
-                                    selection_stat = 'auc'
-                                    select_higher = True
-                                if args.loss_type == 'mae':
-                                    selection_stat = 'mae'
+    selection_stat = 'loss'
+    select_higher = False
+    if args.loss_type == 'ce':
+        selection_stat = 'auc'
+        select_higher = True
+    if args.loss_type == 'mae':
+        selection_stat = 'mae'
 
-                                if args.test_mode:
-                                    dataset_loaders = load_datasets(raw_data, 0, args)
+    if args.test_mode:
+        dataset_loaders = load_datasets(raw_data, 0, args)
 
-                                    test_model(
-                                        dataset_loaders=dataset_loaders,
-                                        model=prop_predictor,
-                                        stat_names=stat_names,
-                                        train_func=run_epoch,
-                                        args=args, )
+        test_model(
+            dataset_loaders=dataset_loaders,
+            model=prop_predictor,
+            stat_names=stat_names,
+            train_func=run_epoch,
+            args=args,)
 
-                                    exit()
+        exit()
 
-                                all_stats = {}
-                                for name in agg_stats:
-                                    all_stats[name] = []
-                                output_dir = args.output_dir
-                                all_model_paths = []
+    all_stats = {}
+    for name in agg_stats:
+        all_stats[name] = []
+    output_dir = args.output_dir
+    all_model_paths = []
 
-                                for round_idx in range(args.n_rounds):
-                                    dataset_loaders = load_datasets(raw_data, round_idx, args)
-                                    prop_predictor, optimizer = init_model(args, n_classes)
+    for round_idx in range(args.n_rounds):
+        dataset_loaders = load_datasets(raw_data, round_idx, args)
+        prop_predictor, optimizer = init_model(args, n_classes)
 
-                                    cur_output_dir = '%s/run_%d' % (output_dir, round_idx)
-                                    args.output_dir = cur_output_dir
-                                    create_dirs(args, cur_output_dir)
+        cur_output_dir = '%s/run_%d' % (output_dir, round_idx)
+        args.output_dir = cur_output_dir
+        create_dirs(args, cur_output_dir)
 
-                                    test_stats, best_model_path = train_model(
-                                        dataset_loaders=dataset_loaders,
-                                        model=prop_predictor,
-                                        optimizer=optimizer,
-                                        stat_names=stat_names,
-                                        selection_stat=selection_stat,
-                                        train_func=run_epoch,
-                                        args=args,
-                                        select_higher=select_higher, )
+        test_stats, best_model_path = train_model(
+            dataset_loaders=dataset_loaders,
+            model=prop_predictor,
+            optimizer=optimizer,
+            stat_names=stat_names,
+            selection_stat=selection_stat,
+            train_func=run_epoch,
+            args=args,
+            select_higher=select_higher,)
 
-                                    # Aggregate stats of interest
-                                    for name in agg_stats:
-                                        all_stats[name].append(test_stats[name])
-                                    all_model_paths.append(best_model_path)
+        # Aggregate stats of interest
+        for name in agg_stats:
+            all_stats[name].append(test_stats[name])
+        all_model_paths.append(best_model_path)
 
-                                if args.loss_type == 'mse':
-                                    loss_arr = all_stats['loss']
-                                    rmse_arr = [x ** 0.5 for x in loss_arr]
-                                    all_stats['rmse'] = rmse_arr
+    if args.loss_type == 'mse':
+        loss_arr = all_stats['loss']
+        rmse_arr = [x ** 0.5 for x in loss_arr]
+        all_stats['rmse'] = rmse_arr
 
-                                # Write summary file
-                                summary_file = open('%s/summary.txt' % output_dir, 'w+')
+    # Write summary file
+    summary_file = open('%s/summary.txt' % output_dir, 'w+')
 
-                                for name, stats_arr in all_stats.items():
-                                    stats = np.array(stats_arr)
-                                    mean, std = np.mean(stats), np.std(stats)
-                                    stats_string = '%s: %s, mean: %.7f, std: %.7f' % (name, str(stats_arr), mean, std)
-                                    print(stats_string)
-                                    summary_file.write('%s\n' % stats_string)
+    for name, stats_arr in all_stats.items():
+        stats = np.array(stats_arr)
+        mean, std = np.mean(stats), np.std(stats)
+        stats_string = '%s: %s, mean: %.7f, std: %.7f' % (name, str(stats_arr), mean, std)
+        print(stats_string)
+        summary_file.write('%s\n' % stats_string)
 
-                                for model_path in all_model_paths:
-                                    summary_file.write('%s\n' % model_path)
+    for model_path in all_model_paths:
+        summary_file.write('%s\n' % model_path)
 
-                                summary_file.close()
+    summary_file.close()
 
 
 def run_epoch(data_loader, model, optimizer, stat_names, args, mode,

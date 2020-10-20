@@ -39,16 +39,15 @@ def bt_index_to_float(bt_index):
 
 
 # Maximum number of neighbors for an atom
-MAX_NEIGHBORS = 8
+MAX_NEIGHBORS = 10
 DEGREES = list(range(MAX_NEIGHBORS))
 
 EXPLICIT_VALENCES = [0, 1, 2, 3, 4, 5, 6]
 IMPLICIT_VALENCES = [0, 1, 2, 3, 4, 5]
 
 N_ATOM_FEATS = (len(SYMBOLS) + len(FORMAL_CHARGES) + len(DEGREES) +
-                len(EXPLICIT_VALENCES) + len(IMPLICIT_VALENCES) +
-                2)
-N_BOND_FEATS = len(BOND_TYPES) + 1 + 1  # conjugated, in ring
+                len(EXPLICIT_VALENCES) + len(IMPLICIT_VALENCES) + 1)
+N_BOND_FEATS = len(BOND_TYPES) + 1 + 1
 
 
 def get_bt_index(bond_type):
