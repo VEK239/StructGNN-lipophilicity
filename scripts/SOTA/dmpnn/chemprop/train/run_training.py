@@ -74,6 +74,7 @@ class EarlyStopping:
                 self.early_stop = True
         else:
             self.best_score = score
+            self.best_epoch = epoch
             self.best_rmses = val_rmses
             self.best_r2s = val_r2s
             self.save_chckpt(val_loss, model)
@@ -259,10 +260,12 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
         scheduler = build_lr_scheduler(optimizer, args)
 
         # Run training
-        best_score = float('inf') if args.minimize_score else -float('inf')
-        best_score_R2 = 0
-        best_epoch, n_iter = 0, 0
-        
+        #         best_score = float('inf') if args.minimize_score else -float('inf')
+        #         best_score_R2 = 0
+        #         best_epoch, n_iter = 0, 0
+
+        n_iter = 0
+
         early_stopping = EarlyStopping(scaler, features_scaler, args, patience=args.patience, delta = args.delta, \
                                        verbose=True, path = os.path.join(save_dir, MODEL_FILE_NAME))
         
@@ -329,7 +332,7 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
                 break
             
         # Evaluate on test set using model with best validation score
-        info(f'Model {model_idx} best validation {args.metric} = {best_score:.6f} on epoch {best_epoch}')
+        info(f'Model {model_idx} best validation {args.metric} = {early_stopping.best_score:.6f} on epoch {early_stopping.best_epoch}')
         model = load_checkpoint(os.path.join(save_dir, MODEL_FILE_NAME), device=args.device, logger=logger)
 
         test_preds = predict(
