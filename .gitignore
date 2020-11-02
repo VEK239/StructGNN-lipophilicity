@@ -1,7 +1,7 @@
 NCIdb.sdf
 __pycache__/
 *.pyc
-logs/
+*.pt
 SMILES_TO_MOLTREE.pickle
 *.pickle
 .idea
@@ -16,4 +16,5 @@ data/*/pubchem_subset.csv
 data/raw/*logs
 scripts/baseline_improvements/*.txt
 scripts/server_do_not_die_pls.py
+scripts/baseline_improvements/chemprop/out.dvc
 scripts/baseline_improvements/chemprop/out.dvc

@@ -9,6 +9,7 @@ Notebook name | Contents | Results
 | LogD Datasets filtering |
 9_eda_logD_Lipophilicity_dataset.ipynb</br>10_eda_logD_logd74_dataset.ipynb</br>11_eda_logD_ochem_dataset.ipynb</br>| 1. Checking Temperature, logP, pH values distribution in dataset</br>2. Removing  rows with Temperature, logP, pH outliers</br>3. Drop all Nan values</br>4. Drop duplicated rows|**Lipophilicity_dataset**:</br>1. There are 4200 experimental records</br>2. All the SMILES are unique.</br>3. All the experiments were held at pH=7.4</br>4. Temperature is not mentioned. </br></br>**logD74**:</br>1. There are 4200 experimental records</br>2. All the SMILES are unique.</br>3. All the experiments were held at pH=7.4</br>4. Temperature is not mentioned</br></br>**ochem**:</br>1. There are 9549 experimental records</br>2. Almost half of them were duplicates. 5155 unique records. All of them include pH</br>3. Almost all of them are neutral (pH in [6, 8])</br>4. There 4929 unique smiles</br>5. emperature is not mentioned</br>6. There were some smiles with multiple records, but big variance. They were dropped.</br>7. All in all there are 4981 records left.
 
+Resulting datasets are stored in `mol_properties/tree/SOTA/data/1_filtering`
 
 ## Data standartization
 
