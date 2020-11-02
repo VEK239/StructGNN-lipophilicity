@@ -18,3 +18,8 @@ scripts/baseline_improvements/*.txt
 scripts/server_do_not_die_pls.py
 scripts/baseline_improvements/chemprop/out.dvc
 scripts/baseline_improvements/chemprop/out.dvc
+data/raw/baselines/dmpnn/logs/exp_*
+data/raw/baselines/jtree/logs/exp_*
+data/raw/baselines/otgnn/output/exp_*
+data/raw/baselines/pretrain_gnn/logs/exp_*
+scripts/baseline_improvements/chemprop/out/*
