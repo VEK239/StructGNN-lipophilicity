@@ -212,12 +212,14 @@ class Atom:
 
 
 class Bond:
-    def __init__(self, rdkit_bond, idx, out_atom_idx, in_atom_idx, bond_type):
+    def __init__(self, rdkit_bond, idx, out_atom_idx, in_atom_idx, bond_type='fictitious'):
         self.rdkit_bond = rdkit_bond
         self.idx = idx
         self.out_atom_idx = out_atom_idx
         self.in_atom_idx = in_atom_idx
         self.bond_type = bond_type
+        if self.bond_type == 'fictitious':
+            self.weight = -1
 
     def get_rdkit_bond(self):
         return self.rdkit_bond
@@ -300,7 +302,8 @@ def create_molecule_for_smiles(smiles, args):
         atom_idx = atom.GetIdx()
         if atom_idx not in used_atoms:
             atom_repr = generate_substructure_sum_vector_mapping([atom_idx], mol, 'ATOM', args)
-            custom_atom = Atom(idx=min_not_used_idx, atom_representation=atom_repr, symbol=atom.GetSymbol(), atom_type='ATOM')
+            custom_atom = Atom(idx=min_not_used_idx, atom_representation=atom_repr, symbol=atom.GetSymbol(),
+                               atom_type='ATOM')
             min_not_used_idx += 1
             mol_atoms.append(custom_atom)
             idx_to_atom[atom_idx].add(custom_atom)
@@ -316,6 +319,16 @@ def create_molecule_for_smiles(smiles, args):
                 start_atom.add_bond(custom_bond)
             for end_atom in end_atoms:
                 end_atom.add_bond(custom_bond)
-
+        elif len(start_atoms & end_atoms) == 2:
+            cur_atoms = start_atoms & end_atoms
+            custom_bond = Bond(bond, idx, list(cur_atoms)[0].idx, list(cur_atoms)[0].idx)
+            mol_bonds.append(custom_bond)
+            for start_atom in start_atoms:
+                start_atom.add_bond(custom_bond)
+            for end_atom in end_atoms:
+                end_atom.add_bond(custom_bond)
+        elif len(start_atoms & end_atoms) == 3:
+            pass
+            # TODO
     custom_mol = Molecule(mol_atoms, mol_bonds, mol, custom_atom_idx_to_idx)
     return custom_mol
