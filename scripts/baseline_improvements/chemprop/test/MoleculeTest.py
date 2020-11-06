@@ -2,8 +2,13 @@ import unittest
 
 from rdkit import Chem
 
-from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.features.molecule import create_molecule_for_smiles
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
+
+from args import TrainArgs
+from features.molecule import create_molecule_for_smiles
 
 
 class MoleculeTest(unittest.TestCase):

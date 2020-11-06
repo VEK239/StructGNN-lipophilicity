@@ -1,5 +1,9 @@
-from scripts.baseline_improvements.chemprop.features.molecule import Molecule, create_molecule_for_smiles, \
-    onek_encoding
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
+
+from features.molecule import Molecule, create_molecule_for_smiles, onek_encoding
 from typing import List, Tuple, Union
 
 from rdkit import Chem

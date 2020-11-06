@@ -1,7 +1,12 @@
 import unittest
 
-from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.features import MolGraphWithSubstructures
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
+
+from args import TrainArgs
+from features import MolGraphWithSubstructures
 
 
 class MolGraphWithSubstructuresTest(unittest.TestCase):
