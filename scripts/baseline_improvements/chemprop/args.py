@@ -210,6 +210,8 @@ class TrainArgs(CommonArgs):
     """Centers messages on atoms instead of on bonds."""
     substructures_merge: bool = False
     """Merges neighboring rings."""
+    fictitious_edges: bool = False
+    """Creates fictitious edges for intersecting substructures."""
     substructures_use_substructures: bool = False
     """Generates chemical substructures."""
     no_substructures_undirected: bool = False

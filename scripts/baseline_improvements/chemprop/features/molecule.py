@@ -319,7 +319,7 @@ def create_molecule_for_smiles(smiles, args):
                 start_atom.add_bond(custom_bond)
             for end_atom in end_atoms:
                 end_atom.add_bond(custom_bond)
-        elif len(start_atoms & end_atoms) == 2:
+        elif args.fictitious_edges and len(start_atoms & end_atoms) == 2:
             cur_atoms = start_atoms & end_atoms
             custom_bond = Bond(bond, idx, list(cur_atoms)[0].idx, list(cur_atoms)[0].idx)
             mol_bonds.append(custom_bond)
@@ -327,7 +327,7 @@ def create_molecule_for_smiles(smiles, args):
                 start_atom.add_bond(custom_bond)
             for end_atom in end_atoms:
                 end_atom.add_bond(custom_bond)
-        elif len(start_atoms & end_atoms) == 3:
+        elif args.fictitious_edges and len(start_atoms & end_atoms) == 3:
             pass
             # TODO
     custom_mol = Molecule(mol_atoms, mol_bonds, mol, custom_atom_idx_to_idx)
