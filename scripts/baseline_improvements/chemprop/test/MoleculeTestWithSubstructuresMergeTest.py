@@ -99,5 +99,16 @@ class MoleculeTestWithSubstructuresMergeTest(unittest.TestCase):
         smi = "C1CCC3C(CC1)CC(C2C(CCCC2)N[S](C(C)C4=CC=CC3=C4)(=C)=O)C5CCCCC5"
         mol = create_molecule_for_smiles(smi, args)
         print(mol.atoms)
-        self.assertEqual(5, len(mol.atoms))  # TODO: change this to firstly sulfonamid or ring. One of two
+        self.assertEqual(5, len(mol.atoms))
         self.assertEqual(4, len(mol.bonds))
+
+    def test_intersecting_ring_sulfonamid(self):
+        args = TrainArgs()
+        args.substructures_merge = True
+        args.substructures_use_substructures = True
+
+        smi = "C1CC[S](NC1)(=O)=O"
+        mol = create_molecule_for_smiles(smi, args)
+        print(mol.atoms)
+        self.assertEqual(3, len(mol.atoms))
+        self.assertEqual(2, len(mol.bonds))
