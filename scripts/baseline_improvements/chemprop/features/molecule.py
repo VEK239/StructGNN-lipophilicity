@@ -24,38 +24,61 @@ STRUCT_TO_NUM = {
 }
 
 
-def get_cycles_for_molecule(mol, merging_cycles=False):
+def get_cycles_for_molecule(mol):
     """
     Finds all the cycles in a given RDKit mol
     :param mol: The given RDKit molecule
-    :param merging_cycles: If True merges cycles with neighboring atoms
     :return: A list of cycles in a mol
     """
     all_cycles = Chem.GetSymmSSSR(mol)
     all_cycles = [set(ring) for ring in all_cycles]
-    if merging_cycles:
-        atom_to_ring = defaultdict(set)
-        for cycle_idx, cycle in enumerate(all_cycles):
-            for atom in cycle:
-                atom_to_ring[atom].add(cycle_idx)
-        rings_to_merge = [1]
-        while rings_to_merge:
-            rings_to_merge = None
-            for atom, atom_cycles in atom_to_ring.items():
-                if len(atom_cycles) > 1:
-                    rings_to_merge = atom_cycles.copy()
-            if rings_to_merge:
-                ring_new_idx = min(rings_to_merge)
-                for ring_idx in rings_to_merge:
-                    for atom in all_cycles[ring_idx]:
-                        all_cycles[ring_new_idx].add(atom)
-                        atom_to_ring[atom].remove(ring_idx)
-                        atom_to_ring[atom].add(ring_new_idx)
-                for ring_idx in rings_to_merge:
-                    if ring_idx != ring_new_idx:
-                        all_cycles[ring_idx] = []
-    all_cycles = [list(cycle) for cycle in all_cycles if len(cycle) > 2]
     return all_cycles
+
+def merge_substructures(rings, acids, esters, amins, sulfonamids):
+    """
+    Merges intersecting substructures
+    :param rings: A list of all rings in mol
+    :param acids: A list of all acids in mol
+    :param esters: A list of all esters in mol
+    :param amins: A list of all amins in mol
+    :param sulfonamids: A list of all sulfonamids in mol
+    :return: A list of cycles in a mol
+    """
+    atom_to_ring = defaultdict(set)
+    for cycle_idx, cycle in enumerate(rings):
+        for atom in cycle:
+            atom_to_ring[atom].add(cycle_idx)
+    rings_to_merge = [1]
+    while rings_to_merge:
+        rings_to_merge = None
+        for atom, atom_cycles in atom_to_ring.items():
+            if len(atom_cycles) > 1:
+                rings_to_merge = atom_cycles.copy()
+        if rings_to_merge:
+            ring_new_idx = min(rings_to_merge)
+            for ring_idx in rings_to_merge:
+                for atom in rings[ring_idx]:
+                    rings[ring_new_idx].add(atom)
+                    atom_to_ring[atom].remove(ring_idx)
+                    atom_to_ring[atom].add(ring_new_idx)
+            for ring_idx in rings_to_merge:
+                if ring_idx != ring_new_idx:
+                    rings[ring_idx] = []
+    all_cycles = [set(cycle) for cycle in rings if len(cycle) > 2]
+
+    remaining_substructures = [all_cycles]
+    for other_substructures in [acids, esters, amins, sulfonamids]:
+        not_intersecting_substr = []
+        for substructure in other_substructures:
+            substructure_add = True
+            for cycle in all_cycles:
+                if len(cycle & substructure) > 0:
+                    substructure_add = False
+            if substructure_add:
+                not_intersecting_substr.append(substructure)
+        remaining_substructures.append([substr for substr in not_intersecting_substr])
+    remaining_substructures = ([list(e) for e in substr_type_list] for substr_type_list in remaining_substructures)
+    return remaining_substructures
 
 
 def get_acids_for_molecule(mol):
@@ -66,7 +89,7 @@ def get_acids_for_molecule(mol):
     """
     acid_pattern = Chem.MolFromSmarts('[CX3](=O)[OX2H1]')
     acids = mol.GetSubstructMatches(acid_pattern)
-    return [list(acid) for acid in acids]
+    return [set(acid) for acid in acids]
 
 
 def get_esters_for_molecule(mol):
@@ -87,7 +110,7 @@ def get_esters_for_molecule(mol):
         for atom in ester:
             if mol.GetBondBetweenAtoms(atom, atoms[0]) and mol.GetBondBetweenAtoms(atom, atoms[1]):
                 atoms.append(atom)
-        ester_atoms.append(atoms)
+        ester_atoms.append(set(atoms))
     return ester_atoms
 
 
@@ -106,7 +129,7 @@ def get_amins_for_molecule(mol):
     amins = mol.GetSubstructMatches(amin_pattern)
     amins = [list(amin) for amin in amins]
     amins = [[amin[0] if mol.GetAtomWithIdx(amin[0]).GetSymbol() == 'N' else amin[1]] for amin in amins]
-    return [amin for amin in amins if amin[0] not in sulfonamid_atoms]
+    return [set(amin) for amin in amins if amin[0] not in sulfonamid_atoms]
 
 
 def get_sulfonamids_for_molecule(mol):
@@ -125,7 +148,7 @@ def get_sulfonamids_for_molecule(mol):
         for neighbor in mol.GetAtomWithIdx(atoms[0]).GetNeighbors():
             if neighbor.GetSymbol() != 'C':
                 atoms.append(neighbor.GetIdx())
-        sulfonamid_atoms.append(atoms)
+        sulfonamid_atoms.append(set(atoms))
     return sulfonamid_atoms
 
 
@@ -264,7 +287,7 @@ class Molecule:
 def create_molecule_for_smiles(smiles, args):
     mol = Chem.MolFromSmiles(smiles)
 
-    rings = get_cycles_for_molecule(mol, args.substructures_merge)
+    rings = get_cycles_for_molecule(mol)
     if args.substructures_use_substructures:
         acids = get_acids_for_molecule(mol)
         esters = get_esters_for_molecule(mol)
@@ -275,6 +298,15 @@ def create_molecule_for_smiles(smiles, args):
         esters = []
         amins = []
         sulfonamids = []
+
+    if args.substructures_merge:
+        rings, acids, esters, amins, sulfonamids = merge_substructures(rings, acids, esters, amins, sulfonamids)
+    else:
+        rings = [list(e) for e in rings]
+        acids = [list(e) for e in acids]
+        esters = [list(e) for e in esters]
+        amins = [list(e) for e in amins]
+        sulfonamids = [list(e) for e in sulfonamids]
 
     used_atoms = set()
     mol_bonds = []
