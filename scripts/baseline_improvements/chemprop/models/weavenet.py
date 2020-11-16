@@ -179,11 +179,13 @@ class WeaveNet(chainer.Chain):
         self.readout_mode = readout_mode
 
     def __call__(self, atom_x, pair_x, batch):
+        atoms, pairs = [], []
         if type(batch) != BatchMolGraphWithSubstructures:
             batch = mol2graph_with_substructures(batch, args=self.args)
         for graph in batch:
             mol = graph.mol
-            atom_x
+            atom_x = mol.get_atom_features_vector()
+            pair_x = mol.construct_pair_feature(num_max_atoms=WEAVE_DEFAULT_NUM_MAX_ATOMS)
             if atom_x.dtype == self.xp.int32:
                 # atom_array: (minibatch, atom)
                 atom_x = self.embed(atom_x)
@@ -196,5 +198,7 @@ class WeaveNet(chainer.Chain):
                 else:
                     # not last layer, both `atom_x` and `pair_x` are needed
                     atom_x, pair_x = self.weave_module[i].forward(atom_x, pair_x)
-            return atom_x
+            atoms.append(atom_x)
+            pairs.append(pair_x)
+        return atoms, pairs
 

@@ -301,6 +301,10 @@ class Molecule:
     def get_atoms(self):
         return self.atoms
 
+    def get_atom_features_vector(self):
+        return numpy.array([numpy.array(atom.get_representation()) for atom in self.atoms()])
+
+
     def get_atom(self, atom_idx):
         return self.atoms[atom_idx]
 

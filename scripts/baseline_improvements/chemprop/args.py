@@ -228,6 +228,10 @@ class TrainArgs(CommonArgs):
     """Number of layers in FFN after MPN encoding."""
     features_only: bool = False
     """Use only the additional features in an FFN, no graph network."""
+    additional_encoder: bool = True
+    """Whether to add a substructures encoder"""
+    gcn_encoder: bool = False
+    """Whether to use the WeaveNet encoder as substructures encoder"""
     separate_val_features_path: List[str] = None
     """Path to file with features for separate val set."""
     separate_test_features_path: List[str] = None
