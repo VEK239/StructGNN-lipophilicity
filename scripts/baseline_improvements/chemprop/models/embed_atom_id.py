@@ -1,5 +1,5 @@
 import chainer
-from chainer_chemistry.config import MAX_ATOMIC_NUM
+MAX_ATOMIC_NUM = 170
 
 
 class EmbedAtomID(chainer.links.EmbedID):

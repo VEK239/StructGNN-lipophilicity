@@ -1,14 +1,21 @@
 from typing import List, Union
 
 import numpy as np
+from rdkit import Chem
 import torch
 import torch.nn as nn
-from rdkit import Chem
+import os, sys, inspect
 
-from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.features import BatchMolGraph, BatchMolGraphWithSubstructures
-from scripts.baseline_improvements.chemprop.nn_utils import get_activation_function, initialize_weights
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
 from .mpn import MPN
+from .gcn import GCN
+from args import TrainArgs
+from features import BatchMolGraph, BatchMolGraphWithSubstructures
+from nn_utils import get_activation_function, initialize_weights
+from .substructures_feature_model import SubstructureLayer
+from .weavenet import WeaveNet
 
 
 class MoleculeModel(nn.Module):
@@ -22,6 +29,8 @@ class MoleculeModel(nn.Module):
                            outputting the actual property predictions.
         """
         super(MoleculeModel, self).__init__()
+
+        self.args = args
 
         self.classification = args.dataset_type == 'classification'
         self.multiclass = args.dataset_type == 'multiclass'
@@ -48,8 +57,11 @@ class MoleculeModel(nn.Module):
 
         :param args: A :class:`~chemprop.args.TrainArgs` object containing model arguments.
         """
-        self.no_substructures_encoder = MPN(args, 'no_substructures')
-        self.substructures_encoder = MPN(args, 'substructures')
+        self.encoder = MPN(args)
+        if self.args.additional_encoder:
+            self.substructures_encoder = SubstructureLayer(args)  # GCN(args) #MPN(args, 'substructures')
+        elif self.args.gcn_encoder:
+            self.gcn_substructures_encoder = WeaveNet()
 
     def create_ffn(self, args: TrainArgs) -> None:
         """
@@ -62,15 +74,18 @@ class MoleculeModel(nn.Module):
             self.num_classes = args.multiclass_num_classes
         if args.features_only:
             first_linear_dim = args.features_size
+        elif self.args.additional_encoder:
+            first_linear_dim = args.substructures_hidden_size + args.hidden_size
+            if args.use_input_features:
+                first_linear_dim += args.features_size
         else:
-            first_linear_dim = args.substructures_hidden_size + args.no_substructures_hidden_size
+            first_linear_dim = args.hidden_size
             if args.use_input_features:
                 first_linear_dim += args.features_size
 
         dropout = nn.Dropout(args.dropout)
         activation = get_activation_function(args.activation)
 
-        args.ffn_hidden_size = first_linear_dim
         # Create FFN layers
         if args.ffn_num_layers == 1:
             ffn = [
@@ -111,8 +126,8 @@ class MoleculeModel(nn.Module):
         return self.ffn[:-1](self.encoder(batch, features_batch))
 
     def forward(self,
-                no_substructures_batch: Union[List[str], List[Chem.Mol], BatchMolGraph],
-                substructures_batch: Union[List[str], List[Chem.Mol], BatchMolGraphWithSubstructures],
+                batch: Union[List[str], List[Chem.Mol], BatchMolGraph],
+                substructures_batch: Union[List[str], List[Chem.Mol], BatchMolGraphWithSubstructures] = None,
                 features_batch: List[np.ndarray] = None) -> torch.FloatTensor:
         """
         Runs the :class:`MoleculeModel` on input.
@@ -124,15 +139,20 @@ class MoleculeModel(nn.Module):
                  or molecule features if :code:`self.featurizer=True`.
         """
         if self.featurizer:
-            return self.featurize(no_substructures_batch, features_batch)
+            return self.featurize(batch, features_batch)
+        if self.args.additional_encoder:
 
-        # out = concatenate([self.no_substructures_encoder(no_substructures_batch, features_batch).cpu().data.numpy(),
-        #                    self.substructures_encoder(substructures_batch, features_batch).cpu().data.numpy()], axis=1)
-
-        out = torch.cat((self.no_substructures_encoder(no_substructures_batch, features_batch),
-                         self.substructures_encoder(substructures_batch)), dim=1)
-        # out = self.substructures_encoder(substructures_batch)
-        output = self.ffn(out)
+            substructures_mol_o = self.substructures_encoder(substructures_batch)
+            out = torch.cat((self.encoder(batch, features_batch),
+                             substructures_mol_o), dim=1)
+            output = self.ffn(out)
+        elif self.args.gcn_encoder:
+            substructures_mol_o = self.gcn_substructures_encoder(substructures_batch)
+            out = torch.cat((self.encoder(batch, features_batch),
+                             substructures_mol_o), dim=1)
+            output = self.ffn(out)
+        else:
+            output = self.ffn(self.encoder(batch, features_batch))
 
         # Don't apply sigmoid during training b/c using BCEWithLogitsLoss
         if self.classification and not self.training:

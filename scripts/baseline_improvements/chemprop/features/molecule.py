@@ -1,6 +1,9 @@
 from collections import defaultdict
+import numpy
 
 from rdkit import Chem
+
+BOND_FDIM = 13
 
 BT_MAPPING_CHAR = {
     Chem.rdchem.BondType.SINGLE: 'S',
@@ -33,6 +36,7 @@ def get_cycles_for_molecule(mol):
     all_cycles = Chem.GetSymmSSSR(mol)
     all_cycles = [set(ring) for ring in all_cycles]
     return all_cycles
+
 
 def merge_substructures(rings, acids, esters, amins, sulfonamids):
     """
@@ -220,11 +224,12 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
 
 
 class Atom:
-    def __init__(self, idx, atom_representation, atom_type, symbol=''):
+    def __init__(self, idx, atom_representation, atom_type, atom_list, symbol=''):
         self.symbol = symbol
         self.idx = idx
         self.atom_representation = atom_representation
         self.atom_type = atom_type
+        self.atom_list = atom_list
         self.bonds = []
 
     def add_bond(self, bond):
@@ -253,7 +258,32 @@ class Molecule:
         self.atoms = atoms
         self.bonds = bonds
         self.rdkit_mol = rdkit_mol
+        self.distance_matrix = None
         self.custom_atom_idx_to_usual_idx = custom_atom_idx_to_usual_idx
+
+    def bond_features_for_substructures(self, i, j):
+        """
+        Builds a feature vector for a bond.
+
+        :param bond: An RDKit bond.
+        :return: A list containing the bond features.
+        """
+        bond = self.get_bond(i, j)
+        if bond is None:
+            fbond = [1] + [0] * (BOND_FDIM - 1)
+        else:
+            bt = bond.GetBondType()
+            fbond = [
+                0,  # bond is not None
+                bt == Chem.rdchem.BondType.SINGLE,
+                bt == Chem.rdchem.BondType.DOUBLE,
+                bt == Chem.rdchem.BondType.TRIPLE,
+                bt == Chem.rdchem.BondType.AROMATIC,
+                (bond.GetIsConjugated() if bt is not None else 0),
+                (bond.IsInRing() if bt is not None else 0)
+            ]
+            fbond += onek_encoding(int(bond.GetStereo()), 6)
+        return numpy.array(numpy.array(fbond))
 
     def get_bond(self, atom_1_idx, atom_2_idx):
         # If bond does not exist between atom_1 and atom_2, return None
@@ -276,6 +306,51 @@ class Molecule:
 
     def get_num_atoms(self):
         return len(self.atoms)
+
+    def construct_distance_vec(self, i, j, max_distance):
+        distance_matrix = self.get_distance_matrix()
+        distance = min(max_distance, distance_matrix[i][j])
+        distance_feature = numpy.zeros((max_distance,), dtype=numpy.float32)
+        distance_feature[:distance] = 1.0
+        return distance_feature
+
+    def get_distance_matrix(self):
+        if self.distance_matrix is None:
+            n = self.get_num_atoms()
+            self.distance_matrix = [[] for _ in range(n)]
+            for k in range(n):
+                for i in range(n):
+                    for j in range(n):
+                        self.distance_matrix[i][j] = min(self.distance_matrix[i][j], self.distance_matrix[i][k] +
+                                                         self.distance_matrix[k][j])
+        return self.distance_matrix
+
+    def construct_pair_feature(self, num_max_atoms=10, max_distance=7):
+        """construct pair feature
+
+        Args:
+            mol (Mol): mol instance
+            num_max_atoms (int): number of max atoms
+
+        Returns (numpy.ndarray): 2 dimensional array. First axis size is
+            `num_max_atoms` ** 2, representing index of each atom pair.
+            Second axis for feature.
+
+        """
+        n_atom = self.get_num_atoms()
+        distance_feature = numpy.zeros((num_max_atoms ** 2, max_distance,),
+                                       dtype=numpy.float32)
+        for i in range(n_atom):
+            for j in range(n_atom):
+                distance_feature[i * n_atom + j] = self.construct_distance_vec(i, j, max_distance)
+        bond_feature = numpy.zeros((num_max_atoms ** 2, BOND_FDIM,), dtype=numpy.float32)
+        for i in range(n_atom):
+            for j in range(n_atom):
+                bond_feature[i * n_atom + j] = self.bond_features_for_substructures(i, j)
+        # ring_feature = construct_ring_feature_vec(mol, num_max_atoms=num_max_atoms)
+        # feature = numpy.hstack((distance_feature, bond_feature, ring_feature))
+        feature = numpy.hstack((distance_feature, bond_feature))
+        return feature
 
     def prnt(self):
         for atom in self.atoms:
@@ -322,7 +397,7 @@ def create_molecule_for_smiles(smiles, args):
         for substruct in substructures:
             mapping = generate_substructure_sum_vector_mapping(substruct, mol, substructure_type_string, args)
             substruct_atom = Atom(idx=min_not_used_idx,
-                                  atom_representation=mapping, atom_type=substructure_type_string)
+                                  atom_representation=mapping, atom_type=substructure_type_string, atom_list=substruct)
             min_not_used_idx += 1
             mol_atoms.append(substruct_atom)
             for idx in substruct:
@@ -335,7 +410,7 @@ def create_molecule_for_smiles(smiles, args):
         if atom_idx not in used_atoms:
             atom_repr = generate_substructure_sum_vector_mapping([atom_idx], mol, 'ATOM', args)
             custom_atom = Atom(idx=min_not_used_idx, atom_representation=atom_repr, symbol=atom.GetSymbol(),
-                               atom_type='ATOM')
+                               atom_type='ATOM', atom_list=[atom_idx])
             min_not_used_idx += 1
             mol_atoms.append(custom_atom)
             idx_to_atom[atom_idx].add(custom_atom)

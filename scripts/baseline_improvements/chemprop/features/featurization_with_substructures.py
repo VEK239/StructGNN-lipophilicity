@@ -1,9 +1,12 @@
-import os,sys,inspect
+import inspect
+import os
+import sys
+
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir)
+sys.path.insert(0, parentdir)
 
-from features.molecule import Molecule, create_molecule_for_smiles, onek_encoding
+from features.molecule import create_molecule_for_smiles, onek_encoding
 from typing import List, Tuple, Union
 
 from rdkit import Chem
@@ -95,7 +98,7 @@ class MolGraphWithSubstructures:
         :param mol: A SMILES or an RDKit molecule.
         """
         mol = create_molecule_for_smiles(mol, args)
-
+        self.mol = mol
         self.n_atoms = 0  # number of atoms
         self.n_bonds = 0  # number of bonds
         self.f_atoms = []  # mapping from atom index to atom features

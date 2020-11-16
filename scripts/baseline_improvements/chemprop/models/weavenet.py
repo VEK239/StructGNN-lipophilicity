@@ -1,11 +1,25 @@
 import chainer
 from chainer import functions
 from chainer import links
+from .embed_atom_id import EmbedAtomID
 
-from chainer_chemistry.config import MAX_ATOMIC_NUM
-from chainer_chemistry.config import WEAVE_DEFAULT_NUM_MAX_ATOMS
-from chainer_chemistry.links.connection.embed_atom_id import EmbedAtomID
-from chainer_chemistry.links.readout.general_readout import GeneralReadout
+MAX_ATOMIC_NUM = 170
+WEAVE_DEFAULT_NUM_MAX_ATOMS = 170
+
+from typing import List, Union
+
+import numpy as np
+from rdkit import Chem
+
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
+
+from args import TrainArgs
+from features import BatchMolGraph, get_atom_fdim, get_bond_fdim, mol2graph, \
+    BatchMolGraphWithSubstructures, get_atom_fdim_with_substructures, \
+    mol2graph_with_substructures
 
 
 WEAVENET_DEFAULT_WEAVE_CHANNELS = [50, ]
@@ -82,7 +96,6 @@ class PairToAtom(chainer.Chain):
             self.linearLayer = chainer.ChainList(
                 *[links.Linear(None, n_channel) for _ in range(n_layer)]
             )
-            self.readout = GeneralReadout(mode=mode)
         self.n_atom = n_atom
         self.n_channel = n_channel
         self.mode = mode
@@ -96,7 +109,7 @@ class PairToAtom(chainer.Chain):
             a = functions.relu(a)
         a = functions.reshape(a, (n_batch, self.n_atom, self.n_atom,
                                   self.n_channel))
-        a = self.readout(a, axis=2)
+        a = functions.sum(a, axis=2)
         return a
 
 
@@ -162,21 +175,26 @@ class WeaveNet(chainer.Chain):
         with self.init_scope():
             self.embed = EmbedAtomID(out_size=hidden_dim, in_size=n_atom_types)
             self.weave_module = chainer.ChainList(*weave_module)
-            self.readout = GeneralReadout(mode=readout_mode)
+            # self.readout = GeneralReadout(mode=readout_mode)
         self.readout_mode = readout_mode
 
-    def __call__(self, atom_x, pair_x, train=True):
-        if atom_x.dtype == self.xp.int32:
-            # atom_array: (minibatch, atom)
-            atom_x = self.embed(atom_x)
+    def __call__(self, atom_x, pair_x, batch):
+        if type(batch) != BatchMolGraphWithSubstructures:
+            batch = mol2graph_with_substructures(batch, args=self.args)
+        for graph in batch:
+            mol = graph.mol
+            atom_x
+            if atom_x.dtype == self.xp.int32:
+                # atom_array: (minibatch, atom)
+                atom_x = self.embed(atom_x)
 
-        for i in range(len(self.weave_module)):
-            if i == len(self.weave_module) - 1:
-                # last layer, only `atom_x` is needed.
-                atom_x = self.weave_module[i].forward(atom_x, pair_x,
-                                                      atom_only=True)
-            else:
-                # not last layer, both `atom_x` and `pair_x` are needed
-                atom_x, pair_x = self.weave_module[i].forward(atom_x, pair_x)
-        x = self.readout(atom_x, axis=1)
-        return x
+            for i in range(len(self.weave_module)):
+                if i == len(self.weave_module) - 1:
+                    # last layer, only `atom_x` is needed.
+                    atom_x = self.weave_module[i].forward(atom_x, pair_x,
+                                                          atom_only=True)
+                else:
+                    # not last layer, both `atom_x` and `pair_x` are needed
+                    atom_x, pair_x = self.weave_module[i].forward(atom_x, pair_x)
+            return atom_x
+
