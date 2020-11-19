@@ -8,12 +8,7 @@ from typing_extensions import Literal
 import torch
 from tap import Tap  # pip install typed-argument-parser (https://github.com/swansonk14/typed-argument-parser)
 
-import os,sys,inspect
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir)
-
-from features import get_available_features_generators
+from chemprop.features import get_available_features_generators
 
 
 def get_checkpoint_paths(checkpoint_path: Optional[str] = None,
@@ -62,7 +57,7 @@ def get_checkpoint_paths(checkpoint_path: Optional[str] = None,
 class CommonArgs(Tap):
     """:class:`CommonArgs` contains arguments that are used in both :class:`TrainArgs` and :class:`PredictArgs`."""
 
-    smiles_column: str = None
+    smiles_column: str = 'smiles'
     """Name of the column containing SMILES strings. By default, uses the first column."""
     checkpoint_dir: str = None
     """Directory from which to load model checkpoints (walks directory and ensembles all models that are found)."""
@@ -135,8 +130,12 @@ class TrainArgs(CommonArgs):
     """:class:`TrainArgs` includes :class:`CommonArgs` along with additional arguments used for training a Chemprop model."""
 
     # General arguments
-    data_path: str
+    additional_encoder: bool = False
+    """Add our encoder to model"""
+    data_path: str = ''
     """Path to data CSV file."""
+    file_prefix: str = ''
+    """Prefix name of data file without .csv"""
     target_columns: List[str] = None
     """
     Name of the columns containing target values.
@@ -200,27 +199,27 @@ class TrainArgs(CommonArgs):
     # Model arguments
     bias: bool = False
     """Whether to add bias to linear layers."""
-    no_substructures_hidden_size: int = 300
-    substructures_hidden_size: int = 300
+    hidden_size: int = 300
     """Dimensionality of hidden layers in MPN."""
-    no_substructures_depth: int = 3
-    substructures_depth: int = 3
+    substructures_hidden_size: int = 300
+    """Dimensionality of hidden layers in SubstructureLayer."""
+    depth: int = 3
     """Number of message passing steps."""
+    substructures_depth: bool = False
+    """Number of message passing steps in StructGNN."""
     dropout: float = 0.0
     """Dropout probability."""
     activation: Literal['ReLU', 'LeakyReLU', 'PReLU', 'tanh', 'SELU', 'ELU'] = 'ReLU'
     """Activation function."""
-    no_substructures_atom_messages: bool = False
-    substructures_atom_messages: bool = False
+    atom_messages: bool = False
     """Centers messages on atoms instead of on bonds."""
-    substructures_merge: bool = False
-    """Merges neighboring rings."""
+    substructures_atom_messages: bool = False
+    undirected: bool = False
+    substructures_undirected: bool = False
     fictitious_edges: bool = False
     """Creates fictitious edges for intersecting substructures."""
     substructures_use_substructures: bool = False
     """Generates chemical substructures."""
-    no_substructures_undirected: bool = False
-    substructures_undirected: bool = False
     """Undirected edges (always sum the two relevant bond vectors)."""
     ffn_hidden_size: int = None
     """Hidden dim for higher-capacity FFN (defaults to hidden_size)."""
@@ -263,6 +262,10 @@ class TrainArgs(CommonArgs):
     """Maximum magnitude of gradient during training."""
     class_balance: bool = False
     """Trains with an equal number of positives and negatives in each batch (only for single task classification)."""
+    patience: int = 0
+    """Early stopping patience"""
+    delta: float = 0.0
+    """Early stopping delta"""
 
     def __init__(self, *args, **kwargs) -> None:
         super(TrainArgs, self).__init__(*args, **kwargs)
@@ -338,6 +341,26 @@ class TrainArgs(CommonArgs):
                 for key, value in config.items():
                     setattr(self, key, value)
 
+        if self.config_path_yaml is not None:
+            import yaml
+            with open(self.config_path_yaml) as f:
+                config = yaml.safe_load(f)
+                for key, value in config.items():
+
+                    if key == 'separate_test_path' and config['separate_test_path']:
+                        setattr(self, key, os.path.join(value, config['file_prefix']+'_test.csv'))
+                    elif key == 'separate_val_path' and config['separate_val_path']:
+                        setattr(self, key, os.path.join(value, config['file_prefix']+'_validation.csv'))
+                    elif key == 'data_path':
+                        if 'separate_val_path' in config.keys() and config['separate_val_path']:
+                            setattr(self, key, os.path.join(value, config['file_prefix']+'_train.csv'))
+                        elif 'separate_test_path' in config.keys() and config['separate_test_path']:
+                            setattr(self, key, os.path.join(value, config['file_prefix']+'_train_val_dataset.csv'))
+                        else:
+                            setattr(self, key, os.path.join(value, config['file_prefix']+'.csv'))
+                    else:
+                        setattr(self, key, value)
+
         # Create temporary directory as save directory if not provided
         if self.save_dir is None:
             temp_dir = TemporaryDirectory()
@@ -371,14 +394,10 @@ class TrainArgs(CommonArgs):
 
         # Handle FFN hidden size
         if self.ffn_hidden_size is None:
-            self.ffn_hidden_size = self.no_substructures_hidden_size + self.substructures_hidden_size
+            self.ffn_hidden_size = self.hidden_size
 
         # Handle MPN variants
-        if self.no_substructures_atom_messages and self.no_substructures_undirected:
-            raise ValueError('Undirected is unnecessary when using atom_messages '
-                             'since atom_messages are by their nature undirected.')
-
-        if self.substructures_atom_messages and self.substructures_undirected:
+        if self.atom_messages and self.undirected:
             raise ValueError('Undirected is unnecessary when using atom_messages '
                              'since atom_messages are by their nature undirected.')
 

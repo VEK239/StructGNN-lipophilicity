@@ -169,7 +169,7 @@ class WeaveNet(nn.Module):
         #     # self.readout = GeneralReadout(mode=readout_mode)
         self.readout_mode = readout_mode
 
-    def __call__(self, atom_x, pair_x, batch):
+    def __call__(self, batch):
         atoms, pairs = [], []
         if type(batch) != BatchMolGraphWithSubstructures:
             batch = mol2graph_with_substructures(batch, args=self.args)

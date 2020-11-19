@@ -1,7 +1,7 @@
-file_prefix: logd_Lip_wo_averaging_train_val_dataset
+file_prefix: logp_wo_logp_json_wo_averaging
 split_file_prefix: logd_Lip_wo_averaging
-input_path: ./data/3_final_data/split_data
-save_dir: ./data/raw/baselines/dmpnn/logs/exp_402
+input_path: ../data/3_final_data/split_data
+save_dir: ../data/raw/baselines/dmpnn/logs/exp_430
 epochs: 1000
 patience: 10
 delta: 0.001
@@ -10,5 +10,11 @@ no_features_scaling: True
 target_columns: [logD]
 split_type: k-fold
 num_folds: 4
-data_path: ./data/raw/baselines/dmpnn/
 additional_encoder: False
+gcn_encoder: True
+hidden_size: 900
+substructure_hidden_size: 0
+depth: 6
+ffn_num_layers: 3
+data_path: ./data/3_final_data/split_data/
+separate_test_path: ./data/3_final_data/split_data/
