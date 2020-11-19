@@ -1,7 +1,7 @@
 file_prefix: logp_wo_logp_json_wo_averaging
 split_file_prefix: logd_Lip_wo_averaging
-input_path: ../data/3_final_data/split_data
-save_dir: ../data/raw/baselines/dmpnn/logs/exp_430
+input_path: ./data/3_final_data/split_data
+save_dir: ./data/raw/baselines/dmpnn/logs/exp_430
 epochs: 1000
 patience: 10
 delta: 0.001
