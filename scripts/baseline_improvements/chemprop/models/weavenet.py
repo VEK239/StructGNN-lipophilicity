@@ -1,7 +1,6 @@
 import torch
 from torch import nn
 from torch.nn import functional
-from .embed_atom_id import EmbedAtomID
 
 MAX_ATOMIC_NUM = 170
 WEAVE_DEFAULT_NUM_MAX_ATOMS = 170

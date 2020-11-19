@@ -28,11 +28,13 @@ class StandardScaler:
         :return: The fitted :class:`StandardScaler` (self).
         """
         X = np.array(X).astype(float)
+        X[np.where(np.isinf(X))] = np.nan
         self.means = np.nanmean(X, axis=0)
         self.stds = np.nanstd(X, axis=0)
         self.means = np.where(np.isnan(self.means), np.zeros(self.means.shape), self.means)
         self.stds = np.where(np.isnan(self.stds), np.ones(self.stds.shape), self.stds)
         self.stds = np.where(self.stds == 0, np.ones(self.stds.shape), self.stds)
+#         print(self.means)
 
         return self
 
@@ -44,6 +46,8 @@ class StandardScaler:
         :return: The transformed data with NaNs replaced by :code:`self.replace_nan_token`.
         """
         X = np.array(X).astype(float)
+        X[np.where(np.isinf(X))] = np.nan
+#         X = np.where(np.isnan(X), np.zeros(X.shape), X)
         transformed_with_nan = (X - self.means) / self.stds
         transformed_with_none = np.where(np.isnan(transformed_with_nan), self.replace_nan_token, transformed_with_nan)
 

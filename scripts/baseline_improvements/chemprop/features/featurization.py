@@ -66,7 +66,7 @@ def onek_encoding_unk(value: int, choices: List[int]) -> List[int]:
     return encoding
 
 
-def atom_features(atom: Chem.rdchem.Atom, functional_groups: List[int] = None) -> List[Union[bool, int, float]]:
+def atom_features(atom: Chem.rdchem.Atom, functional_groups: List[int] = None, symmetry: List[int] = None) -> List[Union[bool, int, float]]:
     """
     Builds a feature vector for an atom.
 
@@ -84,6 +84,8 @@ def atom_features(atom: Chem.rdchem.Atom, functional_groups: List[int] = None) -
            [atom.GetMass() * 0.01]  # scaled to about the same range as other features
     if functional_groups is not None:
         features += functional_groups
+    if symmetry is not None:
+        features += [symmetry[0]]
     return features
 
 
@@ -126,7 +128,7 @@ class MolGraph:
     * :code:`b2revb`: A mapping from a bond index to the index of the reverse bond.
     """
 
-    def __init__(self, mol: Union[str, Chem.Mol]):
+    def __init__(self, mol: Union[str, Chem.Mol], symmetry = False):
         """
         :param mol: A SMILES or an RDKit molecule.
         """
@@ -141,9 +143,16 @@ class MolGraph:
         self.a2b = []  # mapping from atom index to incoming bond indices
         self.b2a = []  # mapping from bond index to the index of the atom the bond is coming from
         self.b2revb = []  # mapping from bond index to the index of the reverse bond
+        self.symmetry = symmetry
 
         # Get atom features
-        self.f_atoms = [atom_features(atom) for atom in mol.GetAtoms()]
+        from collections import Counter
+        sym_classes = Chem.CanonicalRankAtoms(mol, breakTies=False)
+        sym_classes_count = Counter(Chem.CanonicalRankAtoms(mol, breakTies=False))
+        if symmetry:
+            self.f_atoms = [atom_features(atom, symmetry=[sym_classes[i], sym_classes_count[sym_classes[i]]]) for i,atom in enumerate(mol.GetAtoms())]
+        else:
+            self.f_atoms = [atom_features(atom) for atom in mol.GetAtoms()]
         self.n_atoms = len(self.f_atoms)
 
         # Initialize atom to bond mapping for each atom
@@ -234,7 +243,7 @@ class BatchMolGraph:
         self.b2b = None  # try to avoid computing b2b b/c O(n_atoms^3)
         self.a2a = None  # only needed if using atom messages
 
-    def get_components(self, args) -> Tuple[torch.FloatTensor, torch.FloatTensor,
+    def get_components(self, atom_messages: bool = False) -> Tuple[torch.FloatTensor, torch.FloatTensor,
                                                                    torch.LongTensor, torch.LongTensor, torch.LongTensor,
                                                                    List[Tuple[int, int]], List[Tuple[int, int]]]:
         """
@@ -255,8 +264,8 @@ class BatchMolGraph:
         :return: A tuple containing PyTorch tensors with the atom features, bond features, graph structure,
                  and scope of the atoms and bonds (i.e., the indices of the molecules they belong to).
         """
-        if args.no_substructures_atom_messages:
-            f_bonds = self.f_bonds[:, :get_bond_fdim(atom_messages=args.no_substructures_atom_messages)]
+        if atom_messages:
+            f_bonds = self.f_bonds[:, :get_bond_fdim(atom_messages=atom_messages)]
         else:
             f_bonds = self.f_bonds
 
@@ -292,11 +301,14 @@ class BatchMolGraph:
         return self.a2a
 
 
-def mol2graph(mols: Union[List[str], List[Chem.Mol]]) -> BatchMolGraph:
+def mol2graph(mols: Union[List[str], List[Chem.Mol]], args = None) -> BatchMolGraph:
     """
     Converts a list of SMILES or RDKit molecules to a :class:`BatchMolGraph` containing the batch of molecular graphs.
 
     :param mols: A list of SMILES or a list of RDKit molecules.
     :return: A :class:`BatchMolGraph` containing the combined molecular graph for the molecules.
     """
-    return BatchMolGraph([MolGraph(mol) for mol in mols])
+    if args is None:
+        return BatchMolGraph([MolGraph(mol) for mol in mols])
+    else:
+        return BatchMolGraph([MolGraph(mol, args.symmetry_feature) for mol in mols])

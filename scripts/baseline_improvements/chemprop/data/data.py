@@ -6,15 +6,20 @@ from typing import Callable, Dict, Iterator, List, Optional, Union
 import numpy as np
 from torch.utils.data import DataLoader, Dataset, Sampler
 from rdkit import Chem
+import sys
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
 
-from scripts.baseline_improvements.chemprop.args import TrainArgs
 from .scaler import StandardScaler
-from scripts.baseline_improvements.chemprop.features import get_features_generator
-from scripts.baseline_improvements.chemprop.features import BatchMolGraph, MolGraph, BatchMolGraphWithSubstructures, \
+from features import get_features_generator
+from features import BatchMolGraph, MolGraph, BatchMolGraphWithSubstructures, \
     MolGraphWithSubstructures
+from args import TrainArgs
 
 # Cache of graph featurizations
-SMILES_TO_GRAPH_NO_SUBSTRUCTURES: Dict[str, MolGraph] = {}
+SMILES_TO_GRAPH: Dict[str, MolGraph] = {}
 SMILES_TO_GRAPH_SUBSTRUCTURES: Dict[str, MolGraphWithSubstructures] = {}
 
 
@@ -45,6 +50,7 @@ class MoleculeDatapoint:
         self._mol = 'None'  # Initialize with 'None' to distinguish between None returned by invalid molecule
 
         # Generate additional features if given a generator
+
         if self.features_generator is not None:
             self.features = []
 
@@ -102,15 +108,15 @@ class MoleculeDataset(Dataset):
         """
         self._data = data
         self._scaler = None
-        self._batch_graph_substructures = None
-        self._batch_graph_no_substructures = None
+        self._batch_graph = None
+        self._batch_graph_wo_no_substructures = None
         self._random = Random()
 
     def smiles(self) -> List[str]:
         """
         Returns a list containing the SMILES associated with each molecule.
 
-        :return: A list of SMILES stno_substructures.
+        :return: A list of SMILES strings.
         """
         return [d.smiles for d in self._data]
 
@@ -122,7 +128,7 @@ class MoleculeDataset(Dataset):
         """
         return [d.mol for d in self._data]
 
-    def batch_graph(self, model_type, args: TrainArgs, cache: bool = True) -> Union[
+    def batch_graph(self, args: TrainArgs, model_type = 'no_substructures', cache: bool = False) -> Union[
         BatchMolGraph, BatchMolGraphWithSubstructures]:
         r"""
         Constructs a :class:`~chemprop.features.BatchMolGraph` with the graph featurization of all the molecules.
@@ -137,28 +143,65 @@ class MoleculeDataset(Dataset):
                       for each molecule in a global cache.
         :return: A :class:`~chemprop.features.BatchMolGraph` containing the graph featurization of all the molecules.
         """
-        if self._batch_graph_substructures is None or self._batch_graph_no_substructures is None:
-            no_substructures_mol_graphs = []
-            substructures_mol_graphs = []
-            for d in self._data:
-                if d.smiles in SMILES_TO_GRAPH_NO_SUBSTRUCTURES and d.smiles in SMILES_TO_GRAPH_SUBSTRUCTURES:
-                    ring_mol_graph = SMILES_TO_GRAPH_NO_SUBSTRUCTURES[d.smiles]
-                    no_ring_mol_graph = SMILES_TO_GRAPH_SUBSTRUCTURES[d.smiles]
-                else:
-                    ring_mol_graph = MolGraph(d.mol)
-                    no_ring_mol_graph = MolGraphWithSubstructures(d.smiles, args)
-                    if cache:
-                        SMILES_TO_GRAPH_NO_SUBSTRUCTURES[d.smiles] = ring_mol_graph
-                        SMILES_TO_GRAPH_SUBSTRUCTURES[d.smiles] = no_ring_mol_graph
-                no_substructures_mol_graphs.append(ring_mol_graph)
-                substructures_mol_graphs.append(no_ring_mol_graph)
+        if args is not None:
+            if not args.additional_encoder:
+                if self._batch_graph is None:
+                    mol_graphs = []
+                    for d in self._data:
+                        if d.smiles in SMILES_TO_GRAPH:
+                            mol_graph = SMILES_TO_GRAPH[d.smiles]
+                        else:
+                            if args is not None:
+                                mol_graph = MolGraph(d.mol, args.symmetry_feature)
+                            else:
+                                mol_graph = MolGraph(d.mol)
+                            if cache:
+                                SMILES_TO_GRAPH[d.smiles] = mol_graph
+                        mol_graphs.append(mol_graph)
 
-            self._batch_graph_no_substructures = BatchMolGraph(no_substructures_mol_graphs)
-            self._batch_graph_substructures = BatchMolGraphWithSubstructures(substructures_mol_graphs, args=args)
-        if model_type == 'no_substructures':
-            return self._batch_graph_no_substructures
-        else:
-            return self._batch_graph_substructures
+                    self._batch_graph = BatchMolGraph(mol_graphs)
+
+                return self._batch_graph
+            else:
+                if self._batch_graph_wo_no_substructures is None or self._batch_graph is None:
+                    no_substructures_mol_graphs = []
+                    substructures_mol_graphs = []
+                    for d in self._data:
+                        if d.smiles in SMILES_TO_GRAPH and d.smiles in SMILES_TO_GRAPH_SUBSTRUCTURES:
+                            no_substructure_mol_graph = SMILES_TO_GRAPH[d.smiles]
+                            substructure_mol_graph = SMILES_TO_GRAPH_SUBSTRUCTURES[d.smiles]
+                        else:
+                            no_substructure_mol_graph = MolGraph(d.mol)
+                            substructure_mol_graph = MolGraphWithSubstructures(d.smiles, args)
+                            if cache:
+                                SMILES_TO_GRAPH[d.smiles] = no_substructure_mol_graph
+                                SMILES_TO_GRAPH_SUBSTRUCTURES[d.smiles] = substructure_mol_graph
+                        no_substructures_mol_graphs.append(no_substructure_mol_graph)
+                        substructures_mol_graphs.append(substructure_mol_graph)
+
+                    self._batch_graph = BatchMolGraph(no_substructures_mol_graphs)
+                    self._batch_graph_wo_no_substructures = BatchMolGraphWithSubstructures(substructures_mol_graphs, args=args)
+                if model_type == 'no_substructures':
+                    return self._batch_graph
+                else:
+                    return self._batch_graph_wo_no_substructures
+        elif self._batch_graph is None:
+            mol_graphs = []
+            for d in self._data:
+                if d.smiles in SMILES_TO_GRAPH:
+                    mol_graph = SMILES_TO_GRAPH[d.smiles]
+                else:
+                    if self._args is not None:
+                        mol_graph = MolGraph(d.mol, self._args.symmetry_feature)
+                    else:
+                        mol_graph = MolGraph(d.mol)
+                    if cache:
+                        SMILES_TO_GRAPH[d.smiles] = mol_graph
+                mol_graphs.append(mol_graph)
+
+            self._batch_graph = BatchMolGraph(mol_graphs)
+
+        return self._batch_graph
 
     def features(self) -> List[np.ndarray]:
         """
@@ -230,13 +273,22 @@ class MoleculeDataset(Dataset):
         if scaler is not None:
             self._scaler = scaler
 
+
         elif self._scaler is None:
             features = np.vstack([d.features for d in self._data])
             self._scaler = StandardScaler(replace_nan_token=replace_nan_token)
             self._scaler.fit(features)
 
         for d in self._data:
+#             print('before')
+#             print(d.features)
             d.set_features(self._scaler.transform(d.features.reshape(1, -1))[0])
+#             print('after')
+#             print(d.features)
+#             print('means')
+#             print(self._scaler.means)
+#             print('std')
+#             print(self._scaler.stds)
 
         return self._scaler
 
@@ -349,8 +401,7 @@ def construct_molecule_batch(data: List[MoleculeDatapoint], cache: bool = False)
     :return: A :class:`MoleculeDataset` containing all the :class:`MoleculeDatapoint`\ s.
     """
     data = MoleculeDataset(data)
-    # data.batch_graph(cache=cache,
-    #                  model_type='no_substructures', )  # Forces computation and caching of the BatchMolGraph for the molecules
+#     data.batch_graph(cache=cache)  # Forces computation and caching of the BatchMolGraph for the molecules
 
     return data
 

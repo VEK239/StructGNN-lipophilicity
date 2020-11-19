@@ -1,20 +1,21 @@
-import csv
-import os
-import pickle
 from collections import OrderedDict
+import csv
 from logging import Logger
+import pickle
 from random import Random
 from typing import List, Set, Tuple, Union
+import os
 
-import numpy as np
 from rdkit import Chem
-from sklearn.model_selection import KFold
+import numpy as np
 from tqdm import tqdm
 
-from scripts.baseline_improvements.chemprop.args import PredictArgs, TrainArgs
-from scripts.baseline_improvements.chemprop.features import load_features
 from .data import MoleculeDatapoint, MoleculeDataset
 from .scaffold import log_scaffold_stats, scaffold_split
+from chemprop.args import PredictArgs, TrainArgs
+from chemprop.features import load_features
+
+from sklearn.model_selection import KFold
 
 
 def get_task_names(path: str,
@@ -343,27 +344,6 @@ def split_data(data: MoleculeDataset,
     elif split_type == 'scaffold_balanced':
         return scaffold_split(data, sizes=sizes, balanced=True, seed=seed, logger=logger)
 
-    elif split_type == 'one_out_crossval':
-        part_size = len(data) // args.num_folds
-        val_fold = args.seed
-        valid = [data[i] for i in range(len(data)) if val_fold * part_size <= i < (val_fold + 1) * part_size]
-        train = [data[i] for i in range(len(data)) if i < val_fold * part_size or i >= (val_fold + 1) * part_size]
-        return MoleculeDataset(train), MoleculeDataset(valid), MoleculeDataset([])
-
-    elif split_type == 'k-fold':
-        kf = KFold(n_splits=args.num_folds, shuffle=False)
-
-        fold_num = 0
-        for train_index, val_index in kf.split(data):
-            if fold_num == args.seed:
-                break
-            else:
-                fold_num += 1
-        train = [data[i] for i in train_index]
-        val = [data[i] for i in val_index]
-
-        return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset([])
-
     elif split_type == 'random':
         data.shuffle(seed=seed)
 
@@ -375,6 +355,47 @@ def split_data(data: MoleculeDataset,
         test = data[train_val_size:]
 
         return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset(test)
+    elif split_type == 'k-fold':
+        if args.separate_test_path:
+            kf = KFold(n_splits=args.num_folds, shuffle=True, random_state = 42)
+
+            fold_num = 0
+            for train_index, val_index in kf.split(data):
+                if fold_num==args.seed:
+                    break
+                else:
+                    fold_num+=1
+            train = [data[i] for i in train_index]
+            val = [data[i] for i in val_index]
+
+            return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset([])
+        else:
+            kf = KFold(n_splits=args.num_folds, shuffle=True, random_state = 42)
+
+            fold_num = 0
+            for train_val_index, test_index in kf.split(data):
+                if fold_num==args.seed:
+                    break
+                else:
+                    fold_num+=1
+
+            random = Random(42)
+
+
+            random.shuffle(train_val_index)
+
+            train_size = int(0.85 * len(train_val_index))
+            train_val_size = int(len(train_val_index))
+
+            train_index = train_val_index[:train_size]
+            val_index = train_val_index[train_size:train_val_size]
+
+
+            train = [data[i] for i in train_index]
+            val = [data[i] for i in val_index]
+            test = [data[i] for i in test_index]
+
+            return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset(test)
 
     else:
         raise ValueError(f'split_type "{split_type}" not supported.')

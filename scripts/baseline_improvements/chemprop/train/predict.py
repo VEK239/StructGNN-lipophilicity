@@ -3,16 +3,22 @@ from typing import List
 import torch
 from tqdm import tqdm
 
-from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.data import MoleculeDataLoader, MoleculeDataset, StandardScaler
-from scripts.baseline_improvements.chemprop.models import MoleculeModel
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
+
+from data import MoleculeDataLoader, MoleculeDataset, StandardScaler
+from models import MoleculeModel
+
+from args import TrainArgs
 
 
 def predict(model: MoleculeModel,
             data_loader: MoleculeDataLoader,
-            args: TrainArgs,
             disable_progress_bar: bool = False,
-            scaler: StandardScaler = None) -> List[List[float]]:
+            scaler: StandardScaler = None,
+            args: TrainArgs = None) -> List[List[float]]:
     """
     Makes predictions on a dataset using an ensemble of models.
 
@@ -26,16 +32,19 @@ def predict(model: MoleculeModel,
 
     preds = []
 
-    for batch in data_loader:
+    for batch in tqdm(data_loader, disable=disable_progress_bar):
         # Prepare batch
         batch: MoleculeDataset
-        # mol_batch, features_batch = batch.batch_graph(), batch.features()
-        substructure_mol_batch = batch.batch_graph(model_type='substructures', args=args)
-        no_substructure_mol_batch, features_batch = batch.batch_graph(model_type='no_substructures', args=args), batch.features()
+        if args.additional_encoder:
+            substructure_mol_batch = batch.batch_graph(model_type='substructures', args = args)
+        mol_batch, features_batch = batch.batch_graph(args = args), batch.features()
 
         # Make predictions
         with torch.no_grad():
-            batch_preds = model(no_substructure_mol_batch, substructure_mol_batch, features_batch)
+            if args.additional_encoder:
+                batch_preds = model(batch = mol_batch, substructures_batch = substructure_mol_batch, features_batch = features_batch)
+            else:
+                batch_preds = model(batch = mol_batch, features_batch = features_batch)
 
         batch_preds = batch_preds.data.cpu().numpy()
 

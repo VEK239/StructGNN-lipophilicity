@@ -4,13 +4,11 @@ import numpy as np
 from rdkit import Chem
 import torch
 import torch.nn as nn
-import os, sys, inspect
-
+import os,sys,inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
+sys.path.insert(0,parentdir)
 from .mpn import MPN
-from .gcn import GCN
 from args import TrainArgs
 from features import BatchMolGraph, BatchMolGraphWithSubstructures
 from nn_utils import get_activation_function, initialize_weights

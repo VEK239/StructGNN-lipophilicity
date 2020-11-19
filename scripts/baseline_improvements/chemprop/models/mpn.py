@@ -5,37 +5,38 @@ from rdkit import Chem
 import torch
 import torch.nn as nn
 
-from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.features import BatchMolGraph, get_atom_fdim, get_bond_fdim, mol2graph, \
-    BatchMolGraphWithSubstructures, get_atom_fdim_with_substructures, get_bond_fdim_with_substructures, \
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
+from args import TrainArgs
+
+from features import BatchMolGraph, get_atom_fdim, get_bond_fdim, mol2graph, \
+BatchMolGraphWithSubstructures, get_atom_fdim_with_substructures, \
     mol2graph_with_substructures
-from scripts.baseline_improvements.chemprop.nn_utils import index_select_ND, get_activation_function
+from nn_utils import index_select_ND, get_activation_function
 
 
 class MPNEncoder(nn.Module):
     """An :class:`MPNEncoder` is a message passing neural network for encoding a molecule."""
 
-    def __init__(self, args: TrainArgs, model_type, atom_fdim: int, bond_fdim: int):
+    def __init__(self, args: TrainArgs, atom_fdim: int, bond_fdim: int):
         """
         :param args: A :class:`~chemprop.args.TrainArgs` object containing model arguments.
         :param atom_fdim: Atom feature vector dimension.
         :param bond_fdim: Bond feature vector dimension.
         """
         super(MPNEncoder, self).__init__()
-        self.model_type = model_type
         self.atom_fdim = atom_fdim
         self.bond_fdim = bond_fdim
         self.args = args
-        if model_type == 'no_substructures':
-            self.atom_messages = args.no_substructures_atom_messages
-            self.depth = args.no_substructures_depth
-            self.hidden_size = args.no_substructures_hidden_size
-            self.undirected = args.no_substructures_undirected
-        else:
-            self.atom_messages = args.substructures_atom_messages
-            self.hidden_size = args.substructures_hidden_size
-            self.depth = args.substructures_depth
-            self.undirected = args.substructures_undirected
+
+        self.atom_messages = args.atom_messages
+        self.hidden_size = args.hidden_size
+        self.depth = args.depth
+        self.undirected = args.undirected
+
+
         self.bias = args.bias
         self.dropout = args.dropout
         self.layers_per_message = 1
@@ -70,7 +71,7 @@ class MPNEncoder(nn.Module):
         self.W_o = nn.Linear(self.atom_fdim + self.hidden_size, self.hidden_size)
 
     def forward(self,
-                mol_graph: Union[BatchMolGraph, BatchMolGraphWithSubstructures],
+                mol_graph: BatchMolGraph,
                 features_batch: List[np.ndarray] = None) -> torch.FloatTensor:
         """
         Encodes a batch of molecular graphs.
@@ -80,15 +81,14 @@ class MPNEncoder(nn.Module):
         :param features_batch: A list of numpy arrays containing additional features.
         :return: A PyTorch tensor of shape :code:`(num_molecules, hidden_size)` containing the encoding of each molecule.
         """
-        if self.use_input_features and self.model_type == 'no_substructures':
+        if self.use_input_features:
             features_batch = torch.from_numpy(np.stack(features_batch)).float().to(self.device)
 
             if self.features_only:
                 return features_batch
 
-        f_atoms, f_bonds, a2b, b2a, b2revb, a_scope, b_scope = mol_graph.get_components(args=self.args)
-        f_atoms, f_bonds, a2b, b2a, b2revb = f_atoms.to(self.device), f_bonds.to(self.device), a2b.to(
-            self.device), b2a.to(self.device), b2revb.to(self.device)
+        f_atoms, f_bonds, a2b, b2a, b2revb, a_scope, b_scope = mol_graph.get_components(atom_messages=self.atom_messages)
+        f_atoms, f_bonds, a2b, b2a, b2revb = f_atoms.to(self.device), f_bonds.to(self.device), a2b.to(self.device), b2a.to(self.device), b2revb.to(self.device)
 
         if self.atom_messages:
             a2a = mol_graph.get_a2a().to(self.device)
@@ -108,8 +108,7 @@ class MPNEncoder(nn.Module):
             if self.atom_messages:
                 nei_a_message = index_select_ND(message, a2a)  # num_atoms x max_num_bonds x hidden
                 nei_f_bonds = index_select_ND(f_bonds, a2b)  # num_atoms x max_num_bonds x bond_fdim
-                nei_message = torch.cat((nei_a_message, nei_f_bonds),
-                                        dim=2)  # num_atoms x max_num_bonds x hidden + bond_fdim
+                nei_message = torch.cat((nei_a_message, nei_f_bonds), dim=2)  # num_atoms x max_num_bonds x hidden + bond_fdim
                 message = nei_message.sum(dim=1)  # num_atoms x hidden + bond_fdim
             else:
                 # m(a1 -> a2) = [sum_{a0 \in nei(a1)} m(a0 -> a1)] - m(a2 -> a1)
@@ -144,7 +143,7 @@ class MPNEncoder(nn.Module):
 
         mol_vecs = torch.stack(mol_vecs, dim=0)  # (num_molecules, hidden_size)
 
-        if self.use_input_features and self.model_type == 'no_substructures':
+        if self.use_input_features:
             features_batch = features_batch.to(mol_vecs)
             if len(features_batch.shape) == 1:
                 features_batch = features_batch.view([1, features_batch.shape[0]])
@@ -157,7 +156,7 @@ class MPN(nn.Module):
     """An :class:`MPN` is a wrapper around :class:`MPNEncoder` which featurizes input as needed."""
 
     def __init__(self,
-                 args: TrainArgs, model_type,
+                 args: TrainArgs,
                  atom_fdim: int = None,
                  bond_fdim: int = None):
         """
@@ -165,22 +164,20 @@ class MPN(nn.Module):
         :param atom_fdim: Atom feature vector dimension.
         :param bond_fdim: Bond feature vector dimension.
         """
-        self.args = args
         super(MPN, self).__init__()
-        self.model_type = model_type
-        if self.model_type == 'no_substructures':
-            self.atom_fdim = get_atom_fdim()
-            self.bond_fdim = get_bond_fdim(atom_messages=args.no_substructures_atom_messages)
-        else:
-            self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
-                                                              merge_cycles=args.substructures_merge)
-            self.bond_fdim = get_bond_fdim_with_substructures(atom_messages=args.substructures_atom_messages,
-                                                              use_substructures=args.substructures_use_substructures,
-                                                              merge_cycles=args.substructures_merge)
-        self.encoder = MPNEncoder(args, model_type, self.atom_fdim, self.bond_fdim)
+
+        self.args = args
+
+
+
+        self.atom_fdim = atom_fdim or get_atom_fdim()
+        self.bond_fdim = bond_fdim or get_bond_fdim(atom_messages=args.atom_messages)
+
+
+        self.encoder = MPNEncoder(args, self.atom_fdim, self.bond_fdim)
 
     def forward(self,
-                batch: Union[List[str], List[Chem.Mol], BatchMolGraph, BatchMolGraphWithSubstructures],
+                batch: Union[List[str], List[Chem.Mol], BatchMolGraph],
                 features_batch: List[np.ndarray] = None) -> torch.FloatTensor:
         """
         Encodes a batch of molecules.
@@ -190,11 +187,9 @@ class MPN(nn.Module):
         :param features_batch: A list of numpy arrays containing additional features.
         :return: A PyTorch tensor of shape :code:`(num_molecules, hidden_size)` containing the encoding of each molecule.
         """
-        if type(batch) != BatchMolGraph and type(batch) != BatchMolGraphWithSubstructures:
-            if self.model_type == 'no_substructures':
-                batch = mol2graph(batch)
-            else:
-                batch = mol2graph_with_substructures(batch, args=self.args)
+        if type(batch) != BatchMolGraph:
+
+            batch = mol2graph(batch)
 
         output = self.encoder.forward(batch, features_batch)
 

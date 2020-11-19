@@ -4,10 +4,15 @@ from typing import List, Optional, Union
 import numpy as np
 from tqdm import tqdm
 
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
+
 from .predict import predict
-from scripts.baseline_improvements.chemprop.args import PredictArgs, TrainArgs
-from scripts.baseline_improvements.chemprop.data import get_data, get_data_from_smiles, MoleculeDataLoader, MoleculeDataset
-from scripts.baseline_improvements.chemprop.utils import load_args, load_checkpoint, load_scalers, makedirs, timeit
+from args import PredictArgs, TrainArgs
+from data import get_data, get_data_from_smiles, MoleculeDataLoader, MoleculeDataset
+from utils import load_args, load_checkpoint, load_scalers, makedirs, timeit
 
 
 @timeit()

@@ -1,27 +1,34 @@
 """Optimizes hyperparameters using Bayesian optimization."""
 
-import json
-import numpy as np
-import os
 from copy import deepcopy
-from hyperopt import fmin, hp, tpe
+import json
 from typing import Dict, Union
+import os
 
-from scripts.baseline_improvements.chemprop.args import HyperoptArgs
-from scripts.baseline_improvements.chemprop.constants import HYPEROPT_LOGGER_NAME
-from scripts.baseline_improvements.chemprop.models import MoleculeModel
-from scripts.baseline_improvements.chemprop.nn_utils import param_count
-from scripts.baseline_improvements.chemprop.train import cross_validate
-from scripts.baseline_improvements.chemprop.utils import create_logger, makedirs, timeit
+from hyperopt import fmin, hp, tpe
+import numpy as np
+
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
+
+from .args import HyperoptArgs
+from .constants import HYPEROPT_LOGGER_NAME
+from .models import MoleculeModel
+from .nn_utils import param_count
+from .train import cross_validate
+from .utils import create_logger, makedirs, timeit
+
 
 SPACE = {
-    'no_substructures_hidden_size': hp.quniform('no_substructures_hidden_size', low=300, high=800, q=100),
-    'substructures_hidden_size': hp.quniform('substructures_hidden_size', low=300, high=800, q=100),
-    'no_substructures_depth': hp.quniform('no_substructures_depth', low=1, high=6, q=1),
-    'substructures_depth': hp.quniform('substructures_depth', low=1, high=6, q=1),
+    'hidden_size': hp.quniform('hidden_size', low=300, high=2400, q=100),
+    'substructure_hidden_size': hp.quniform('substructure_hidden_size', low=300, high=2400, q=100),
+    'depth': hp.quniform('depth', low=2, high=6, q=1),
+    'dropout': hp.quniform('dropout', low=0.0, high=0.4, q=0.05),
+    'ffn_num_layers': hp.quniform('ffn_num_layers', low=1, high=3, q=1)
 }
-INT_KEYS = ['no_substructures_hidden_size', 'substructures_hidden_size', 'no_substructures_depth',
-            'substructures_depth']
+INT_KEYS = ['substructure_hidden_size','hidden_size', 'depth', 'ffn_num_layers']
 
 
 @timeit(logger_name=HYPEROPT_LOGGER_NAME)
@@ -64,7 +71,7 @@ def hyperopt(args: HyperoptArgs) -> None:
         for key, value in hyperparams.items():
             setattr(hyper_args, key, value)
 
-        hyper_args.ffn_hidden_size = hyper_args.no_substructures_hidden_size + hyper_args.substructures_hidden_size
+        hyper_args.ffn_hidden_size = hyper_args.hidden_size
 
         # Record hyperparameters
         logger.info(hyperparams)
