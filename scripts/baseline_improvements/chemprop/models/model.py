@@ -59,7 +59,7 @@ class MoleculeModel(nn.Module):
         if self.args.additional_encoder:
             self.substructures_encoder = SubstructureLayer(args)  # GCN(args) #MPN(args, 'substructures')
         elif self.args.gcn_encoder:
-            self.gcn_substructures_encoder = WeaveNet()
+            self.gcn_substructures_encoder = WeaveNet(args)
 
     def create_ffn(self, args: TrainArgs) -> None:
         """

@@ -29,56 +29,58 @@ class LinearLayer(nn.Module):
     def __init__(self, n_channel, n_layer):
         super(LinearLayer, self).__init__()
 
-        self.layers = [nn.Linear(None, n_channel) for _ in range(n_layer)]
+        self.layers = [nn.Linear(WEAVE_DEFAULT_NUM_MAX_ATOMS, n_channel)] + [nn.Linear(n_channel, n_channel) for _ in range(n_layer - 1)]
         self.n_output_channel = n_channel
 
     def forward(self, x):
         n_batch, n_atom, n_channel = x.shape
-        x = functional.reshape(x, (n_batch * n_atom, n_channel))
+        x = torch.reshape(x, (n_batch * n_atom, n_channel))
         for l in self.layers:
             x = l(x)
             x = functional.relu(x)
-        x = functional.reshape(x, (n_batch, n_atom, self.n_output_channel))
+        x = torch.reshape(x, (n_batch, n_atom, self.n_output_channel))
         return x
 
 
 class AtomToPair(nn.Module):
     def __init__(self, n_channel, n_layer, n_atom):
         super(AtomToPair, self).__init__()
-        self.linear_layers = [nn.Linear(None, n_channel) for _ in range(n_layer)]
+        self.linear_layers = [nn.Linear(WEAVE_DEFAULT_NUM_MAX_ATOMS, n_channel)] + [nn.Linear(n_channel, n_channel) for _ in range(n_layer - 1)]
         self.n_atom = n_atom
         self.n_channel = n_channel
 
     def forward(self, x):
         n_batch, n_atom, n_feature = x.shape
-        atom_repeat = functional.reshape(x, (n_batch, 1, n_atom, n_feature))
-        atom_repeat = functional.broadcast_to(
-            atom_repeat, (n_batch, n_atom, n_atom, n_feature))
-        atom_repeat = functional.reshape(atom_repeat,
+        atom_repeat = torch.reshape(x, (n_batch, 1, n_atom, n_feature))
+        atom_repeat_numpy = atom_repeat.numpy()
+        atom_repeat_numpy = np.broadcast_to(atom_repeat_numpy,  (n_batch, n_atom, n_atom, n_feature))
+        atom_repeat = torch.from_numpy(atom_repeat_numpy)
+        atom_repeat = torch.reshape(atom_repeat,
                                         (n_batch, n_atom * n_atom, n_feature))
 
-        atom_tile = functional.reshape(x, (n_batch, n_atom, 1, n_feature))
-        atom_tile = functional.broadcast_to(
-            atom_tile, (n_batch, n_atom, n_atom, n_feature))
-        atom_tile = functional.reshape(atom_tile,
+        atom_tile = torch.reshape(x, (n_batch, n_atom, 1, n_feature))
+        atom_tile_numpy = atom_tile.numpy()
+        atom_tile_numpy = np.broadcast_to(atom_tile_numpy, (n_batch, n_atom, n_atom, n_feature) )
+        atom_tile = torch.from_numpy(atom_tile_numpy)
+        atom_tile = torch.reshape(atom_tile,
                                       (n_batch, n_atom * n_atom, n_feature))
 
-        pair_x0 = torch.cat((atom_tile, atom_repeat), axis=2)
-        pair_x0 = functional.reshape(pair_x0,
+        pair_x0 = torch.cat((atom_tile, atom_repeat), 2)
+        pair_x0 = torch.reshape(pair_x0,
                                     (n_batch * n_atom * n_atom, n_feature * 2))
         for l in self.linear_layers:
             pair_x0 = l(pair_x0)
             pair_x0 = functional.relu(pair_x0)
-        pair_x0 = functional.reshape(pair_x0,
+        pair_x0 = torch.reshape(pair_x0,
                                     (n_batch, n_atom * n_atom, self.n_channel))
 
-        pair_x1 = torch.cat((atom_repeat, atom_tile), axis=2)
-        pair_x1 = functional.reshape(pair_x1,
+        pair_x1 = torch.cat((atom_repeat, atom_tile), 2)
+        pair_x1 = torch.reshape(pair_x1,
                                     (n_batch * n_atom * n_atom, n_feature * 2))
         for l in self.linear_layers:
             pair_x1 = l(pair_x1)
             pair_x1 = functional.relu(pair_x1)
-        pair_x1 = functional.reshape(pair_x1,
+        pair_x1 = torch.reshape(pair_x1,
                                     (n_batch, n_atom * n_atom, self.n_channel))
         return pair_x0 + pair_x1
 
@@ -86,21 +88,21 @@ class AtomToPair(nn.Module):
 class PairToAtom(nn.Module):
     def __init__(self, n_channel, n_layer, n_atom, mode='sum'):
         super(PairToAtom, self).__init__()
-        self.linearLayer = [nn.Linear(None, n_channel) for _ in range(n_layer)]
+        self.linearLayer = [nn.Linear(n_channel, n_channel) for _ in range(n_layer)]
         self.n_atom = n_atom
         self.n_channel = n_channel
         self.mode = mode
 
     def forward(self, x):
         n_batch, n_pair, n_feature = x.shape
-        a = functional.reshape(
+        a = torch.reshape(
             x, (n_batch * (self.n_atom * self.n_atom), n_feature))
         for l in self.linearLayer:
             a = l(a)
             a = functional.relu(a)
-        a = functional.reshape(a, (n_batch, self.n_atom, self.n_atom,
+        a = torch.reshape(a, (n_batch, self.n_atom, self.n_atom,
                                   self.n_channel))
-        a = functional.sum(a, axis=2)
+        a = torch.sum(a, 2)
         return a
 
 
@@ -123,7 +125,7 @@ class WeaveModule(nn.Module):
     def forward(self, atom_x, pair_x, atom_only=False):
         a0 = self.atom_to_atom.forward(atom_x)
         a1 = self.pair_to_atom.forward(pair_x)
-        a = torch.cat([a0, a1], axis=2)
+        a = torch.cat([a0, a1], 2)
         next_atom = self.atom_layer.forward(a)
         next_atom = functional.relu(next_atom)
         if atom_only:
@@ -131,7 +133,7 @@ class WeaveModule(nn.Module):
 
         p0 = self.atom_to_pair.forward(atom_x)
         p1 = self.pair_to_pair.forward(pair_x)
-        p = torch.cat([p0, p1], axis=2)
+        p = torch.cat([p0, p1], 2)
         next_pair = self.pair_layer.forward(p)
         next_pair = functional.relu(next_pair)
         return next_atom, next_pair
@@ -151,10 +153,11 @@ class WeaveNet(nn.Module):
         readout_mode (str): 'sum' or 'max' or 'summax'
     """
 
-    def __init__(self, weave_channels=None, hidden_dim=16,
+    def __init__(self, args, weave_channels=None, hidden_dim=16,
                  n_atom=WEAVE_DEFAULT_NUM_MAX_ATOMS,
                  n_sub_layer=1, n_atom_types=MAX_ATOMIC_NUM,
                  readout_mode='sum'):
+        self.args = args
         weave_channels = weave_channels or WEAVENET_DEFAULT_WEAVE_CHANNELS
         self.weave_module = [
             WeaveModule(n_atom, c, n_sub_layer, readout_mode=readout_mode)
