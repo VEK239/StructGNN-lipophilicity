@@ -4,6 +4,7 @@ import numpy
 from rdkit import Chem
 
 BOND_FDIM = 13
+ATOM_FDIM = 170
 
 BT_MAPPING_CHAR = {
     Chem.rdchem.BondType.SINGLE: 'S',
@@ -272,17 +273,17 @@ class Molecule:
         if bond is None:
             fbond = [1] + [0] * (BOND_FDIM - 1)
         else:
-            bt = bond.GetBondType()
+            bt = bond.rdkit_bond.GetBondType()
             fbond = [
                 0,  # bond is not None
                 bt == Chem.rdchem.BondType.SINGLE,
                 bt == Chem.rdchem.BondType.DOUBLE,
                 bt == Chem.rdchem.BondType.TRIPLE,
                 bt == Chem.rdchem.BondType.AROMATIC,
-                (bond.GetIsConjugated() if bt is not None else 0),
-                (bond.IsInRing() if bt is not None else 0)
+                (bond.rdkit_bond.GetIsConjugated() if bt is not None else 0),
+                (bond.rdkit_bond.IsInRing() if bt is not None else 0)
             ]
-            fbond += onek_encoding(int(bond.GetStereo()), 6)
+            fbond += onek_encoding(int(bond.rdkit_bond.GetStereo()), 6)
         return numpy.array(numpy.array(fbond))
 
     def get_bond(self, atom_1_idx, atom_2_idx):
@@ -301,9 +302,11 @@ class Molecule:
     def get_atoms(self):
         return self.atoms
 
-    def get_atom_features_vector(self):
-        return numpy.array([numpy.array(atom.get_representation()) for atom in self.atoms()])
-
+    def get_atom_features_vector(self, num_max_atoms):
+        atoms = [numpy.array(atom.get_representation()) for atom in self.atoms]
+        print(num_max_atoms, len(atoms))
+        atoms += [numpy.zeros(ATOM_FDIM) for _ in range(num_max_atoms - len(atoms))]
+        return numpy.stack(atoms)
 
     def get_atom(self, atom_idx):
         return self.atoms[atom_idx]
@@ -321,7 +324,10 @@ class Molecule:
     def get_distance_matrix(self):
         if self.distance_matrix is None:
             n = self.get_num_atoms()
-            self.distance_matrix = [[] for _ in range(n)]
+            self.distance_matrix = [[1e12 for _ in range(n)] for _ in range(n)]
+            for bond in self.bonds:
+                self.distance_matrix[bond.out_atom_idx][bond.in_atom_idx] = 1
+                self.distance_matrix[bond.in_atom_idx][bond.out_atom_idx] = 1
             for k in range(n):
                 for i in range(n):
                     for j in range(n):
@@ -354,6 +360,7 @@ class Molecule:
         # ring_feature = construct_ring_feature_vec(mol, num_max_atoms=num_max_atoms)
         # feature = numpy.hstack((distance_feature, bond_feature, ring_feature))
         feature = numpy.hstack((distance_feature, bond_feature))
+        print(feature.shape)
         return feature
 
     def prnt(self):
