@@ -168,11 +168,8 @@ class MPN(nn.Module):
 
         self.args = args
 
-
-
         self.atom_fdim = atom_fdim or get_atom_fdim()
         self.bond_fdim = bond_fdim or get_bond_fdim(atom_messages=args.atom_messages)
-
 
         self.encoder = MPNEncoder(args, self.atom_fdim, self.bond_fdim)
 

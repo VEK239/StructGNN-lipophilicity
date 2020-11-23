@@ -163,6 +163,7 @@ class BatchMolGraphWithSubstructures:
         r"""
         :param mol_graphs: A list of :class:`MolGraph`\ s from which to construct the :class:`BatchMolGraph`.
         """
+        self.mol_graphs = mol_graphs
         self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
                                                           merge_cycles=args.substructures_merge)
         self.bond_fdim = get_bond_fdim_with_substructures(use_substructures=args.substructures_use_substructures,

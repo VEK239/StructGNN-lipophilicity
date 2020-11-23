@@ -1,13 +1,16 @@
+import inspect
+import os
+import sys
 from typing import List, Union
 
 import numpy as np
-from rdkit import Chem
 import torch
 import torch.nn as nn
-import os,sys,inspect
+from rdkit import Chem
+
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir)
+sys.path.insert(0, parentdir)
 from .mpn import MPN
 from args import TrainArgs
 from features import BatchMolGraph, BatchMolGraphWithSubstructures
@@ -56,9 +59,9 @@ class MoleculeModel(nn.Module):
         :param args: A :class:`~chemprop.args.TrainArgs` object containing model arguments.
         """
         self.encoder = MPN(args)
-        if self.args.additional_encoder:
+        if self.args.additional_encoder and not self.args.gcn_encoder:
             self.substructures_encoder = SubstructureLayer(args)  # GCN(args) #MPN(args, 'substructures')
-        elif self.args.gcn_encoder:
+        elif self.args.gcn_encoder and self.args.additional_encoder:
             self.gcn_substructures_encoder = WeaveNet(args)
 
     def create_ffn(self, args: TrainArgs) -> None:
@@ -138,16 +141,18 @@ class MoleculeModel(nn.Module):
         """
         if self.featurizer:
             return self.featurize(batch, features_batch)
-        if self.args.additional_encoder:
+        if self.args.additional_encoder and not self.args.gcn_encoder:
 
             substructures_mol_o = self.substructures_encoder(substructures_batch)
             out = torch.cat((self.encoder(batch, features_batch),
                              substructures_mol_o), dim=1)
             output = self.ffn(out)
-        elif self.args.gcn_encoder:
-            substructures_mol_o = self.gcn_substructures_encoder(substructures_batch)
-            out = torch.cat((self.encoder(batch, features_batch),
-                             substructures_mol_o), dim=1)
+        elif self.args.gcn_encoder and self.args.additional_encoder:
+            print(substructures_batch)
+            substructures_mol_o_atom, substructures_mol_o_pair = self.gcn_substructures_encoder(substructures_batch)
+            dmpnn_mol_o = self.encoder(batch, features_batch)
+            print(dmpnn_mol_o.shape, substructures_mol_o_atom.shape, substructures_mol_o_pair.shape)
+            out = torch.cat((dmpnn_mol_o, substructures_mol_o_atom, substructures_mol_o_pair), dim=1)
             output = self.ffn(out)
         else:
             output = self.ffn(self.encoder(batch, features_batch))
