@@ -39,7 +39,6 @@ class LinearLayer(nn.Module):
         for l in self.layers:
             x = l(x)
             x = functional.relu(x)
-        print(x.shape)
         # x = torch.reshape(x, (n_batch, n_atom, self.n_output_channel))
         return x
 
@@ -58,7 +57,6 @@ class LinearLayerDoubleAtomToAtom(nn.Module):
         for l in self.layers:
             x = l(x)
             x = functional.relu(x)
-        print(x.shape)
         # x = torch.reshape(x, (n_batch, n_atom, self.n_output_channel))
         return x
 
@@ -116,14 +114,11 @@ class PairToAtom(nn.Module):
 
     def forward(self, x):
         n_feature, n_pair, n_batch = x.shape
-        print(x.shape)
         a = torch.reshape(
             x, (n_batch, n_feature * n_pair))
-        print(a.shape)
         for l in self.linearLayer:
             a = l(a)
             a = functional.relu(a)
-        print(a.shape)
         a = torch.reshape(a, (n_batch, self.n_atom, self.n_atom,
                                   self.n_channel))
         a = torch.sum(a, 2)
@@ -133,7 +128,7 @@ class PairToAtom(nn.Module):
 class WeaveModule(nn.Module):
 
     def __init__(self, n_atom, output_channel, n_sub_layer,
-                 readout_mode='sum'):
+                 readout_mode='sum', device='cpu'):
         super(WeaveModule, self).__init__()
         self.atom_layer = LinearLayerDoubleAtomToAtom(output_channel, WEAVE_DEFAULT_NUM_MAX_ATOMS * MAX_ATOMIC_NUM, n_sub_layer)
         self.pair_layer = LinearLayer(output_channel, n_sub_layer)
@@ -142,6 +137,7 @@ class WeaveModule(nn.Module):
         self.atom_to_pair = AtomToPair(output_channel, n_sub_layer, n_atom)
         self.pair_to_atom = PairToAtom(output_channel, n_sub_layer, n_atom,
                                        mode=readout_mode)
+        self.device = device
         self.n_atom = n_atom
         self.n_channel = output_channel
         self.readout_mode = readout_mode
@@ -150,7 +146,6 @@ class WeaveModule(nn.Module):
         a0 = self.atom_to_atom.forward(atom_x).unsqueeze(1)
         a1 = self.pair_to_atom.forward(pair_x)
         a = torch.cat([a0, a1], dim=1)
-        print(a.shape)
         next_atom = self.atom_layer.forward(a)
         next_atom = functional.relu(next_atom)
         if atom_only:
@@ -161,7 +156,8 @@ class WeaveModule(nn.Module):
         p = torch.cat([p0, p1], 1)
         next_pair = self.pair_layer.forward(p)
         next_pair = functional.relu(next_pair)
-        next_pair = torch.transpose(next_pair, 2, 0)
+        # next_atom = torch.transpose(next_atom, 2, 0)
+        # print(next_atom.shape)
         return next_atom, next_pair
 
 
@@ -184,9 +180,10 @@ class WeaveNet(nn.Module):
                  n_sub_layer=1, n_atom_types=MAX_ATOMIC_NUM,
                  readout_mode='sum'):
         self.args = args
+        self.device = args.device
         weave_channels = weave_channels or WEAVENET_DEFAULT_WEAVE_CHANNELS
         self.weave_module = [
-            WeaveModule(n_atom, c, n_sub_layer, readout_mode=readout_mode)
+            WeaveModule(n_atom, c, n_sub_layer, readout_mode=readout_mode, device=self.device)
             for c in weave_channels
         ]
 
@@ -203,7 +200,6 @@ class WeaveNet(nn.Module):
             batch = mol2graph_with_substructures(batch, args=self.args)
         for graph in batch.mol_graphs:
             mol = graph.mol
-            print(mol)
             atom_x = mol.get_atom_features_vector(WEAVE_DEFAULT_NUM_MAX_ATOMS)
             pair_x = mol.construct_pair_feature(num_max_atoms=WEAVE_DEFAULT_NUM_MAX_ATOMS)
             # if atom_x.dtype == self.xp.int32:
@@ -213,15 +209,20 @@ class WeaveNet(nn.Module):
             pairs.append(pair_x)
 
         atom_x = torch.from_numpy(np.dstack(atoms))
+        atom_x = atom_x.to(self.device)
         pair_x = torch.from_numpy(np.dstack(pairs))
+        pair_x = pair_x.to(self.device)
         for i in range(len(self.weave_module)):
             if i == len(self.weave_module) - 1:
                 # last layer, only `atom_x` is needed.
+                print('last')
                 atom_x = self.weave_module[i].forward(atom_x, pair_x,
                                                       atom_only=True)
             else:
+                print('not last')
                 # not last layer, both `atom_x` and `pair_x` are needed
                 atom_x, pair_x = self.weave_module[i].forward(atom_x, pair_x)
 
+        pair_x = torch.transpose(pair_x.view(pair_x.shape[0] * pair_x.shape[1], pair_x.shape[2]), 0, 1)
         return atom_x, pair_x
 

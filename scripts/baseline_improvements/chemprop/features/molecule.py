@@ -304,7 +304,6 @@ class Molecule:
 
     def get_atom_features_vector(self, num_max_atoms):
         atoms = [numpy.array(atom.get_representation()) for atom in self.atoms]
-        print(num_max_atoms, len(atoms))
         atoms += [numpy.zeros(ATOM_FDIM) for _ in range(num_max_atoms - len(atoms))]
         return numpy.stack(atoms)
 
@@ -360,7 +359,6 @@ class Molecule:
         # ring_feature = construct_ring_feature_vec(mol, num_max_atoms=num_max_atoms)
         # feature = numpy.hstack((distance_feature, bond_feature, ring_feature))
         feature = numpy.hstack((distance_feature, bond_feature))
-        print(feature.shape)
         return feature
 
     def prnt(self):

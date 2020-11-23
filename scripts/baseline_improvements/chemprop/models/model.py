@@ -8,6 +8,9 @@ import torch
 import torch.nn as nn
 from rdkit import Chem
 
+MAX_ATOMIC_NUM = 170
+WEAVE_DEFAULT_NUM_MAX_ATOMS = 25
+
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
@@ -75,8 +78,14 @@ class MoleculeModel(nn.Module):
             self.num_classes = args.multiclass_num_classes
         if args.features_only:
             first_linear_dim = args.features_size
-        elif self.args.additional_encoder:
+        elif self.args.additional_encoder and not self.args.gcn_encoder:
             first_linear_dim = args.substructures_hidden_size + args.hidden_size
+            if args.use_input_features:
+                first_linear_dim += args.features_size
+        elif self.args.additional_encoder and self.args.gcn_encoder:
+            first_linear_dim = args.hidden_size + WEAVE_DEFAULT_NUM_MAX_ATOMS *\
+                               MAX_ATOMIC_NUM + 20 * WEAVE_DEFAULT_NUM_MAX_ATOMS * WEAVE_DEFAULT_NUM_MAX_ATOMS
+            print(first_linear_dim)
             if args.use_input_features:
                 first_linear_dim += args.features_size
         else:
@@ -151,9 +160,12 @@ class MoleculeModel(nn.Module):
             print(substructures_batch)
             substructures_mol_o_atom, substructures_mol_o_pair = self.gcn_substructures_encoder(substructures_batch)
             dmpnn_mol_o = self.encoder(batch, features_batch)
-            print(dmpnn_mol_o.shape, substructures_mol_o_atom.shape, substructures_mol_o_pair.shape)
+            # dmpnn_mol_o = dmpnn_mol_o.to(device='cpu')
             out = torch.cat((dmpnn_mol_o, substructures_mol_o_atom, substructures_mol_o_pair), dim=1)
+            print(out.shape, self.ffn.parameters())
             output = self.ffn(out)
+            # output = output.to(device=self.args.device)
+            # print('moved')
         else:
             output = self.ffn(self.encoder(batch, features_batch))
 
