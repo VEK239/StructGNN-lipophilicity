@@ -218,7 +218,7 @@ class TrainArgs(CommonArgs):
     substructures_undirected: bool = False
     fictitious_edges: bool = False
     """Creates fictitious edges for intersecting substructures."""
-    substructures_use_substructures: bool = False
+    substructures_use_substructures: bool = True
     """Generates chemical substructures."""
     """Undirected edges (always sum the two relevant bond vectors)."""
     ffn_hidden_size: int = None
@@ -237,6 +237,7 @@ class TrainArgs(CommonArgs):
     """Path to file with features for separate test set."""
     config_path: str = None
     config_path_yaml: str = None
+    substructures_merge: bool = False
     """
     Path to a :code:`.json` file containing arguments. Any arguments present in the config file
     will override arguments specified via the command line or by the defaults.
