@@ -41,7 +41,9 @@ def predict(model: MoleculeModel,
 
         # Make predictions
         with torch.no_grad():
-            if args.additional_encoder:
+            if args.additional_encoder and not args.gcn_encoder:
+                batch_preds = model(batch = mol_batch, substructures_batch = substructure_mol_batch, features_batch = features_batch)
+            elif args.additional_encoder and args.gcn_encoder:
                 batch_preds = model(batch = mol_batch, substructures_batch = substructure_mol_batch, features_batch = features_batch)
             else:
                 batch_preds = model(batch = mol_batch, features_batch = features_batch)

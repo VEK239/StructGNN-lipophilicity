@@ -35,7 +35,6 @@ class MoleculeModel(nn.Module):
         super(MoleculeModel, self).__init__()
 
         self.args = args
-
         self.classification = args.dataset_type == 'classification'
         self.multiclass = args.dataset_type == 'multiclass'
         self.featurizer = featurizer
@@ -83,9 +82,7 @@ class MoleculeModel(nn.Module):
             if args.use_input_features:
                 first_linear_dim += args.features_size
         elif self.args.additional_encoder and self.args.gcn_encoder:
-            first_linear_dim = args.hidden_size + WEAVE_DEFAULT_NUM_MAX_ATOMS *\
-                               MAX_ATOMIC_NUM + 20 * WEAVE_DEFAULT_NUM_MAX_ATOMS * WEAVE_DEFAULT_NUM_MAX_ATOMS
-            print(first_linear_dim)
+            first_linear_dim = args.hidden_size + WEAVE_DEFAULT_NUM_MAX_ATOMS * MAX_ATOMIC_NUM
             if args.use_input_features:
                 first_linear_dim += args.features_size
         else:
@@ -142,6 +139,7 @@ class MoleculeModel(nn.Module):
         """
         Runs the :class:`MoleculeModel` on input.
 
+        :param substructures_batch: List of substructures molecules
         :param batch: A list of SMILES, a list of RDKit molecules, or a
                       :class:`~chemprop.features.featurization.BatchMolGraph`.
         :param features_batch: A list of numpy arrays containing additional features.
@@ -157,12 +155,12 @@ class MoleculeModel(nn.Module):
                              substructures_mol_o), dim=1)
             output = self.ffn(out)
         elif self.args.gcn_encoder and self.args.additional_encoder:
-            print(substructures_batch)
-            substructures_mol_o_atom, substructures_mol_o_pair = self.gcn_substructures_encoder(substructures_batch)
+            substructures_mol_o_atom = self.gcn_substructures_encoder(substructures_batch)
+            # output = self.ffn(substructures_mol_o_atom)
             dmpnn_mol_o = self.encoder(batch, features_batch)
             # dmpnn_mol_o = dmpnn_mol_o.to(device='cpu')
-            out = torch.cat((dmpnn_mol_o, substructures_mol_o_atom, substructures_mol_o_pair), dim=1)
-            print(out.shape, self.ffn.parameters())
+            out = torch.cat((dmpnn_mol_o, substructures_mol_o_atom), dim=1)
+            # print(out.shape, self.ffn.parameters())
             output = self.ffn(out)
             # output = output.to(device=self.args.device)
             # print('moved')

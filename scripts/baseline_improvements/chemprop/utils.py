@@ -16,10 +16,11 @@ import torch.nn as nn
 from torch.optim import Adam, Optimizer
 from torch.optim.lr_scheduler import _LRScheduler
 
-from chemprop.args import TrainArgs
-from chemprop.data import StandardScaler, MoleculeDataset
-from chemprop.models import MoleculeModel
-from chemprop.nn_utils import NoamLR
+from args import TrainArgs
+from data.scaler import StandardScaler
+from data.data import MoleculeDataset
+from models.model import MoleculeModel
+from nn_utils import NoamLR
 
 
 def makedirs(path: str, isfile: bool = False) -> None:
@@ -68,7 +69,6 @@ def save_checkpoint(path: str,
             'stds': features_scaler.stds
         } if features_scaler is not None else None
     }
-    torch.save(state, path)
 
 
 def load_checkpoint(path: str,
@@ -99,7 +99,6 @@ def load_checkpoint(path: str,
     # Build model
     model = MoleculeModel(args)
     model_state_dict = model.state_dict()
-
     # Skip missing parameters and parameters of mismatched size
     pretrained_state_dict = {}
     for param_name in loaded_state_dict.keys():

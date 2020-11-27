@@ -288,6 +288,8 @@ class Molecule:
 
     def get_bond(self, atom_1_idx, atom_2_idx):
         # If bond does not exist between atom_1 and atom_2, return None
+        if atom_1_idx >= len(self.atoms) or atom_2_idx >= len(self.atoms):
+            return None
         for bond in self.atoms[atom_1_idx].bonds:
             if atom_2_idx == bond.out_atom_idx or atom_2_idx == bond.in_atom_idx:
                 return bond
@@ -305,6 +307,7 @@ class Molecule:
     def get_atom_features_vector(self, num_max_atoms):
         atoms = [numpy.array(atom.get_representation()) for atom in self.atoms]
         atoms += [numpy.zeros(ATOM_FDIM) for _ in range(num_max_atoms - len(atoms))]
+        atoms = atoms[:num_max_atoms]
         return numpy.stack(atoms)
 
     def get_atom(self, atom_idx):
@@ -315,6 +318,8 @@ class Molecule:
 
     def construct_distance_vec(self, i, j, max_distance):
         distance_matrix = self.get_distance_matrix()
+        if i >= len(distance_matrix) or j >= len(distance_matrix):
+            return numpy.zeros((max_distance,), dtype=numpy.float32)
         distance = min(max_distance, distance_matrix[i][j])
         distance_feature = numpy.zeros((max_distance,), dtype=numpy.float32)
         distance_feature[:distance] = 1.0
@@ -349,13 +354,13 @@ class Molecule:
         n_atom = self.get_num_atoms()
         distance_feature = numpy.zeros((num_max_atoms ** 2, max_distance,),
                                        dtype=numpy.float32)
-        for i in range(n_atom):
-            for j in range(n_atom):
-                distance_feature[i * n_atom + j] = self.construct_distance_vec(i, j, max_distance)
+        for i in range(num_max_atoms):
+            for j in range(num_max_atoms):
+                distance_feature[i * num_max_atoms + j] = self.construct_distance_vec(i, j, max_distance)
         bond_feature = numpy.zeros((num_max_atoms ** 2, BOND_FDIM,), dtype=numpy.float32)
-        for i in range(n_atom):
-            for j in range(n_atom):
-                bond_feature[i * n_atom + j] = self.bond_features_for_substructures(i, j)
+        for i in range(num_max_atoms):
+            for j in range(num_max_atoms):
+                bond_feature[i * num_max_atoms + j] = self.bond_features_for_substructures(i, j)
         # ring_feature = construct_ring_feature_vec(mol, num_max_atoms=num_max_atoms)
         # feature = numpy.hstack((distance_feature, bond_feature, ring_feature))
         feature = numpy.hstack((distance_feature, bond_feature))

@@ -1,20 +1,19 @@
-from logging import Logger
+import inspect
 import os
 import sys
+from logging import Logger
 from typing import List
-import pandas as pd
-
 
 import numpy as np
-from tensorboardX import SummaryWriter
+import pandas as pd
 import torch
-from tqdm import trange
+from tensorboardX import SummaryWriter
 from torch.optim.lr_scheduler import ExponentialLR
+from tqdm import trange
 
-import os,sys,inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir)
+sys.path.insert(0, parentdir)
 
 from .evaluate import evaluate, evaluate_predictions
 from .predict import predict
@@ -24,12 +23,14 @@ from constants import MODEL_FILE_NAME
 from data import get_class_sizes, get_data, MoleculeDataLoader, split_data, StandardScaler, validate_dataset_type
 from models import MoleculeModel
 from nn_utils import param_count
-from utils import build_optimizer, build_lr_scheduler, get_loss_func, get_metric_func, load_checkpoint,\
+from utils import build_optimizer, build_lr_scheduler, get_loss_func, get_metric_func, load_checkpoint, \
     makedirs, save_checkpoint, save_smiles_splits
+
 
 class EarlyStopping:
     """Early stops the training if validation loss doesn't improve after a given patience."""
-    def __init__(self,scaler, features_scaler, args, patience=7, verbose=False, delta=0, path='checkpoint.pt'):
+
+    def __init__(self, scaler, features_scaler, args, patience=7, verbose=False, delta=0, path='checkpoint.pt'):
         """
         Args:
             patience (int): How long to wait after last time validation loss improved.
@@ -53,15 +54,16 @@ class EarlyStopping:
         self.path = path
         self.epoch = 0
 
-
         self.scaler = scaler
         self.features_scaler = features_scaler
         self.args = args
-    def __call__(self, val_loss, val_rmses, val_r2s, model, epoch = 0):
+
+    def __call__(self, val_loss, val_rmses, val_r2s, model, epoch=0):
 
         score = -val_loss
 
         if self.best_score is None:
+            self.best_epoch = epoch
             self.best_score = score
             self.best_rmses = val_rmses
             self.best_r2s = val_r2s
@@ -69,7 +71,7 @@ class EarlyStopping:
         elif score < self.best_score + self.delta:
             self.counter += 1
             self.epoch = epoch
-            print ('EarlyStopping counter: ',self.counter,  ' out of ', self.patience)
+            print('EarlyStopping counter: ', self.counter, ' out of ', self.patience)
             if self.counter >= self.patience:
                 self.early_stop = True
         else:
@@ -83,7 +85,8 @@ class EarlyStopping:
     def save_chckpt(self, val_loss, model):
         '''Saves model when validation loss decrease.'''
         if self.verbose:
-            print ('Validation loss decreased', round(self.val_loss_min,6),' -->', round(val_loss,6), '.  Saving model ...')
+            print('Validation loss decreased', round(self.val_loss_min, 6), ' -->', round(val_loss, 6),
+                  '.  Saving model ...')
         save_checkpoint(self.path, model, self.scaler, self.features_scaler, self.args)
         self.val_loss_min = val_loss
 
@@ -126,11 +129,11 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
     # Split data
     debug(f'Splitting data with seed {args.seed}')
     if args.separate_test_path:
-
-        test_data = get_data(path=args.separate_test_path, args=args, features_path=args.separate_test_features_path, logger=logger)
+        test_data = get_data(path=args.separate_test_path, args=args, features_path=args.separate_test_features_path,
+                             logger=logger)
     if args.separate_val_path:
-
-        val_data = get_data(path=args.separate_val_path, args=args, features_path=args.separate_val_features_path, logger=logger)
+        val_data = get_data(path=args.separate_val_path, args=args, features_path=args.separate_val_features_path,
+                            logger=logger)
 
     if args.separate_val_path and args.separate_test_path:
         train_data = data
@@ -139,9 +142,11 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
                                               seed=args.seed, args=args, logger=logger)
     elif args.separate_test_path:
 
-        train_data, val_data, _ = split_data(data=data, split_type=args.split_type, sizes=(0.8, 0.2, 0.0), seed=args.seed, args=args, logger=logger)
+        train_data, val_data, _ = split_data(data=data, split_type=args.split_type, sizes=(0.8, 0.2, 0.0),
+                                             seed=args.seed, args=args, logger=logger)
     else:
-        train_data, val_data, test_data = split_data(data=data, split_type=args.split_type, sizes=args.split_sizes, seed=args.seed, args=args, logger=logger)
+        train_data, val_data, test_data = split_data(data=data, split_type=args.split_type, sizes=args.split_sizes,
+                                                     seed=args.seed, args=args, logger=logger)
 
     if args.dataset_type == 'classification':
         class_sizes = get_class_sizes(data)
@@ -200,7 +205,6 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
     else:
         cache = False
         num_workers = args.num_workers
-    from torch.utils.data import  Dataset, DataLoader
     # Create data loaders
     train_data_loader = MoleculeDataLoader(
         dataset=train_data,
@@ -267,8 +271,8 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
 
         n_iter = 0
 
-        early_stopping = EarlyStopping(scaler, features_scaler, args, patience=args.patience, delta = args.delta, \
-                                       verbose=True, path = os.path.join(save_dir, MODEL_FILE_NAME))
+        early_stopping = EarlyStopping(scaler, features_scaler, args, patience=args.patience, delta=args.delta, \
+                                       verbose=True, path=os.path.join(save_dir, MODEL_FILE_NAME))
 
         for epoch in trange(args.epochs):
             debug(f'Epoch {epoch}')
@@ -294,7 +298,7 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
                 dataset_type=args.dataset_type,
                 scaler=scaler,
                 logger=logger,
-                args = args
+                args=args
             )
 
             # Average validation score
@@ -320,34 +324,36 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
             early_stopping(avg_val_score, val_scores, val_scores_r2, model, epoch)
 
             # Save model checkpoint if improved validation score
-#             if args.minimize_score and avg_val_score < best_score or \
-#                     not args.minimize_score and avg_val_score > best_score:
-#                 best_score, best_epoch = avg_val_score, epoch
-#                 best_score_r2 = avg_val_score_r2
-#                 best_vals = val_scores
-#                 best_vals_r2 = val_scores_r2
-#                 save_checkpoint(os.path.join(save_dir, MODEL_FILE_NAME), model, scaler, features_scaler, args)
+            #             if args.minimize_score and avg_val_score < best_score or \
+            #                     not args.minimize_score and avg_val_score > best_score:
+            #                 best_score, best_epoch = avg_val_score, epoch
+            #                 best_score_r2 = avg_val_score_r2
+            #                 best_vals = val_scores
+            #                 best_vals_r2 = val_scores_r2
+            #                 save_checkpoint(os.path.join(save_dir, MODEL_FILE_NAME), model, scaler, features_scaler, args)
 
             if early_stopping.early_stop:
                 print("Early stopping", epoch)
                 break
 
         # Evaluate on test set using model with best validation score
-        info(f'Model {model_idx} best validation {args.metric} = {early_stopping.best_score:.6f} on epoch {early_stopping.best_epoch}')
+        info(
+            f'Model {model_idx} best validation {args.metric} = {early_stopping.best_score:.6f} on epoch {early_stopping.best_epoch}')
         model = load_checkpoint(os.path.join(save_dir, MODEL_FILE_NAME), device=args.device, logger=logger)
+
 
         test_preds = predict(
             model=model,
             data_loader=test_data_loader,
             scaler=scaler,
-            args = args
+            args=args
         )
-        test_predictions = pd.DataFrame(columns = [args.smiles_column])
+        test_predictions = pd.DataFrame(columns=[args.smiles_column])
         test_predictions[args.smiles_column] = test_smiles
         for task in range(args.num_tasks):
             test_predictions[args.target_columns[task]] = np.array(test_targets)[:, task]
-            test_predictions[args.target_columns[task]+'_pred'] = np.array(test_preds)[:, task]
-        test_predictions.to_csv(os.path.join(args.save_dir, 'test_predictions.csv'), index = False)
+            test_predictions[args.target_columns[task] + '_pred'] = np.array(test_preds)[:, task]
+        test_predictions.to_csv(os.path.join(args.save_dir, 'test_predictions.csv'), index=False)
 
         test_scores, test_scores_r2 = evaluate_predictions(
             preds=test_preds,
@@ -365,7 +371,7 @@ def run_training(args: TrainArgs, logger: Logger = None) -> List[float]:
 
         avg_test_score = test_scores
         avg_test_score_r2 = test_scores_r2
-#         print(avg_test_score)
+        #         print(avg_test_score)
         for task in range(args.num_tasks):
             info(f'Model {model_idx} test {args.metric} {args.target_columns[task]} = {avg_test_score[task]:.6f}')
             info(f'Model {model_idx} test R2 {args.target_columns[task]} = {avg_test_score_r2[task]:.6f}')
