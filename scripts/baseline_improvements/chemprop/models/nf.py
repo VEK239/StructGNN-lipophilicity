@@ -15,13 +15,26 @@ from nf_utils import dev
 
 from args import TrainArgs
 
+from features import BatchMolGraph, get_atom_fdim, get_bond_fdim, mol2graph, \
+    BatchMolGraphWithSubstructures, get_atom_fdim_with_substructures, get_bond_fdim_with_substructures, \
+    mol2graph_with_substructures
+
 
 
 class QSAR(nn.Module):
-    def __init__(self, args:TrainArgs, atom_fdim: int, bond_fdim: int):
+    def __init__(self, args:TrainArgs):
         super(QSAR, self).__init__()
         
+        self.args = args
+        self.device = args.device
+        
         hid_dim = args.substructures_hidden_size
+        
+        self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
+                                                              merge_cycles=args.substructures_merge)
+        self.bond_fdim = get_bond_fdim_with_substructures(atom_messages=args.substructures_atom_messages,
+                                                              use_substructures=args.substructures_use_substructures,
+                                                              merge_cycles=args.substructures_merge)
         
         self.gcn1 = GraphConv(input_dim=43, conv_width=128)
         self.gcn2 = GraphConv(input_dim=134, conv_width=128)
@@ -31,7 +44,13 @@ class QSAR(nn.Module):
 #         self.fc2 = nn.Linear(hid_dim, n_out)
         self.to(dev)
 
-    def forward(self, atoms, bonds, edges):
+#     def forward(self, atoms, bonds, edges):
+    def forward(self, mol_graph: BatchMolGraphWithSubstructures):
+        atoms, bonds, a2b, b2a, b2revb, a_scope, b_scope = mol_graph.get_components(args=self.args)
+        atoms, bonds, a2b, b2a, b2revb = atoms.to(self.device), bonds.to(self.device), a2b.to(
+            self.device), b2a.to(self.device), b2revb.to(self.device)
+        print(atoms.shape)
+        print(bonds.shape)
         atoms = self.gcn1(atoms, bonds, edges)
         # atoms = self.bn(atoms)
         atoms = self.pool(atoms, edges)

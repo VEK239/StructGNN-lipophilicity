@@ -14,6 +14,8 @@ from args import TrainArgs
 from features import BatchMolGraph, BatchMolGraphWithSubstructures
 from nn_utils import get_activation_function, initialize_weights
 from .mpn import MPN
+from .nf import QSAR
+
 
 
 class MoleculeModel(nn.Module):
@@ -54,7 +56,8 @@ class MoleculeModel(nn.Module):
         :param args: A :class:`~chemprop.args.TrainArgs` object containing model arguments.
         """
         self.no_substructures_encoder = MPN(args, 'no_substructures')
-        self.substructures_encoder = MPN(args, 'substructures')
+#         self.substructures_encoder = MPN(args, 'substructures')
+        self.substructures_encoder =  QSAR(args)
 
     def create_ffn(self, args: TrainArgs) -> None:
         """
