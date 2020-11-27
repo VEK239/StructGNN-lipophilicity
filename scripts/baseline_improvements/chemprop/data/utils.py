@@ -11,8 +11,13 @@ from rdkit import Chem
 from sklearn.model_selection import KFold
 from tqdm import tqdm
 
-from scripts.baseline_improvements.chemprop.args import PredictArgs, TrainArgs
-from scripts.baseline_improvements.chemprop.features import load_features
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+
+from args import PredictArgs, TrainArgs
+from features import load_features
 from .data import MoleculeDatapoint, MoleculeDataset
 from .scaffold import log_scaffold_stats, scaffold_split
 
@@ -105,7 +110,7 @@ def filter_invalid_smiles(data: MoleculeDataset) -> MoleculeDataset:
 
 
 def get_data(path: str,
-             smiles_column: str = None,
+             smiles_column: str = 'smiles',
              target_columns: List[str] = None,
              ignore_columns: List[str] = None,
              skip_invalid_smiles: bool = True,

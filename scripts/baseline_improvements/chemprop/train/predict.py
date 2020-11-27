@@ -3,19 +3,24 @@ from typing import List
 import torch
 from tqdm import tqdm
 
-from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.data import MoleculeDataLoader, MoleculeDataset, StandardScaler
-from scripts.baseline_improvements.chemprop.models import MoleculeModel
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+
+from data import MoleculeDataLoader, MoleculeDataset, StandardScaler
+from models import MoleculeModel
+
+from args import TrainArgs
 
 
 def predict(model: MoleculeModel,
             data_loader: MoleculeDataLoader,
-            args: TrainArgs,
             disable_progress_bar: bool = False,
-            scaler: StandardScaler = None) -> List[List[float]]:
+            scaler: StandardScaler = None,
+            args: TrainArgs = None) -> List[List[float]]:
     """
     Makes predictions on a dataset using an ensemble of models.
-
     :param model: A :class:`~chemprop.models.model.MoleculeModel`.
     :param data_loader: A :class:`~chemprop.data.data.MoleculeDataLoader`.
     :param disable_progress_bar: Whether to disable the progress bar.
@@ -26,7 +31,7 @@ def predict(model: MoleculeModel,
 
     preds = []
 
-    for batch in data_loader:
+    for batch in tqdm(data_loader, disable=disable_progress_bar):
         # Prepare batch
         batch: MoleculeDataset
         # mol_batch, features_batch = batch.batch_graph(), batch.features()

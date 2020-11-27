@@ -2,7 +2,7 @@
 import sys
 sys.path.append('/home/mol/liza/mol_properties')
 
-from scripts.baseline_improvements.chemprop.train import chemprop_train
+from train import chemprop_train
 
 
 if __name__ == '__main__':
