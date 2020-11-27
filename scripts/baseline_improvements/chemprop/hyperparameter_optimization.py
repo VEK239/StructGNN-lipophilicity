@@ -7,12 +7,17 @@ from copy import deepcopy
 from hyperopt import fmin, hp, tpe
 from typing import Dict, Union
 
-from scripts.baseline_improvements.chemprop.args import HyperoptArgs
-from scripts.baseline_improvements.chemprop.constants import HYPEROPT_LOGGER_NAME
-from scripts.baseline_improvements.chemprop.models import MoleculeModel
-from scripts.baseline_improvements.chemprop.nn_utils import param_count
-from scripts.baseline_improvements.chemprop.train import cross_validate
-from scripts.baseline_improvements.chemprop.utils import create_logger, makedirs, timeit
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+
+from .args import HyperoptArgs
+from .constants import HYPEROPT_LOGGER_NAME
+from .models import MoleculeModel
+from .nn_utils import param_count
+from .train import cross_validate
+from .utils import create_logger, makedirs, timeit
 
 SPACE = {
     'no_substructures_hidden_size': hp.quniform('no_substructures_hidden_size', low=300, high=800, q=100),

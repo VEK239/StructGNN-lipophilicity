@@ -5,9 +5,14 @@ import torch
 import torch.nn as nn
 from rdkit import Chem
 
-from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.features import BatchMolGraph, BatchMolGraphWithSubstructures
-from scripts.baseline_improvements.chemprop.nn_utils import get_activation_function, initialize_weights
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+
+from args import TrainArgs
+from features import BatchMolGraph, BatchMolGraphWithSubstructures
+from nn_utils import get_activation_function, initialize_weights
 from .mpn import MPN
 
 

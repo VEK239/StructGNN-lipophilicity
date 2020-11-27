@@ -1,12 +1,16 @@
 import logging
 from typing import Callable, List
 
-from sklearn.metrics import r2_score
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
 
-from scripts.baseline_improvements.chemprop.args import TrainArgs
 from .predict import predict
-from scripts.baseline_improvements.chemprop.data import MoleculeDataLoader, StandardScaler
-from scripts.baseline_improvements.chemprop.models import MoleculeModel
+from data import MoleculeDataLoader, StandardScaler
+from models import MoleculeModel
+from sklearn.metrics import r2_score
+from args import TrainArgs
 
 
 def evaluate_predictions(preds: List[List[float]],
@@ -14,10 +18,9 @@ def evaluate_predictions(preds: List[List[float]],
                          num_tasks: int,
                          metric_func: Callable,
                          dataset_type: str,
-                         logger: logging.Logger = None, test = False) -> List[float]:
+                         logger: logging.Logger = None) -> List[float]:
     """
     Evaluates predictions using a metric function after filtering out invalid targets.
-
     :param preds: A list of lists of shape :code:`(data_size, num_tasks)` with model predictions.
     :param targets: A list of lists of shape :code:`(data_size, num_tasks)` with targets.
     :param num_tasks: Number of tasks.
@@ -43,6 +46,7 @@ def evaluate_predictions(preds: List[List[float]],
 
     # Compute metric
     results = []
+    results_r2 = []
     for i in range(num_tasks):
         # # Skip if all targets or preds are identical, otherwise we'll crash during classification
         if dataset_type == 'classification':
@@ -59,16 +63,17 @@ def evaluate_predictions(preds: List[List[float]],
                 continue
 
         if len(valid_targets[i]) == 0:
+            results.append(float('nan'))
+            results_r2.append(float('nan'))
             continue
 
         if dataset_type == 'multiclass':
             results.append(metric_func(valid_targets[i], valid_preds[i], labels=list(range(len(valid_preds[i][0])))))
         else:
             results.append(metric_func(valid_targets[i], valid_preds[i]))
-            results.append(r2_score(valid_targets[i], valid_preds[i]))
-            if test:
-                print('Test r2 score:', r2_score(valid_targets[i], valid_preds[i]))
-    return results
+            results_r2.append(r2_score(valid_targets[i], valid_preds[i]))
+
+    return results, results_r2
 
 
 def evaluate(model: MoleculeModel,
@@ -76,12 +81,11 @@ def evaluate(model: MoleculeModel,
              num_tasks: int,
              metric_func: Callable,
              dataset_type: str,
-             args: TrainArgs,
              scaler: StandardScaler = None,
-             logger: logging.Logger = None) -> List[float]:
+             logger: logging.Logger = None,
+             args: TrainArgs = None) -> List[float]:
     """
     Evaluates an ensemble of models on a dataset by making predictions and then evaluating the predictions.
-
     :param model: A :class:`~chemprop.models.model.MoleculeModel`.
     :param data_loader: A :class:`~chemprop.data.data.MoleculeDataLoader`.
     :param num_tasks: Number of tasks.
@@ -95,10 +99,10 @@ def evaluate(model: MoleculeModel,
         model=model,
         data_loader=data_loader,
         scaler=scaler,
-        args=args
+        args = args
     )
 
-    results = evaluate_predictions(
+    results, results_r2 = evaluate_predictions(
         preds=preds,
         targets=data_loader.targets,
         num_tasks=num_tasks,
@@ -106,5 +110,4 @@ def evaluate(model: MoleculeModel,
         dataset_type=dataset_type,
         logger=logger
     )
-
-    return results
+    return results, results_r2

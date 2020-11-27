@@ -4,11 +4,16 @@ from typing import Tuple
 
 import numpy as np
 
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+
 from .run_training import run_training
-from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.constants import TEST_SCORES_FILE_NAME, TRAIN_LOGGER_NAME
-from scripts.baseline_improvements.chemprop.data import get_task_names
-from scripts.baseline_improvements.chemprop.utils import create_logger, makedirs, timeit
+from args import TrainArgs
+from constants import TEST_SCORES_FILE_NAME, TRAIN_LOGGER_NAME
+from data import get_task_names
+from utils import create_logger, makedirs, timeit
 
 
 @timeit(logger_name=TRAIN_LOGGER_NAME)
