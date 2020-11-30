@@ -69,6 +69,7 @@ def save_checkpoint(path: str,
             'stds': features_scaler.stds
         } if features_scaler is not None else None
     }
+    torch.save(state, path)
 
 
 def load_checkpoint(path: str,
