@@ -135,7 +135,7 @@ class TrainArgs(CommonArgs):
     """:class:`TrainArgs` includes :class:`CommonArgs` along with additional arguments used for training a Chemprop model."""
 
     # General arguments
-    data_path: str
+    data_path: str = ''
     """Path to data CSV file."""
     target_columns: List[str] = None
     """
@@ -201,8 +201,9 @@ class TrainArgs(CommonArgs):
     bias: bool = False
     """Whether to add bias to linear layers."""
     no_substructures_hidden_size: int = 300
-    substructures_hidden_size: int = 300
     """Dimensionality of hidden layers in MPN."""
+    substructures_hidden_size: int = 300
+    """Dimensionality of hidden layers in GCN."""
     no_substructures_depth: int = 3
     substructures_depth: int = 3
     """Number of message passing steps."""
@@ -233,6 +234,7 @@ class TrainArgs(CommonArgs):
     separate_test_features_path: List[str] = None
     """Path to file with features for separate test set."""
     config_path: str = None
+    config_path_yaml: str = None
     """
     Path to a :code:`.json` file containing arguments. Any arguments present in the config file
     will override arguments specified via the command line or by the defaults.
@@ -333,6 +335,26 @@ class TrainArgs(CommonArgs):
                 config = json.load(f)
                 for key, value in config.items():
                     setattr(self, key, value)
+                    
+        if self.config_path_yaml is not None:
+            import yaml
+            with open(self.config_path_yaml) as f:
+                config = yaml.safe_load(f)
+                for key, value in config.items():
+                    
+                    if key == 'separate_test_path' and config['separate_test_path']:
+                        setattr(self, key, os.path.join(value, config['file_prefix']+'_test.csv'))
+                    elif key == 'separate_val_path' and config['separate_val_path']:
+                        setattr(self, key, os.path.join(value, config['file_prefix']+'_validation.csv'))
+                    elif key == 'data_path':
+                        if 'separate_val_path' in config.keys() and config['separate_val_path']:
+                            setattr(self, key, os.path.join(value, config['file_prefix']+'_train.csv'))
+                        elif 'separate_test_path' in config.keys() and config['separate_test_path']:
+                            setattr(self, key, os.path.join(value, config['file_prefix']+'_train_val_dataset.csv'))
+                        else:
+                            setattr(self, key, os.path.join(value, config['file_prefix']+'.csv'))
+                    else:
+                        setattr(self, key, value)
 
         # Create temporary directory as save directory if not provided
         if self.save_dir is None:

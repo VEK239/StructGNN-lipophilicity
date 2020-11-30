@@ -8,10 +8,15 @@ from torch.optim import Optimizer
 from torch.optim.lr_scheduler import _LRScheduler
 from tqdm import tqdm
 
-from scripts.baseline_improvements.chemprop.args import TrainArgs
-from scripts.baseline_improvements.chemprop.data import MoleculeDataLoader, MoleculeDataset
-from scripts.baseline_improvements.chemprop.models import MoleculeModel
-from scripts.baseline_improvements.chemprop.nn_utils import compute_gnorm, compute_pnorm, NoamLR
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+
+from args import TrainArgs
+from data import MoleculeDataLoader, MoleculeDataset
+from models import MoleculeModel
+from nn_utils import compute_gnorm, compute_pnorm, NoamLR
 
 
 def train(model: MoleculeModel,
@@ -25,7 +30,6 @@ def train(model: MoleculeModel,
           writer: SummaryWriter = None) -> int:
     """
     Trains a model for an epoch.
-
     :param model: A :class:`~chemprop.models.model.MoleculeModel`.
     :param data_loader: A :class:`~chemprop.data.data.MoleculeDataLoader`.
     :param loss_func: Loss function.
@@ -38,11 +42,12 @@ def train(model: MoleculeModel,
     :return: The total number of iterations (training examples) trained on so far.
     """
     debug = logger.debug if logger is not None else print
-
+    
+    debug(f'Train function')
+    
     model.train()
     loss_sum, iter_count = 0, 0
-
-    for batch in data_loader:
+    for batch in tqdm(data_loader, total=len(data_loader)):
         # Prepare batch
         batch: MoleculeDataset
         substructure_mol_batch = batch.batch_graph(model_type='substructures', args=args)
@@ -55,6 +60,7 @@ def train(model: MoleculeModel,
         model.zero_grad()
         preds = model(no_substructure_mol_batch, substructure_mol_batch, features_batch)
 
+
         # Move tensors to correct device
         mask = mask.to(preds.device)
         targets = targets.to(preds.device)
@@ -62,9 +68,7 @@ def train(model: MoleculeModel,
 
         if args.dataset_type == 'multiclass':
             targets = targets.long()
-            loss = torch.cat(
-                [loss_func(preds[:, target_index, :], targets[:, target_index]).unsqueeze(1) for target_index in
-                 range(preds.size(1))], dim=1) * class_weights * mask
+            loss = torch.cat([loss_func(preds[:, target_index, :], targets[:, target_index]).unsqueeze(1) for target_index in range(preds.size(1))], dim=1) * class_weights * mask
         else:
             loss = loss_func(preds, targets) * class_weights * mask
         loss = loss.sum() / mask.sum()
