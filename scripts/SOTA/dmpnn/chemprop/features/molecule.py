@@ -153,7 +153,16 @@ def onek_encoding_unk(value, choices_len):
     return encoding
 
 
-def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, args):
+def get_num_rings_in_ring(substruct, sssr):
+    cycles_in_ring = set()
+    for cycle in sssr:
+        for atom in cycle:
+            if atom in substruct:
+                cycles_in_ring.add(cycle)
+    return len(cycles_in_ring)
+
+
+def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, args, sssr):
     """
     Generates a vector with mapping for a substructure
     :param substruct: The given substructure
@@ -188,8 +197,10 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
 
     if args.substructures_use_substructures:
         substruct_type = onek_encoding_unk(STRUCT_TO_NUM[structure_type], len(STRUCT_TO_NUM))
+        if structure_type == 'RING':
+            substruct_type[STRUCT_TO_NUM['RING']] = get_num_rings_in_ring(substruct, sssr)
     else:
-        substruct_type = [1 if structure_type == 'RING' else 0]
+        substruct_type = [get_num_rings_in_ring(substruct, sssr) if structure_type == 'RING' else 0]
 
     features = substruct_atomic_encoding + substruct_valence_array + substruct_Hs_array + substruct_type + \
                [substruct_formal_charge, substruct_is_aromatic, substruct_mass * 0.01, substruct_edges_sum * 0.1]
@@ -255,6 +266,7 @@ class Molecule:
 def create_molecule_for_smiles(smiles, args):
     mol = Chem.MolFromSmiles(smiles)
 
+    sssr = Chem.GetSymmSSSR(mol)
     rings = get_cycles_for_molecule(mol, args.substructures_merge)
     if args.substructures_use_substructures:
         acids = get_acids_for_molecule(mol)
@@ -277,7 +289,7 @@ def create_molecule_for_smiles(smiles, args):
         substructure_type_string = structure_type[1]
         substructures = structure_type[0]
         for substruct in substructures:
-            mapping = generate_substructure_sum_vector_mapping(substruct, mol, substructure_type_string, args)
+            mapping = generate_substructure_sum_vector_mapping(substruct, mol, substructure_type_string, args, sssr)
             substruct_atom = Atom(idx=(min(*substruct) if len(substruct) > 1 else substruct[0]),
                                   atom_representation=mapping, atom_type=substructure_type_string)
             mol_atoms.append(substruct_atom)
@@ -288,7 +300,7 @@ def create_molecule_for_smiles(smiles, args):
     for atom in mol.GetAtoms():
         atom_idx = atom.GetIdx()
         if atom_idx not in used_atoms:
-            atom_repr = generate_substructure_sum_vector_mapping([atom_idx], mol, 'ATOM', args)
+            atom_repr = generate_substructure_sum_vector_mapping([atom_idx], mol, 'ATOM', args, sssr)
             custom_atom = Atom(idx=atom_idx, atom_representation=atom_repr, symbol=atom.GetSymbol(), atom_type='ATOM')
             mol_atoms.append(custom_atom)
             idx_to_atom[atom_idx].add(custom_atom)
