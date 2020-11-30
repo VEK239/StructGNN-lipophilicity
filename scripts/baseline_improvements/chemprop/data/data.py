@@ -15,8 +15,8 @@ sys.path.insert(0,parentdir)
 from args import TrainArgs
 from .scaler import StandardScaler
 from features import get_features_generator
-from features import BatchMolGraph, MolGraph, tensorise_smiles#BatchMolGraphWithSubstructures, \
-#     MolGraphWithSubstructures
+from features import BatchMolGraph, MolGraph, tensorise_smiles,BatchMolGraphWithSubstructures, \
+     MolGraphWithSubstructures
 
 # Cache of graph featurizations
 SMILES_TO_GRAPH_NO_SUBSTRUCTURES: Dict[str, MolGraph] = {}
@@ -174,12 +174,12 @@ class MoleculeDataset(Dataset):
 #                     no_ring_mol_graph = MolGraphWithSubstructures(d.smiles, args)
                     if cache:
                         SMILES_TO_GRAPH_NO_SUBSTRUCTURES[d.smiles] = ring_mol_graph
-                        SMILES_TO_GRAPH_SUBSTRUCTURES[d.smiles] = no_ring_mol_graph
+#                         SMILES_TO_GRAPH_SUBSTRUCTURES[d.smiles] = no_ring_mol_graph
                 no_substructures_mol_graphs.append(ring_mol_graph)
-                substructures_mol_graphs.append(no_ring_mol_graph)
+#                 substructures_mol_graphs.append(no_ring_mol_graph)
 
             self._batch_graph_no_substructures = BatchMolGraph(no_substructures_mol_graphs)
-            self._batch_graph_substructures = tensorise_smiles(self.smiles,args)#BatchMolGraphWithSubstructures(substructures_mol_graphs, args=args)
+            self._batch_graph_substructures = tensorise_smiles(self.smiles(),args)#BatchMolGraphWithSubstructures(substructures_mol_graphs, args=args)
         if model_type == 'no_substructures':
             return self._batch_graph_no_substructures
         else:

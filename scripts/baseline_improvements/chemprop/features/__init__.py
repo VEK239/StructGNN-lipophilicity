@@ -6,6 +6,8 @@ from .featurization import atom_features, bond_features, BatchMolGraph, get_atom
 from .featurization_with_substructures import atom_features_for_substructures, bond_features_for_substructures, BatchMolGraphWithSubstructures, get_atom_fdim_with_substructures,\
     get_bond_fdim_with_substructures, mol2graph_with_substructures, MolGraphWithSubstructures
 
+from .featurization_with_substructures_nf import tensorise_smiles
+
 from .utils import load_features, save_features
 
 __all__ = [
@@ -28,5 +30,6 @@ __all__ = [
     'mol2graph_with_substructures',
     'MolGraphWithSubstructures',
     'load_features',
-    'save_features'
+    'save_features',
+    'tensorise_smiles'
 ]
