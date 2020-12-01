@@ -212,6 +212,8 @@ class TrainArgs(CommonArgs):
     activation: Literal['ReLU', 'LeakyReLU', 'PReLU', 'tanh', 'SELU', 'ELU'] = 'ReLU'
     """Activation function."""
     no_substructures_atom_messages: bool = False
+    substructures_max_degree: int = 20
+    """Max degree in NF tensor"""
     substructures_atom_messages: bool = False
     """Centers messages on atoms instead of on bonds."""
     substructures_merge: bool = False

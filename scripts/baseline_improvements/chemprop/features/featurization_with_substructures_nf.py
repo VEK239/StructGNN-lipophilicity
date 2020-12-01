@@ -20,7 +20,6 @@ THREE_D_DISTANCE_MAX = 20
 THREE_D_DISTANCE_STEP = 1
 THREE_D_DISTANCE_BINS = list(range(0, THREE_D_DISTANCE_MAX + 1, THREE_D_DISTANCE_STEP))
 
-MAX_DEGREE=5
 MAX_ATOMS=None
 
 BOND_FDIM = 13
@@ -36,7 +35,7 @@ def get_atom_fdim_with_substructures(use_substructures=False, merge_cycles=False
     return atom_fdim
 
 
-def get_bond_fdim_with_substructures(atom_messages: bool = False, use_substructures: bool = False,
+def get_bond_fdim_with_substructures(use_substructures: bool = False,
                                      merge_cycles: bool = False) -> int:
     """
     Gets the dimensionality of the bond feature vector.
@@ -46,7 +45,7 @@ def get_bond_fdim_with_substructures(atom_messages: bool = False, use_substructu
                           Otherwise it contains both atom and bond features.
     :return: The dimensionality of the bond feature vector.
     """
-    return BOND_FDIM + (not atom_messages) * get_atom_fdim_with_substructures(use_substructures, merge_cycles)
+    return BOND_FDIM #+ (not atom_messages) * get_atom_fdim_with_substructures(use_substructures, merge_cycles)
 
 
 def atom_features_for_substructures(atom) -> List[Union[bool, int, float]]:
@@ -269,7 +268,7 @@ def padaxis(array, new_size, axis, pad_value=0, pad_right=True):
     return np.pad(array, pad_width=pad_width, mode='constant', constant_values=pad_value)
 
 
-def tensorise_smiles(smiles, args, max_degree=MAX_DEGREE, max_atoms=MAX_ATOMS):
+def tensorise_smiles(smiles, args, max_atoms=MAX_ATOMS):
     """Takes a list of smiles and turns the graphs in tensor representation.
     # Arguments:
         smiles: a list (or iterable) of smiles representations
@@ -292,13 +291,14 @@ def tensorise_smiles(smiles, args, max_degree=MAX_DEGREE, max_atoms=MAX_ATOMS):
     """
 
     # import sizes
+    max_degree = args.substructures_max_degree
     n = len(smiles)
     
     n_atom_features = get_atom_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
                                                           merge_cycles=args.substructures_merge)
     n_bond_features = get_bond_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
                                                           merge_cycles=args.substructures_merge)
-    print(n_bond_features)
+#     print(n_bond_features)
     
 #     self.n_atoms = 0  # number of atoms
 #     self.n_bonds = 0  # number of bonds
@@ -364,7 +364,7 @@ def tensorise_smiles(smiles, args, max_degree=MAX_DEGREE, max_atoms=MAX_ATOMS):
                     edge_tensor = padaxis(edge_tensor, new_degree, axis=2, pad_value=-1)
                     
                 bond_features = bond_features_for_substructures(bond.get_rdkit_bond())#np.array(feature.bond_features(bond), dtype=int)
-                print(len(bond_features))
+#                 print(len(bond_features))
                 bond_tensor[mol_ix, a1_ix, a1_neigh, :] = bond_features
                 bond_tensor[mol_ix, a2_ix, a2_neigh, :] = bond_features
 
@@ -378,9 +378,9 @@ def tensorise_smiles(smiles, args, max_degree=MAX_DEGREE, max_atoms=MAX_ATOMS):
             edge_tensor[mol_ix, a1_ix, : degree] = neighbours
                 
 
-    return T.from_numpy(atom_tensor).float(), \
-           T.from_numpy(bond_tensor).float(), \
-           T.from_numpy(edge_tensor).long()
+    return torch.from_numpy(atom_tensor).float(), \
+           torch.from_numpy(bond_tensor).float(), \
+           torch.from_numpy(edge_tensor).long()
 
 
 

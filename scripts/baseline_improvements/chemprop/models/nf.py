@@ -28,29 +28,30 @@ class QSAR(nn.Module):
         self.args = args
         self.device = args.device
         
+        self.max_degree = args.substructures_max_degree
+
+        
         hid_dim = args.substructures_hidden_size
         
         self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
                                                               merge_cycles=args.substructures_merge)
-        self.bond_fdim = get_bond_fdim_with_substructures(atom_messages=args.substructures_atom_messages,
-                                                              use_substructures=args.substructures_use_substructures,
+        self.bond_fdim = get_bond_fdim_with_substructures( use_substructures=args.substructures_use_substructures,
                                                               merge_cycles=args.substructures_merge)
-        
-        self.gcn1 = GraphConv(input_dim=43, conv_width=128)
-        self.gcn2 = GraphConv(input_dim=134, conv_width=128)
-        self.gop = GraphOutput(input_dim=134, output_dim=128)
+        self.gcn1 = GraphConv(input_dim=self.atom_fdim+self.bond_fdim, conv_width=128, max_degree = self.max_degree)
+        self.gcn2 = GraphConv(input_dim=141, conv_width=128, max_degree = self.max_degree)
+        self.gop = GraphOutput(input_dim=141, output_dim=args.substructures_hidden_size)
         # self.bn = nn.BatchNorm2d(80)
         self.pool = GraphPool()
 #         self.fc2 = nn.Linear(hid_dim, n_out)
         self.to(dev)
 
 #     def forward(self, atoms, bonds, edges):
-    def forward(self, mol_graph: BatchMolGraphWithSubstructures):
-        atoms, bonds, a2b, b2a, b2revb, a_scope, b_scope = mol_graph.get_components(args=self.args)
-        atoms, bonds, a2b, b2a, b2revb = atoms.to(self.device), bonds.to(self.device), a2b.to(
-            self.device), b2a.to(self.device), b2revb.to(self.device)
-        print(atoms.shape)
-        print(bonds.shape)
+    def forward(self, batch):
+        atoms, bonds, edges = batch
+        atoms, bonds, edges = atoms.to(self.device), bonds.to(self.device), edges.to(
+            self.device)
+
+        
         atoms = self.gcn1(atoms, bonds, edges)
         # atoms = self.bn(atoms)
         atoms = self.pool(atoms, edges)
@@ -59,7 +60,7 @@ class QSAR(nn.Module):
         atoms = self.pool(atoms, edges)
         fp = self.gop(atoms, bonds, edges)
 #         out = F.sigmoid(self.fc2(fp))
-        return out
+        return fp
 
 #     def fit(self, loader_train, loader_valid, path, epochs=1000, early_stop=100, lr=1e-3):
 #         criterion = nn.BCELoss()

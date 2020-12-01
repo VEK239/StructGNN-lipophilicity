@@ -51,7 +51,7 @@ def train(model: MoleculeModel,
         # Prepare batch
         batch: MoleculeDataset
         substructure_mol_batch = batch.batch_graph(model_type='substructures', args=args)
-        print(substructure_mol_batch)
+#         print(substructure_mol_batch)
         no_substructure_mol_batch, features_batch, target_batch = batch.batch_graph(model_type='no_substructures', args=args), \
                                                        batch.features(), batch.targets()
         mask = torch.Tensor([[x is not None for x in tb] for tb in target_batch])

@@ -72,21 +72,29 @@ class GraphConv(nn.Module):
 
     def forward(self, *input, mask=None):
         atoms, bonds, edges = input
+        
+#         print(atoms.shape)
+#         print(bonds.shape)
+#         print(edges.shape)
 
         # Create a matrix that stores for each atom, the degree it is
         atom_degrees = (edges != -1).sum(-1, keepdim=True)
-
+#         print('atom_degrees', atom_degrees.shape)
         # For each atom, look up the features of it's neighbour
         neighbor_atom_features = lookup_neighbors(atoms, edges, include_self=True)
+#         print('neighbor_atom_features', neighbor_atom_features.shape)
 
         # Sum along degree axis to get summed neighbour features
         summed_atom_features = neighbor_atom_features.sum(-2)
+#         print('summed_atom_features', summed_atom_features.shape)
 
         # Sum the edge features for each atom
         summed_bond_features = bonds.sum(-2)
+#         print('summed_bond_features', summed_bond_features.shape)
 
         # Concatenate the summed atom and bond features
         summed_features = T.cat([summed_atom_features, summed_bond_features], dim=-1)
+#         print('summed_features', summed_features.shape)
 
         # For each degree we convolve with a different weight matrix
         new_features = None

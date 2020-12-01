@@ -21,26 +21,7 @@ from features import BatchMolGraph, MolGraph, tensorise_smiles,BatchMolGraphWith
 # Cache of graph featurizations
 SMILES_TO_GRAPH_NO_SUBSTRUCTURES: Dict[str, MolGraph] = {}
 SMILES_TO_GRAPH_SUBSTRUCTURES: Dict[str, MolGraphWithSubstructures] = {}
-    
-class MolData(Dataset):
-    """Custom PyTorch Dataset that takes a file containing \n separated SMILES"""
-    def __init__(self, smiles, labels):
-        self.max_atom = 80
-        self.max_degree = 6
-        self.atoms, self.bonds, self.edges = self._featurize(smiles)
-        self.label = T.from_numpy(labels).float()
 
-    def _featurize(self, smiles):
-        return tensorise_smiles(smiles, max_atoms=self.max_atom, max_degree=self.max_degree)
-
-    def __getitem__(self, i):
-        return self.atoms[i], self.bonds[i], self.edges[i], self.label[i]
-
-    def split(self, batch_size):
-        return
-
-    def __len__(self):
-        return len(self.label)
 
 
 class MoleculeDatapoint:
