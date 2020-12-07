@@ -303,7 +303,7 @@ class Atom:
 
     def get_mass(self):
         if self.mass is None:
-            self.mass = sum(atom.GetAtomicNum() for atom in self.rdkit_atoms) / 10 # taking the second from end (mass divided by 100)
+            self.mass = sum(atom.GetAtomicNum() for atom in self.rdkit_atoms) / 10
         return self.mass
 
 class Bond:
@@ -390,7 +390,7 @@ def create_molecule_for_smiles(smiles, args):
         if atom_idx not in used_atoms:
             atom_repr = generate_substructure_sum_vector_mapping([atom_idx], mol, 'ATOM', args, sssr)
             custom_atom = Atom(idx=min_not_used_atom, atom_representation=atom_repr, symbol=atom.GetSymbol(), atom_type='ATOM',
-                               simple_atoms=[atom_idx])
+                               simple_atoms=[atom_idx], rdkit_atoms=[atom])
             min_not_used_atom += 1
             mol_atoms.append(custom_atom)
             idx_to_atom[atom_idx].add(custom_atom)
