@@ -156,12 +156,9 @@ def onek_encoding_unk(value, choices_len):
 def get_num_rings_in_ring(substruct, sssr):
     cycles_in_ring = set()
     for cycle in sssr:
-        all_atoms_in_ring = True
         for atom in cycle:
-            if atom not in substruct:
-                all_atoms_in_ring = False
-        if all_atoms_in_ring:
-            cycles_in_ring.add(cycle)
+            if atom in substruct:
+                cycles_in_ring.add(cycle)
     return len(cycles_in_ring)
 
 
