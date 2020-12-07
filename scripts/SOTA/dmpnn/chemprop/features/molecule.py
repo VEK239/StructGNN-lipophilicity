@@ -205,31 +205,88 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
     else:
         substruct_type = [get_num_rings_in_ring(substruct, sssr) if structure_type == 'RING' else 0]
 
-    if args.substructures_extra_features:
-        in_to_in_features = []
-        for dist in range(1, args.substructures_extra_max_in_to_in):
-            cur_dist_sum = 0
-            for atom_1 in substruct:
-                for atom_2 in substruct:
-                    if atom_1 >= atom_2:
-                        continue
-                    if distance_matrix[atom_1][atom_2] == dist:
-                        cur_dist_sum += dist * mol.GetAtomWithIdx(atom_1).GetMass() * mol.GetAtomWithIdx(
-                            atom_2).GetMass()
-            in_to_in_features.append(cur_dist_sum)
-
     features = substruct_atomic_encoding + substruct_valence_array + substruct_Hs_array + substruct_type + \
                [substruct_formal_charge, substruct_is_aromatic, substruct_mass * 0.01, substruct_edges_sum * 0.1]
     return tuple(features)
 
 
+def add_substructures_extra_atom_features(mol, args):
+    for atom in mol.get_atoms():
+        if atom.atom_type == 'ATOM':
+            atom.atom_representation += [0] * (
+                    args.substructures_extra_max_in_to_in + args.substructures_extra_max_in_to_out
+                    + args.substructures_extra_max_out_to_out)
+            continue
+
+        in_to_in_features = []
+        for dist in range(1, args.substructures_extra_max_in_to_in):
+            cur_dist_sum = 0
+            for atom_1 in atom.simple_atoms:
+                for atom_2 in atom.simple_atoms:
+                    if atom_1 >= atom_2:
+                        continue
+                    if mol.distance_matrix[atom_1][atom_2] == dist:
+                        cur_dist_sum += dist * mol.GetAtomWithIdx(atom_1).GetMass() * mol.GetAtomWithIdx(
+                            atom_2).GetMass()
+            in_to_in_features.append(cur_dist_sum)
+        atom.atom_representation += in_to_in_features
+
+        in_to_out_features = []
+        for dist in range(1, args.substructures_extra_max_in_to_out):
+            cur_dist_sum = 0
+            for atom_1 in atom.simple_atoms:
+                for substruct_2 in mol.get_atoms():
+                    if substruct_2 == atom:
+                        continue
+                    min_distance = 1e10
+                    for atom_2 in substruct_2.simple_atoms:
+                        min_distance = min(min_distance, mol.distance_matrix[atom_1][atom_2])
+
+                    if min_distance == dist:
+                        cur_dist_sum += dist * mol.GetAtomWithIdx(atom_1).GetMass() * substruct_2.get_mass()
+            in_to_out_features.append(cur_dist_sum)
+        atom.atom_representation += in_to_out_features
+
+
+        # getting all neighbours of this substruct
+        neighbours = set()
+        for atom_1 in atom.simple_atoms:
+            for substruct_2 in mol.get_atoms():
+                if substruct_2 == atom:
+                    continue
+                min_distance = 1e10
+                for atom_2 in substruct_2.simple_atoms:
+                    min_distance = min(min_distance, mol.distance_matrix[atom_1][atom_2])
+
+                if min_distance == 1:
+                    neighbours.add(substruct_2)
+
+        out_to_out_features = []
+        for dist in range(1, args.substructures_extra_max_in_to_out):
+            cur_dist_sum = 0
+            for substruct_1 in neighbours:
+                for substruct_2 in neighbours:
+                    if substruct_2 == substruct_1:
+                        continue
+                    min_distance = 1e10
+                    for atom_1 in substruct_1.simple_atoms:
+                        for atom_2 in substruct_2.simple_atoms:
+                            min_distance = min(min_distance, mol.distance_matrix[atom_1][atom_2])
+                    if min_distance == dist:
+                        cur_dist_sum += dist * substruct_1.get_mass() * substruct_2.get_mass()
+            out_to_out_features.append(cur_dist_sum)
+        atom.atom_representation += out_to_out_features
+
+
 class Atom:
-    def __init__(self, idx, atom_representation, atom_type, symbol=''):
+    def __init__(self, idx, atom_representation, atom_type, simple_atoms, symbol=''):
         self.symbol = symbol
         self.idx = idx
         self.atom_representation = atom_representation
         self.atom_type = atom_type
         self.bonds = []
+        self.simple_atoms = simple_atoms
+        self.mass = None
 
     def add_bond(self, bond):
         self.bonds.append(bond)
@@ -237,6 +294,10 @@ class Atom:
     def get_representation(self):
         return list(self.atom_representation)
 
+    def get_mass(self):
+        if self.mass is None:
+            self.mass = self.atom_representation[-2] * 100  # taking the second from end (mass divided by 100)
+        return self.mass
 
 class Bond:
     def __init__(self, rdkit_bond, idx, out_atom_idx, in_atom_idx, bond_type):
@@ -329,10 +390,10 @@ def create_molecule_for_smiles(smiles, args):
         substructure_type_string = structure_type[1]
         substructures = structure_type[0]
         for substruct in substructures:
-            mapping = generate_substructure_sum_vector_mapping(substruct, mol, substructure_type_string, args, sssr,
-                                                               distance_matrix)
+            mapping = generate_substructure_sum_vector_mapping(substruct, mol, substructure_type_string, args, sssr)
             substruct_atom = Atom(idx=(min(*substruct) if len(substruct) > 1 else substruct[0]),
-                                  atom_representation=mapping, atom_type=substructure_type_string)
+                                  atom_representation=mapping, atom_type=substructure_type_string,
+                                  simple_atoms=substruct)
             mol_atoms.append(substruct_atom)
             for idx in substruct:
                 idx_to_atom[idx].add(substruct_atom)
@@ -342,7 +403,8 @@ def create_molecule_for_smiles(smiles, args):
         atom_idx = atom.GetIdx()
         if atom_idx not in used_atoms:
             atom_repr = generate_substructure_sum_vector_mapping([atom_idx], mol, 'ATOM', args, sssr)
-            custom_atom = Atom(idx=atom_idx, atom_representation=atom_repr, symbol=atom.GetSymbol(), atom_type='ATOM')
+            custom_atom = Atom(idx=atom_idx, atom_representation=atom_repr, symbol=atom.GetSymbol(), atom_type='ATOM',
+                               simple_atoms=[atom_idx])
             mol_atoms.append(custom_atom)
             idx_to_atom[atom_idx].add(custom_atom)
 
