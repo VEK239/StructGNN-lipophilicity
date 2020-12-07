@@ -1,7 +1,5 @@
-from typing import List, Tuple, Union
-
 import torch
-
+from typing import List, Tuple, Union
 
 from .molecule import create_molecule_for_smiles
 
@@ -12,13 +10,17 @@ THREE_D_DISTANCE_STEP = 1
 THREE_D_DISTANCE_BINS = list(range(0, THREE_D_DISTANCE_MAX + 1, THREE_D_DISTANCE_STEP))
 
 
-def get_atom_fdim_with_substructures(use_substructures=False, merge_cycles=False) -> int:
+def get_atom_fdim_with_substructures(args) -> int:
     """Gets the dimensionality of the atom feature vector."""
     atom_fdim = 160
-    if use_substructures:
+    if args.substructures_use_substructures:
         atom_fdim += 5
-    if merge_cycles:
+    if args.substructures_merge:
         atom_fdim += 5
+    if args.substructures_extra_features:
+        atom_fdim += args.substructures_extra_max_in_to_in + args.substructures_extra_max_in_to_out \
+                     + args.substructures_extra_max_out_to_out
+
     return atom_fdim
 
 
@@ -68,8 +70,7 @@ class BatchMolGraphWithSubstructures:
         :param mol_graphs: A list of :class:`MolGraphWithSubstructures`\ s from which to construct the
         :class:`BatchMolGraphWithSubstructures`.
         """
-        self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
-                                                          merge_cycles=args.substructures_merge)
+        self.atom_fdim = get_atom_fdim_with_substructures(args)
 
         # Start n_atoms and n_bonds at 1 b/c zero padding
         self.n_atoms = 1  # number of atoms (start at 1 b/c need index 0 as padding)

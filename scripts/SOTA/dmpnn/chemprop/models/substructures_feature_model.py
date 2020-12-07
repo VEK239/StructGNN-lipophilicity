@@ -94,8 +94,7 @@ class SubstructureLayer(nn.Module):
         """
         self.args = args
         super(SubstructureLayer, self).__init__()
-        self.atom_fdim = get_atom_fdim_with_substructures(use_substructures=args.substructures_use_substructures,
-                                                          merge_cycles=args.substructures_merge)
+        self.atom_fdim = get_atom_fdim_with_substructures(args)
         self.encoder = SubstructureEncoder(args, self.atom_fdim)
 
     def forward(self,

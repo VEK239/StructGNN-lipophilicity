@@ -218,11 +218,11 @@ class TrainArgs(CommonArgs):
     """Undirected edges (always sum the two relevant bond vectors)."""
     substructures_extra_features: bool = False
     """Whether to use extra ring features to identify each substructure"""
-    substructures_extra_max_in_to_in: Int = 0
+    substructures_extra_max_in_to_in: int = 0
     """Max distance to consider between two atoms INSIDE of ring"""
-    substructures_extra_max_in_to_out: Int = 0
+    substructures_extra_max_in_to_out: int = 0
     """Max distance to consider between two atoms INSIDE and OUT of ring"""
-    substructures_extra_max_ouot_to_out: Int = 0
+    substructures_extra_max_ouot_to_out: int = 0
     """Max distance to consider between two atoms OUT of ring"""
     ffn_hidden_size: int = None
     """Hidden dim for higher-capacity FFN (defaults to hidden_size)."""
