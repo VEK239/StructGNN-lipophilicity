@@ -279,7 +279,7 @@ def add_substructures_extra_atom_features(mol, args):
                                 continue
                             min_distance = min(min_distance, mol.rdkit_distance_matrix[atom_1][atom_2])
                     if min_distance == dist:
-                        cur_dist_sum += substruct_1.get_mass() * substruct_2.get_mass()
+                        cur_dist_sum += substruct_1.get_mass() * substruct_2.get_mass() / 10
             out_to_out_features.append(cur_dist_sum)
         atom.atom_representation += tuple(out_to_out_features)
 
@@ -303,7 +303,7 @@ class Atom:
 
     def get_mass(self):
         if self.mass is None:
-            self.mass = sum(atom.GetAtomicNum() for atom in self.rdkit_atoms) / 10
+            self.mass = sum(atom.GetAtomicNum() for atom in self.rdkit_atoms)
         return self.mass
 
 class Bond:
