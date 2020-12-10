@@ -364,6 +364,7 @@ class Molecule:
         # ring_feature = construct_ring_feature_vec(mol, num_max_atoms=num_max_atoms)
         # feature = numpy.hstack((distance_feature, bond_feature, ring_feature))
         feature = numpy.hstack((distance_feature, bond_feature))
+        print(feature.shape)
         return feature
 
     def prnt(self):
@@ -373,8 +374,9 @@ class Molecule:
             print(bond.out_atom_idx, bond.in_atom_idx)
 
 
-def create_molecule_for_smiles(smiles, args):
-    mol = Chem.MolFromSmiles(smiles)
+def create_molecule_for_smiles(smiles, args, mol=None):
+    if mol is None:
+        mol = Chem.MolFromSmiles(smiles)
 
     rings = get_cycles_for_molecule(mol)
     if args.substructures_use_substructures:

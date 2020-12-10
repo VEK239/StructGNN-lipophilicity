@@ -8,7 +8,7 @@ from typing_extensions import Literal
 import torch
 from tap import Tap  # pip install typed-argument-parser (https://github.com/swansonk14/typed-argument-parser)
 
-from chemprop.features import get_available_features_generators
+from features import get_available_features_generators
 
 
 def get_checkpoint_paths(checkpoint_path: Optional[str] = None,
@@ -271,6 +271,8 @@ class TrainArgs(CommonArgs):
     """Early stopping patience"""
     delta: float = 0.0
     """Early stopping delta"""
+    weave_max_atoms = 15
+    """Default max atoms count for weave encoder"""
 
     def __init__(self, *args, **kwargs) -> None:
         super(TrainArgs, self).__init__(*args, **kwargs)

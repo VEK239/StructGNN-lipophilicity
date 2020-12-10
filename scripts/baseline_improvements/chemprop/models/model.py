@@ -32,6 +32,9 @@ class MoleculeModel(nn.Module):
                            learned features from the last layer prior to prediction rather than
                            outputting the actual property predictions.
         """
+        global WEAVE_DEFAULT_NUM_MAX_ATOMS
+        WEAVE_DEFAULT_NUM_MAX_ATOMS = args.weave_max_atoms
+
         super(MoleculeModel, self).__init__()
 
         self.args = args
