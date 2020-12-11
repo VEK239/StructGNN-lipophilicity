@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from rdkit import Chem
+from rdkit.Chem import rdmolfiles
 
 BT_MAPPING_CHAR = {
     Chem.rdchem.BondType.SINGLE: 'S',
@@ -165,7 +166,7 @@ def get_num_rings_in_ring(substruct, sssr):
     return len(cycles_in_ring)
 
 
-def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, args, sssr):
+def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, args, sssr, ranking):
     """
     Generates a vector with mapping for a substructure
     :param substruct: The given substructure
@@ -205,8 +206,11 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
     else:
         substruct_type = [get_num_rings_in_ring(substruct, sssr) if structure_type == 'RING' else 0]
 
+    substruct_symmetry_feature = sum(ranking[i] for i in substruct) / len(substruct)
+
     features = substruct_atomic_encoding + substruct_valence_array + substruct_Hs_array + substruct_type + \
-               [substruct_formal_charge, substruct_is_aromatic, substruct_mass * 0.01, substruct_edges_sum * 0.1]
+               [substruct_formal_charge, substruct_is_aromatic, substruct_mass * 0.01,
+                substruct_edges_sum * 0.1, substruct_symmetry_feature]
     return tuple(features)
 
 
@@ -279,7 +283,7 @@ def add_substructures_extra_atom_features(mol, args):
                                 continue
                             min_distance = min(min_distance, mol.rdkit_distance_matrix[atom_1][atom_2])
                     if min_distance == dist:
-                        cur_dist_sum += substruct_1.get_mass() * substruct_2.get_mass() / 10
+                        cur_dist_sum += substruct_1.get_mass() * substruct_2.get_mass() / 100
             out_to_out_features.append(cur_dist_sum)
         atom.atom_representation += tuple(out_to_out_features)
 
@@ -352,6 +356,7 @@ def create_molecule_for_smiles(smiles, args):
     mol = Chem.MolFromSmiles(smiles)
     distance_matrix = Chem.GetDistanceMatrix(mol)
     sssr = Chem.GetSymmSSSR(mol)
+    ranking = rdmolfiles.CanonicalRankAtoms(mol)
     rings = get_cycles_for_molecule(mol, args.substructures_merge)
     if args.substructures_use_substructures:
         acids = get_acids_for_molecule(mol)
@@ -375,7 +380,7 @@ def create_molecule_for_smiles(smiles, args):
         substructure_type_string = structure_type[1]
         substructures = structure_type[0]
         for substruct in substructures:
-            mapping = generate_substructure_sum_vector_mapping(substruct, mol, substructure_type_string, args, sssr)
+            mapping = generate_substructure_sum_vector_mapping(substruct, mol, substructure_type_string, args, sssr, ranking)
             substruct_atom = Atom(idx=min_not_used_atom,
                                   atom_representation=mapping, atom_type=substructure_type_string,
                                   simple_atoms=substruct, rdkit_atoms = [mol.GetAtomWithIdx(i) for i in substruct])
@@ -388,7 +393,7 @@ def create_molecule_for_smiles(smiles, args):
     for atom in mol.GetAtoms():
         atom_idx = atom.GetIdx()
         if atom_idx not in used_atoms:
-            atom_repr = generate_substructure_sum_vector_mapping([atom_idx], mol, 'ATOM', args, sssr)
+            atom_repr = generate_substructure_sum_vector_mapping([atom_idx], mol, 'ATOM', args, sssr, ranking)
             custom_atom = Atom(idx=min_not_used_atom, atom_representation=atom_repr, symbol=atom.GetSymbol(), atom_type='ATOM',
                                simple_atoms=[atom_idx], rdkit_atoms=[atom])
             min_not_used_atom += 1

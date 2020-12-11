@@ -237,7 +237,8 @@ class TrainArgs(CommonArgs):
     substructures_use_substructures:bool = True
     substructures_merge: bool = False
     config_path: str = None
-        
+
+    substructures_symmetry_feature: bool = False
     config_path_yaml: str = None
     """
     Path to a :code:`.json` file containing arguments. Any arguments present in the config file

@@ -20,6 +20,8 @@ def get_atom_fdim_with_substructures(args) -> int:
     if args.substructures_extra_features:
         atom_fdim += args.substructures_extra_max_in_to_in + args.substructures_extra_max_in_to_out \
                      + args.substructures_extra_max_out_to_out
+    if args.substructures_symmetry_feature:
+        atom_fdim += 1
 
     return atom_fdim
 
