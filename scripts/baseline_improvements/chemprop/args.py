@@ -231,6 +231,8 @@ class TrainArgs(CommonArgs):
     """Whether to add a substructures encoder"""
     gcn_encoder: bool = False
     """Whether to use the WeaveNet encoder as substructures encoder"""
+    weave_hidden_size: int = 900
+    """Weave encoder forward layer output size"""
     separate_val_features_path: List[str] = None
     """Path to file with features for separate val set."""
     separate_test_features_path: List[str] = None

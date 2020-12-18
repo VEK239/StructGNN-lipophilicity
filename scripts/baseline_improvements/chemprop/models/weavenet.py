@@ -96,13 +96,6 @@ class WeaveModule(nn.Module):
         next_atom = functional.relu(next_atom)
         if atom_only:
             return next_atom
-        #
-        # p0 = self.atom_to_pair.forward(atom_x)
-        # p1 = self.pair_to_pair.forward(pair_x)
-        # p = torch.cat([p0, p1], 1)
-        # next_pair = self.pair_layer.forward(p)
-        # next_pair = functional.relu(next_pair)
-        # return next_atom, next_pair
 
 
 class WeaveNet(nn.Module):
@@ -132,6 +125,7 @@ class WeaveNet(nn.Module):
         self.weave_module = WeaveModule(args.weave_max_atoms, weave_channels[0], n_sub_layer, readout_mode=readout_mode,
                                         device=self.device)
         self.readout_mode = readout_mode
+        self.forward_layer = nn.Linear(WEAVE_DEFAULT_NUM_MAX_ATOMS * MAX_ATOMIC_NUM, args.weave_hidden_size)
 
     def forward(self, batch):
         atoms, pairs = [], []
@@ -150,8 +144,6 @@ class WeaveNet(nn.Module):
         pair_x = pair_x.to(self.device)
         atom_x = self.weave_module.forward(atom_x, pair_x,
                                            atom_only=True)
-        # else:
-        #     # not last layer, both `atom_x` and `pair_x` are needed
-        #     atom_x, pair_x = self.weave_module[i].forward(atom_x, pair_x)
+        atom_x = self.forward_layer.forward(atom_x)
 
         return atom_x

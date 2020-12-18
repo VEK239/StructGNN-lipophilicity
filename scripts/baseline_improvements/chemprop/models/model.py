@@ -85,7 +85,7 @@ class MoleculeModel(nn.Module):
             if args.use_input_features:
                 first_linear_dim += args.features_size
         elif self.args.additional_encoder and self.args.gcn_encoder:
-            first_linear_dim = args.hidden_size + WEAVE_DEFAULT_NUM_MAX_ATOMS * MAX_ATOMIC_NUM
+            first_linear_dim = args.hidden_size + args.weave_hidden_size
             if args.use_input_features:
                 first_linear_dim += args.features_size
         else:
