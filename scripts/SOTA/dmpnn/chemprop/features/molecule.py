@@ -153,6 +153,14 @@ def onek_encoding_unk(value, choices_len):
     encoding[int(value)] = 1
     return encoding
 
+def onek_encoding_hybridization(atom_idx, mol):
+    s_h = 1 if atom_idx in [a[0] for a in mol.GetSubstructMatches(Chem.MolFromSmarts('[^0]'))] else 0
+    sp_h = 1 if atom_idx in [a[0] for a in mol.GetSubstructMatches(Chem.MolFromSmarts('[^1]'))] else 0
+    sp2_h = 1 if atom_idx in [a[0] for a in mol.GetSubstructMatches(Chem.MolFromSmarts('[^2]'))] else 0
+    sp3_h = 1 if atom_idx in [a[0] for a in mol.GetSubstructMatches(Chem.MolFromSmarts('[^3]'))] else 0
+    sp3d_h = 1 if atom_idx in [a[0] for a in mol.GetSubstructMatches(Chem.MolFromSmarts('[^4]'))] else 0
+    sp3d2_h = 1 if atom_idx in [a[0] for a in mol.GetSubstructMatches(Chem.MolFromSmarts('[^5]'))] else 0
+    return [s_h, sp_h, sp2_h, sp3_h, sp3d_h, sp3d2_h]
 
 def get_num_rings_in_ring(substruct, sssr):
     cycles_in_ring = set()
@@ -206,11 +214,20 @@ def generate_substructure_sum_vector_mapping(substruct, mol, structure_type, arg
     else:
         substruct_type = [get_num_rings_in_ring(substruct, sssr) if structure_type == 'RING' else 0]
 
-    substruct_symmetry_feature = sum(ranking[i] for i in substruct) / len(substruct)
-
     features = substruct_atomic_encoding + substruct_valence_array + substruct_Hs_array + substruct_type + \
                [substruct_formal_charge, substruct_is_aromatic, substruct_mass * 0.01,
-                substruct_edges_sum * 0.1, substruct_symmetry_feature]
+                substruct_edges_sum * 0.1]
+
+    if args.substructures_symmetry_feature:
+        substruct_symmetry_feature = sum(ranking[i] for i in substruct) / len(substruct)
+        features += substruct_symmetry_feature
+
+    if args.use_hybridization_features:
+        hybridization_features = []
+        for atom_idx in substruct:
+            hybridization_features.append(onek_encoding_hybridization(atom_idx, mol))
+        hybridization_features = [sum(x) for x in zip(*hybridization_features)]
+        features += hybridization_features
     return tuple(features)
 
 

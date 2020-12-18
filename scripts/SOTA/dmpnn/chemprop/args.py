@@ -239,6 +239,9 @@ class TrainArgs(CommonArgs):
     config_path: str = None
 
     substructures_symmetry_feature: bool = False
+    """Whether to use the symmetry feature in substructures encoder or not"""
+    use_hybridization_features: bool = False
+    """Whether to use the hybridization features in substructures encoder or not"""
     config_path_yaml: str = None
     """
     Path to a :code:`.json` file containing arguments. Any arguments present in the config file
