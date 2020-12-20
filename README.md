@@ -9,16 +9,6 @@ In addition to the previous approach, we also improved the substructures represe
 
 For a detailed description of SOTA StructGNN we refer the reader to the paper ["Lipophilicity Prediction with Multitask Learning and Molecular Substructures Representation"](https://arxiv.org/abs/2011.12117).
 
-<!-- TABLE OF CONTENTS -->
-## Table of Contents
-
-* [Structure of this repository](#structure-of-this-repository)
-* [Data](#data)
-* [Prerequisites](#prerequisites)
-* [Installation](#installation)
-* [StructWeave](#structgnn)
-* [StructGNNWithImprovements](#structgnnwithimprovements)
-
 ## Structure of this repository
 
 There are 2 main branches:
