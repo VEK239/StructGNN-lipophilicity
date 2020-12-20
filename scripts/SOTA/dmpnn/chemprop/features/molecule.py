@@ -334,7 +334,7 @@ class Atom:
 
     def get_mass(self):
         if self.mass is None:
-            self.mass = sum(atom.GetAtomicNum() for atom in self.rdkit_atoms)
+            self.mass = sum(1 for atom in self.rdkit_atoms)
         return self.mass
 
 class Bond:
