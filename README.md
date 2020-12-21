@@ -19,7 +19,7 @@ There are 2 main branches:
 This repository was built with the help of
 
 * [StructGNN repo](https://github.com/jbr-ai-labs/lipophilicity-prediction)
-* [Junction Tree original repo](https://github.com/benatorc/OTGNN)
+* [DMPNN repo](https://github.com/chemprop/chemprop)
 
 ## Data
 
